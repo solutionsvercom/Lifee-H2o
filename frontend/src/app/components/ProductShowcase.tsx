@@ -1,5 +1,5 @@
 import { motion, useInView } from "motion/react";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 
 const products = [
   { 
@@ -37,47 +37,6 @@ const products = [
 export function ProductShowcase() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const [loadingProduct, setLoadingProduct] = useState<string | null>(null);
-  const [status, setStatus] = useState("");
-
-  const handleSubmit = async (product: string) => {
-    if (loadingProduct) return;
-
-    const name = window.prompt("Enter your name");
-    const email = window.prompt("Enter your email");
-    const phone = window.prompt("Enter your phone number");
-    if (!name || !email || !phone) {
-      setStatus("error: Name, email and phone are required.");
-      return;
-    }
-
-    setLoadingProduct(product);
-    setStatus("");
-    try {
-      const response = await fetch("http://localhost:5000/api/email/order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          email,
-          phone,
-          product,
-          quantity: "1",
-          address: "",
-        }),
-      });
-      const data = await response.json();
-      if (data.success) {
-        setStatus("success: Order request sent successfully!");
-      } else {
-        setStatus("error: " + (data.error || "Failed to send order request"));
-      }
-    } catch (error) {
-      setStatus("error: Cannot connect to server");
-    } finally {
-      setLoadingProduct(null);
-    }
-  };
 
   return (
     <section 
@@ -200,17 +159,6 @@ export function ProductShowcase() {
                   </div>
                 </div>
 
-                {/* Add to cart button */}
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => void handleSubmit(product.size)}
-                  disabled={Boolean(loadingProduct)}
-                  className="w-full mt-6 py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                  {loadingProduct === product.size ? "Sending..." : "Order Now"}
-                </motion.button>
-
                 {/* Hover glow effect */}
                 <motion.div
                   className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
@@ -237,12 +185,6 @@ export function ProductShowcase() {
             </span>
           </div>
         </motion.div>
-        {status.startsWith("success") && (
-          <p className="mt-4 text-center text-green-400">✅ Order request sent successfully!</p>
-        )}
-        {status.startsWith("error") && (
-          <p className="mt-4 text-center text-red-400">❌ {status}</p>
-        )}
       </div>
     </section>
   );

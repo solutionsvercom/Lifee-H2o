@@ -123,7 +123,7 @@ export function AboutSection() {
                 className="absolute inset-0 rounded-3xl"
               />
               <img
-                src="/images/lifee-bottle.png"  
+                src="/images/lifee-bottle1L.png"  
                 alt="Natural water source"
                 className="relative w-full h-auto rounded-2xl"
               />

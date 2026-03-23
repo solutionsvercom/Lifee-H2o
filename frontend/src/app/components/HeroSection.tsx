@@ -1,6 +1,6 @@
 import { motion, useScroll, useTransform } from "motion/react";
-import { useRef, useState, useEffect } from "react";
-import { Volume2, VolumeX, ChevronDown } from "lucide-react";
+import { useRef, useState } from "react";
+import { ChevronDown } from "lucide-react";
 
 export function HeroSection() {
   const [soundEnabled, setSoundEnabled] = useState(false);
@@ -15,7 +15,7 @@ export function HeroSection() {
   const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
 
   return (
-    <div ref={containerRef} className="relative h-screen overflow-hidden">
+    <section id="home" ref={containerRef} className="relative min-h-screen overflow-hidden scroll-mt-24">
       {/* Animated Background - Dark aqua gradient */}
       <motion.div 
         style={{ y: backgroundY }}
@@ -63,32 +63,42 @@ export function HeroSection() {
         />
       ))}
 
-      {/* Sound toggle */}
-      <button
-        onClick={() => setSoundEnabled(!soundEnabled)}
-        className="absolute top-8 right-8 z-50 p-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 transition-all duration-300"
-      >
-        {soundEnabled ? (
-          <Volume2 className="w-5 h-5 text-white" />
-        ) : (
-          <VolumeX className="w-5 h-5 text-white" />
-        )}
-      </button>
+
 
       {/* Main content */}
       <motion.div 
         style={{ opacity }}
-        className="relative z-10 h-full flex flex-col items-center justify-center px-6 py-12"
+        className="relative z-10 h-full flex flex-col items-center justify-center px-4 sm:px-6 pt-28 pb-12 sm:pb-16"
       >
         {/* Large center-focused hyper-realistic 3D bottle */}
         <motion.div
-          style={{ 
+          style={{
             scale: bottleScale,
+            perspective: "600px",
+            perspectiveOrigin: "center center",
           }}
           className="relative mb-8 max-w-full overflow-visible"
         >
           {/* Soft glow around bottle */}
           <div className="absolute inset-0 bg-cyan-400/30 blur-[80px] scale-150" />
+          <motion.div
+            animate={{
+              x: [-20, 0, 20, 0, -20],
+              opacity: [0.6, 0.2, 0.6, 0.2, 0.6],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: "linear",
+              times: [0, 0.25, 0.5, 0.75, 1],
+            }}
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(ellipse at center, rgba(0,150,255,0.3) 0%, transparent 70%)",
+              filter: "blur(15px)",
+            }}
+          />
           
           {/* Studio lighting effect */}
           <div className="absolute -top-20 -left-20 w-40 h-40 bg-white/20 rounded-full blur-3xl" />
@@ -96,22 +106,52 @@ export function HeroSection() {
 
           {/* Realistic 3D Bottle with smooth 360° rotation */}
           <motion.div
-            animate={{
-              rotateY: [0, 360],
-            }}
+            animate={{ y: [0, -15, 0] }}
             transition={{
-              duration: 20,
+              duration: 4,
               repeat: Infinity,
-              ease: "linear",
-            }}
-            className="relative flex items-center justify-center"
-            style={{
-              transformStyle: 'preserve-3d',
+              ease: "easeInOut",
             }}
           >
-            <div className="scale-75 md:scale-90 lg:scale-100">
-              <RealisticLifeeBottle />
-            </div>
+            <motion.div
+              animate={{
+                scaleX: [1, 0.08, 1, 0.08, 1],
+                rotateY: [0, 90, 180, 270, 360],
+              }}
+              transition={{
+                duration: 20,
+                repeat: Infinity,
+                ease: "linear",
+                times: [0, 0.25, 0.5, 0.75, 1],
+              }}
+              className="relative flex items-center justify-center"
+              style={{
+                transformStyle: "preserve-3d",
+                perspective: "1000px",
+              }}
+            >
+              <motion.div
+                animate={{
+                  opacity: [0.6, 0.1, 0.6, 0.1, 0.6],
+                  scaleX: [1, 0.1, 1, 0.1, 1],
+                }}
+                transition={{
+                  duration: 20,
+                  repeat: Infinity,
+                  ease: "linear",
+                  times: [0, 0.25, 0.5, 0.75, 1],
+                }}
+                className="absolute inset-0 pointer-events-none z-10"
+                style={{
+                  background:
+                    "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%)",
+                  borderRadius: "50%",
+                }}
+              />
+              <div className="w-[clamp(160px,45vw,240px)]">
+                <RealisticLifeeBottle />
+              </div>
+            </motion.div>
           </motion.div>
 
           {/* Water droplets falling from bottle */}
@@ -143,10 +183,10 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 1 }}
-          className="text-center max-w-4xl space-y-6"
+          className="text-center max-w-4xl space-y-5 sm:space-y-6"
         >
           <motion.h1 
-            className="text-5xl md:text-7xl font-bold text-white tracking-tight"
+            className="text-[clamp(2rem,8vw,4.5rem)] font-bold text-white tracking-tight leading-tight"
             style={{
               textShadow: '0 0 40px rgba(14, 165, 233, 0.5)',
             }}
@@ -158,28 +198,11 @@ export function HeroSection() {
             </span>
           </motion.h1>
 
-          <p className="text-lg md:text-xl text-cyan-100 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-[clamp(1rem,3vw,1.25rem)] text-cyan-100 max-w-2xl mx-auto leading-relaxed">
             Crafted with advanced purification technology, delivering unmatched 
             freshness and safety in every drop across Madhya Pradesh.
           </p>
 
-          {/* CTAs */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 bg-gradient-to-r from-cyan-400 to-blue-500 text-white rounded-full font-semibold shadow-lg shadow-cyan-500/50 hover:shadow-cyan-500/70 transition-all duration-300"
-            >
-              Order Now
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 bg-white/10 backdrop-blur-md border-2 border-white/30 text-white rounded-full font-semibold hover:bg-white/20 transition-all duration-300"
-            >
-              Become a Distributor
-            </motion.button>
-          </div>
         </motion.div>
 
         {/* Scroll indicator */}
@@ -194,21 +217,16 @@ export function HeroSection() {
 
       {/* Glassmorphic overlay for depth */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20 pointer-events-none" />
-    </div>
+    </section>
   );
 }
 
 // Hyper-realistic LIFEE bottle component with condensation and water effects
 function RealisticLifeeBottle() {
-  const bottleWidth = 200;
-  const bottleHeight = 500;
-
   return (
     <div 
-      className="relative"
+      className="relative w-full aspect-[1/3]"
       style={{ 
-        width: bottleWidth,
-        height: bottleHeight,
         filter: 'drop-shadow(0 30px 60px rgba(0, 0, 0, 0.4))',
       }}
     >
@@ -222,19 +240,36 @@ function RealisticLifeeBottle() {
         <defs>
           {/* Ultra-realistic gradients */}
           <linearGradient id="bottleGlass" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#E0F7FF" stopOpacity="0.25" />
-            <stop offset="30%" stopColor="#FFFFFF" stopOpacity="0.7" />
-            <stop offset="50%" stopColor="#B3E5FC" stopOpacity="0.5" />
-            <stop offset="70%" stopColor="#FFFFFF" stopOpacity="0.6" />
-            <stop offset="100%" stopColor="#E0F7FF" stopOpacity="0.2" />
+            <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.08" />
+            <stop offset="15%" stopColor="#FFFFFF" stopOpacity="0.55" />
+            <stop offset="35%" stopColor="#B3E5FC" stopOpacity="0.25" />
+            <stop offset="50%" stopColor="#81D4FA" stopOpacity="0.15" />
+            <stop offset="65%" stopColor="#B3E5FC" stopOpacity="0.20" />
+            <stop offset="85%" stopColor="#FFFFFF" stopOpacity="0.45" />
+            <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.06" />
           </linearGradient>
 
           {/* Water inside gradient */}
-          <linearGradient id="waterInside" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#B3E5FC" stopOpacity="0.9" />
-            <stop offset="50%" stopColor="#81D4FA" stopOpacity="0.8" />
-            <stop offset="100%" stopColor="#4FC3F7" stopOpacity="0.85" />
+          <linearGradient id="waterInside" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#E0F7FF" stopOpacity="0.95" />
+            <stop offset="30%" stopColor="#B3E5FC" stopOpacity="0.90" />
+            <stop offset="60%" stopColor="#7DD3FC" stopOpacity="0.85" />
+            <stop offset="100%" stopColor="#38BDF8" stopOpacity="0.90" />
           </linearGradient>
+
+          {/* Bottle edge shadow for 3D depth */}
+          <linearGradient id="bottleEdge" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#000000" stopOpacity="0.25" />
+            <stop offset="10%" stopColor="#000000" stopOpacity="0.05" />
+            <stop offset="90%" stopColor="#000000" stopOpacity="0.05" />
+            <stop offset="100%" stopColor="#000000" stopOpacity="0.20" />
+          </linearGradient>
+
+          {/* Center highlight */}
+          <radialGradient id="centerGlow" cx="30%" cy="30%" r="60%">
+            <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.4" />
+            <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+          </radialGradient>
 
           {/* Label gradient */}
           <linearGradient id="labelBg" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -248,6 +283,16 @@ function RealisticLifeeBottle() {
             <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
           </linearGradient>
 
+          <linearGradient id="capGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#3B82F6" />
+            <stop offset="50%" stopColor="#1D4ED8" />
+            <stop offset="100%" stopColor="#1E3A8A" />
+          </linearGradient>
+          <linearGradient id="capTop" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#60A5FA" />
+            <stop offset="100%" stopColor="#2563EB" />
+          </linearGradient>
+
           {/* Condensation pattern */}
           <filter id="condensation">
             <feTurbulence baseFrequency="0.05" numOctaves="3" seed="2" />
@@ -255,42 +300,45 @@ function RealisticLifeeBottle() {
           </filter>
         </defs>
 
-        {/* Bottle cap - blue */}
-        <g>
-          <rect x="65" y="20" width="70" height="35" rx="5" fill="#1E40AF" />
-          <ellipse cx="100" cy="20" rx="35" ry="10" fill="#2563EB" />
-          <ellipse cx="100" cy="22" rx="32" ry="9" fill="#3B82F6" />
-          <ellipse cx="90" cy="28" rx="12" ry="4" fill="rgba(255, 255, 255, 0.4)" />
-        </g>
+        <rect x="68" y="22" width="64" height="33" rx="6" fill="url(#capGrad)" />
+        <ellipse cx="100" cy="22" rx="32" ry="10" fill="url(#capTop)" />
+        <ellipse cx="100" cy="55" rx="33" ry="5" fill="#1E3A8A" opacity="0.8" />
+        <ellipse cx="88" cy="28" rx="14" ry="5" fill="rgba(255,255,255,0.35)" />
+        <ellipse cx="92" cy="18" rx="8" ry="4" fill="rgba(255,255,255,0.6)" />
 
         {/* Bottle neck */}
         <path
-          d="M 75 55 L 65 75 L 65 100 L 135 100 L 135 75 L 125 55 Z"
+          d="M 78 55 L 68 75 L 65 100 L 135 100 L 132 75 L 122 55 Z"
           fill="url(#bottleGlass)"
-          stroke="rgba(255, 255, 255, 0.4)"
+          stroke="rgba(255,255,255,0.3)"
           strokeWidth="1"
+        />
+        <path
+          d="M 78 55 L 70 75 L 68 100 L 80 100 L 82 75 L 84 55 Z"
+          fill="rgba(255,255,255,0.4)"
         />
 
         {/* Main bottle body - realistic shape */}
-        <rect
-          x="55"
-          y="100"
-          width="90"
-          height="350"
-          rx="20"
+        <path
+          d="M 65 100 C 55 100, 45 110, 45 125 L 45 380 C 45 400, 55 450, 65 460 L 135 460 C 145 450, 155 400, 155 380 L 155 125 C 155 110, 145 100, 135 100 Z"
           fill="url(#bottleGlass)"
-          stroke="rgba(255, 255, 255, 0.3)"
-          strokeWidth="1"
+          stroke="rgba(255,255,255,0.35)"
+          strokeWidth="1.5"
         />
 
         {/* Water inside bottle */}
-        <rect
-          x="58"
-          y="130"
-          width="84"
-          height="310"
-          rx="18"
+        <path
+          d="M 48 140 L 48 378 C 48 396, 57 445, 66 455 L 134 455 C 143 445, 152 396, 152 378 L 152 140 Z"
           fill="url(#waterInside)"
+          opacity="0.85"
+        />
+        <path
+          d="M 65 100 C 55 100, 45 110, 45 125 L 45 380 C 45 400, 55 450, 65 460 L 135 460 C 145 450, 155 400, 155 380 L 155 125 C 155 110, 145 100, 135 100 Z"
+          fill="url(#bottleEdge)"
+        />
+        <path
+          d="M 65 100 C 55 100, 45 110, 45 125 L 45 380 C 45 400, 55 450, 65 460 L 135 460 C 145 450, 155 400, 155 380 L 155 125 C 155 110, 145 100, 135 100 Z"
+          fill="url(#centerGlow)"
         />
 
         {/* LIFEE Label */}
@@ -421,21 +469,32 @@ function RealisticLifeeBottle() {
           fill="rgba(255, 255, 255, 0.15)"
         />
 
-        {/* Cap highlight */}
-        <ellipse
-          cx="92"
-          cy="30"
-          rx="10"
-          ry="5"
-          fill="rgba(255, 255, 255, 0.6)"
-        />
       </svg>
+      <motion.div
+        animate={{
+          x: ["-120%", "0%", "120%", "0%", "-120%"],
+          opacity: [0, 0.7, 0, 0.7, 0],
+          scaleX: [0.3, 1, 0.3, 1, 0.3],
+        }}
+        transition={{
+          duration: 20,
+          repeat: Infinity,
+          ease: "linear",
+          times: [0, 0.25, 0.5, 0.75, 1],
+        }}
+        className="absolute inset-0 z-20 pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(90deg, transparent 20%, rgba(255,255,255,0.5) 50%, transparent 80%)",
+          borderRadius: "8px",
+        }}
+      />
 
       {/* Realistic shadow beneath bottle */}
       <div 
         className="absolute bottom-0 left-1/2 -translate-x-1/2"
         style={{
-          width: bottleWidth * 0.5,
+          width: '50%',
           height: 30,
           background: 'radial-gradient(ellipse, rgba(0, 0, 0, 0.4), transparent)',
           filter: 'blur(12px)',

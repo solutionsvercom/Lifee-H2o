@@ -3,7 +3,7 @@ import { Facebook, Instagram, Twitter, Linkedin, Youtube } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="relative bg-gradient-to-br from-[#0A2540] to-slate-950 text-white pt-16 pb-8 px-6">
+    <footer className="relative bg-gradient-to-br from-[#0A2540] to-slate-950 text-white pt-14 md:pt-16 pb-8 px-4 sm:px-6">
       {/* Wave divider */}
       <div className="absolute top-0 left-0 right-0 h-px">
         <motion.div
@@ -38,7 +38,7 @@ export function Footer() {
             >
               <div className="text-4xl">💧</div>
               <div>
-                <h3 className="text-2xl font-bold">Premium Water</h3>
+                <h3 className="text-2xl font-bold">LIFEE Water</h3>
                 <p className="text-cyan-400 text-sm">Purity Engineered</p>
               </div>
             </motion.div>

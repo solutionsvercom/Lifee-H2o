@@ -7,8 +7,9 @@ export function AboutSection() {
 
   return (
     <section 
+      id="about"
       ref={ref}
-      className="relative min-h-screen flex items-center py-20 px-6 overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800"
+      className="relative min-h-screen flex items-center py-20 md:py-24 px-4 sm:px-6 overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800 scroll-mt-24"
     >
       {/* Flowing water visual */}
       <motion.div
@@ -49,7 +50,7 @@ export function AboutSection() {
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.2, duration: 0.8 }}
             >
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              <h2 className="text-[clamp(1.8rem,6vw,3rem)] font-bold text-white mb-6 leading-tight">
                 Elegant{" "}
                 <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
                   Storytelling
@@ -86,7 +87,7 @@ export function AboutSection() {
               className="grid grid-cols-3 gap-6 pt-4"
             >
               {[
-                { value: "100%", label: "Pure" },
+                { value: "99.9%", label: "Pure" },
                 { value: "0", label: "Impurities" },
                 { value: "24/7", label: "Available" },
               ].map((stat, i) => (

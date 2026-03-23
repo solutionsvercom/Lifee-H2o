@@ -48,8 +48,9 @@ export function PurificationProcess() {
 
   return (
     <section 
+      id="process"
       ref={ref}
-      className="relative py-24 px-6 bg-gradient-to-b from-slate-800 to-[#0A2540] overflow-hidden"
+      className="relative py-20 md:py-24 px-4 sm:px-6 bg-gradient-to-b from-slate-800 to-[#0A2540] overflow-hidden scroll-mt-24"
     >
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-10">
@@ -70,7 +71,7 @@ export function PurificationProcess() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+          <h2 className="text-[clamp(1.8rem,6vw,3rem)] font-bold text-white mb-4 leading-tight">
             Purification{" "}
             <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
               Process

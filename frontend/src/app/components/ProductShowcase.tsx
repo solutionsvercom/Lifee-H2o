@@ -40,8 +40,9 @@ export function ProductShowcase() {
 
   return (
     <section 
+      id="products"
       ref={ref}
-      className="relative py-24 px-6 bg-gradient-to-br from-[#0A2540] to-slate-900 overflow-hidden"
+      className="relative py-20 md:py-24 px-4 sm:px-6 bg-gradient-to-br from-[#0A2540] to-slate-900 overflow-hidden scroll-mt-24"
     >
       {/* Animated background elements */}
       <div className="absolute inset-0">
@@ -75,7 +76,7 @@ export function ProductShowcase() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+          <h2 className="text-[clamp(1.8rem,6vw,3rem)] font-bold text-white mb-6 leading-tight">
             Product{" "}
             <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
               Showcase

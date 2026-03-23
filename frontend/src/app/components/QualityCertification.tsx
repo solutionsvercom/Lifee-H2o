@@ -31,8 +31,9 @@ export function QualityCertification() {
 
   return (
     <section 
+      id="certifications"
       ref={ref}
-      className="relative py-24 px-6 bg-gradient-to-br from-slate-900 via-[#0A2540] to-slate-900"
+      className="relative py-20 md:py-24 px-4 sm:px-6 bg-gradient-to-br from-slate-900 via-[#0A2540] to-slate-900 scroll-mt-24"
     >
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-5">
@@ -61,7 +62,7 @@ export function QualityCertification() {
               repeat: Infinity,
             }}
           >
-            <h2 className="text-5xl md:text-6xl font-bold text-white mb-6">
+            <h2 className="text-[clamp(2rem,7vw,3.75rem)] font-bold text-white mb-6 leading-tight">
               Tested. Certified.{" "}
               <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent">
                 Trusted.
@@ -179,7 +180,7 @@ export function QualityCertification() {
                 }}
                 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent"
               >
-                100+
+                99
               </motion.div>
               <p className="text-cyan-100/70">Quality Tests Daily</p>
             </div>

@@ -19,8 +19,9 @@ export function DistributionSection() {
 
   return (
     <section 
+      id="distribution"
       ref={ref}
-      className="relative py-24 px-6 bg-gradient-to-br from-[#0A2540] via-slate-900 to-[#0A2540] overflow-hidden"
+      className="relative py-20 md:py-24 px-4 sm:px-6 bg-gradient-to-br from-[#0A2540] via-slate-900 to-[#0A2540] overflow-hidden scroll-mt-24"
     >
       {/* Background grid */}
       <div className="absolute inset-0 opacity-10">
@@ -43,7 +44,7 @@ export function DistributionSection() {
             className="space-y-8"
           >
             <div className="space-y-4">
-              <h2 className="text-4xl md:text-5xl font-bold text-white">
+              <h2 className="text-[clamp(1.8rem,6vw,3rem)] font-bold text-white leading-tight">
                 Join Our Growing{" "}
                 <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
                   Distribution Network

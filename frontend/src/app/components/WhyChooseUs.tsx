@@ -36,8 +36,9 @@ export function WhyChooseUs() {
 
   return (
     <section 
+      id="why-us"
       ref={ref}
-      className="relative py-24 px-6 bg-gradient-to-b from-slate-900 to-[#0A2540]"
+      className="relative py-20 md:py-24 px-4 sm:px-6 bg-gradient-to-b from-slate-900 to-[#0A2540] scroll-mt-24"
     >
       <div className="container mx-auto max-w-7xl relative z-10">
         {/* Header */}
@@ -47,7 +48,7 @@ export function WhyChooseUs() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+          <h2 className="text-[clamp(1.8rem,6vw,3rem)] font-bold text-white mb-6 leading-tight">
             Why Choose{" "}
             <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
               Us

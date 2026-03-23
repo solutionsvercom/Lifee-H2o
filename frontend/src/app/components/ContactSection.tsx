@@ -7,14 +7,44 @@ export function ContactSection() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const [formData, setFormData] = useState({
     name: "",
+    email: "",
     phone: "",
     location: "",
     requirement: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
+    setLoading(true);
+    setStatus("");
+
+    try {
+      const response = await fetch("http://localhost:5000/api/email/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          message: formData.requirement,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setStatus("success: Message sent successfully!");
+        setFormData({ name: "", email: "", phone: "", location: "", requirement: "" });
+      } else {
+        setStatus("error: " + (data.error || "Failed to send message"));
+      }
+    } catch (error) {
+      setStatus("error: Cannot connect to server");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -115,6 +145,18 @@ export function ContactSection() {
                 </div>
 
                 <div className="space-y-2">
+                  <label className="text-white/90 text-sm">Email</label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="Enter your email"
+                    className="w-full px-4 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
                   <label className="text-white/90 text-sm">Location</label>
                   <input
                     type="text"
@@ -140,13 +182,20 @@ export function ContactSection() {
 
                 <motion.button
                   type="submit"
+                  disabled={loading}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl font-semibold shadow-lg shadow-cyan-500/50 hover:shadow-cyan-500/70 transition-all duration-300 flex items-center justify-center gap-2"
+                  className="w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl font-semibold shadow-lg shadow-cyan-500/50 hover:shadow-cyan-500/70 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <Send className="w-5 h-5" />
-                  Send Message
+                  {loading ? "Sending..." : "Send Message"}
                 </motion.button>
+                {status.startsWith("success") && (
+                  <p className="text-sm text-green-400">✅ Message sent successfully!</p>
+                )}
+                {status.startsWith("error") && (
+                  <p className="text-sm text-red-400">❌ {status}</p>
+                )}
               </form>
             </div>
           </motion.div>

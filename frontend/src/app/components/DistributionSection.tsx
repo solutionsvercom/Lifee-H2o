@@ -1,5 +1,5 @@
 import { motion, useInView } from "motion/react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { MapPin, Users, TrendingUp } from "lucide-react";
 
 const cities = [
@@ -16,6 +16,43 @@ const cities = [
 export function DistributionSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState("");
+
+  const handleSubmit = async () => {
+    if (loading) return;
+
+    const name = window.prompt("Enter your name");
+    const email = window.prompt("Enter your email");
+    const phone = window.prompt("Enter your phone number");
+    const city = window.prompt("Enter your city");
+    const businessName = window.prompt("Enter your business name");
+
+    if (!name || !email || !phone) {
+      setStatus("error: Name, email and phone are required.");
+      return;
+    }
+
+    setLoading(true);
+    setStatus("");
+    try {
+      const response = await fetch("http://localhost:5000/api/email/distributor", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, phone, city, businessName }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        setStatus("success: Distributor request sent successfully!");
+      } else {
+        setStatus("error: " + (data.error || "Failed to submit distributor request"));
+      }
+    } catch (error) {
+      setStatus("error: Cannot connect to server");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <section 
@@ -108,10 +145,18 @@ export function DistributionSection() {
               transition={{ delay: 1, duration: 0.6 }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={() => void handleSubmit()}
+              disabled={loading}
               className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-full font-semibold shadow-lg shadow-cyan-500/50 hover:shadow-cyan-500/70 transition-all duration-300"
             >
-              Become a Distributor
+              {loading ? "Sending..." : "Become a Distributor"}
             </motion.button>
+            {status.startsWith("success") && (
+              <p className="text-green-400">✅ Distributor request sent successfully!</p>
+            )}
+            {status.startsWith("error") && (
+              <p className="text-red-400">❌ {status}</p>
+            )}
           </motion.div>
 
           {/* Right - Futuristic MP Map */}

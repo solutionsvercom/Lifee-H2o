@@ -12,12 +12,16 @@ export function CustomizeOrderForm({ title, subtitle }: CustomizeOrderFormProps)
   const [customData, setCustomData] = useState({
     image: "",
     name: "",
+    email: "",
+    phone: "",
     eventDate: "",
     message: "",
     finish: "glossy" as LabelFinish,
     quantity: 50,
     location: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState("");
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -25,6 +29,51 @@ export function CustomizeOrderForm({ title, subtitle }: CustomizeOrderFormProps)
     const reader = new FileReader();
     reader.onloadend = () => setCustomData((prev) => ({ ...prev, image: reader.result as string }));
     reader.readAsDataURL(file);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setStatus("");
+
+    try {
+      const response = await fetch("http://localhost:5000/api/email/custom-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: customData.name,
+          email: customData.email,
+          phone: customData.phone,
+          orderType: title,
+          quantity: customData.quantity,
+          eventDate: customData.eventDate,
+          customMessage: customData.message,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setStatus("success: Custom order sent successfully!");
+        setCustomData({
+          image: "",
+          name: "",
+          email: "",
+          phone: "",
+          eventDate: "",
+          message: "",
+          finish: "glossy",
+          quantity: 50,
+          location: "",
+        });
+      } else {
+        setStatus("error: " + (data.error || "Failed to send custom order"));
+      }
+    } catch (error) {
+      setStatus("error: Cannot connect to server");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -38,7 +87,7 @@ export function CustomizeOrderForm({ title, subtitle }: CustomizeOrderFormProps)
           <p className="text-cyan-100/80 mt-3">{subtitle}</p>
         </div>
 
-        <div className="p-5 sm:p-8 rounded-3xl bg-white/10 backdrop-blur-lg border border-white/20 space-y-6">
+        <form onSubmit={handleSubmit} className="p-5 sm:p-8 rounded-3xl bg-white/10 backdrop-blur-lg border border-white/20 space-y-6">
           <div className="space-y-3">
             <label className="text-white font-semibold">Upload Image</label>
             <div className="relative">
@@ -62,6 +111,30 @@ export function CustomizeOrderForm({ title, subtitle }: CustomizeOrderFormProps)
               onChange={(e) => setCustomData({ ...customData, name: e.target.value })}
               placeholder="Enter name"
               className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
+            />
+          </div>
+
+          <div className="space-y-3">
+            <label className="text-white font-semibold">Email</label>
+            <input
+              type="email"
+              value={customData.email}
+              onChange={(e) => setCustomData({ ...customData, email: e.target.value })}
+              placeholder="Enter email"
+              className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
+              required
+            />
+          </div>
+
+          <div className="space-y-3">
+            <label className="text-white font-semibold">Phone</label>
+            <input
+              type="tel"
+              value={customData.phone}
+              onChange={(e) => setCustomData({ ...customData, phone: e.target.value })}
+              placeholder="Enter phone number"
+              className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
+              required
             />
           </div>
 
@@ -133,13 +206,20 @@ export function CustomizeOrderForm({ title, subtitle }: CustomizeOrderFormProps)
 
           <div className="pt-4">
             <button
-              type="button"
-              className="block mx-auto w-full max-w-[300px] py-4 px-6 text-center rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold shadow-lg shadow-cyan-500/50 hover:shadow-cyan-500/70 transition-all"
+              type="submit"
+              disabled={loading}
+              className="block mx-auto w-full max-w-[300px] py-4 px-6 text-center rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold shadow-lg shadow-cyan-500/50 hover:shadow-cyan-500/70 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Request Custom Order
+              {loading ? "Sending..." : "Request Custom Order"}
             </button>
           </div>
-        </div>
+          {status.startsWith("success") && (
+            <p className="text-center text-green-400">✅ Custom order sent successfully!</p>
+          )}
+          {status.startsWith("error") && (
+            <p className="text-center text-red-400">❌ {status}</p>
+          )}
+        </form>
       </div>
     </main>
   );

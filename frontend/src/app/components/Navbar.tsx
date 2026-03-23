@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Home, Info, Cog, Package, Phone, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
 const navItems = [
-  { label: "Home", href: "#home" },
-  { label: "About", href: "#about" },
-  { label: "Process", href: "#process" },
-  { label: "Products", href: "#products" },
-  { label: "Contact", href: "#contact" },
+  { label: "Home", href: "#home", icon: Home },
+  { label: "About", href: "#about", icon: Info },
+  { label: "Process", href: "#process", icon: Cog },
+  { label: "Products", href: "#products", icon: Package },
+  { label: "Contact", href: "#contact", icon: Phone },
 ];
 
 export function Navbar() {
@@ -39,15 +39,19 @@ export function Navbar() {
           </a>
 
           <nav className="hidden md:flex items-center gap-8">
-            {navItems.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="text-cyan-100/90 hover:text-cyan-300 transition-colors text-sm font-medium"
-              >
-                {item.label}
-              </a>
-            ))}
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  className="text-cyan-100/90 hover:text-cyan-300 transition-colors text-sm font-medium inline-flex items-center gap-2"
+                >
+                  <Icon className="w-4 h-4" />
+                  {item.label}
+                </a>
+              );
+            })}
           </nav>
 
           <button
@@ -74,16 +78,20 @@ export function Navbar() {
             className="md:hidden border-t border-white/10 bg-[#071b2f]/95 backdrop-blur-xl"
           >
             <div className="container mx-auto max-w-7xl px-4 sm:px-6 py-3 flex flex-col">
-              {navItems.map((item) => (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  onClick={closeMenu}
-                  className="min-h-11 w-full flex items-center px-2 py-3 text-cyan-100/90 hover:text-cyan-300 hover:bg-white/5 rounded-md transition-all"
-                >
-                  {item.label}
-                </a>
-              ))}
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    onClick={closeMenu}
+                    className="min-h-11 w-full flex items-center gap-2 px-2 py-3 text-cyan-100/90 hover:text-cyan-300 hover:bg-white/5 rounded-md transition-all"
+                  >
+                    <Icon className="w-4 h-4" />
+                    {item.label}
+                  </a>
+                );
+              })}
             </div>
           </motion.nav>
         )}

@@ -1,6 +1,6 @@
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef, useState } from "react";
-import { ChevronDown } from "lucide-react";
+
 
 export function HeroSection() {
   const [soundEnabled, setSoundEnabled] = useState(false);
@@ -205,14 +205,7 @@ export function HeroSection() {
 
         </motion.div>
 
-        {/* Scroll indicator */}
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        >
-          <ChevronDown className="w-8 h-8 text-white/60" />
-        </motion.div>
+       
       </motion.div>
 
       {/* Glassmorphic overlay for depth */}

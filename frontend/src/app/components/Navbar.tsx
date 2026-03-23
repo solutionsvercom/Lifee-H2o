@@ -25,10 +25,8 @@ export function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 ${
-        isScrolled
-          ? "bg-[#071b2f]/85 backdrop-blur-xl border-b border-white/10"
-          : "bg-transparent"
+      className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 bg-white/5 backdrop-blur-[12px] border-b border-white/10 shadow-[0_2px_20px_rgba(0,0,0,0.3)] ${
+        isScrolled ? "bg-[#0a2540]/75" : ""
       }`}
     >
       <div className="container mx-auto max-w-7xl px-4 sm:px-6">

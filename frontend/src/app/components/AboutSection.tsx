@@ -87,7 +87,7 @@ export function AboutSection() {
               className="grid grid-cols-3 gap-6 pt-4"
             >
               {[
-                { value: "100%", label: "Pure" },
+                { value: "99.9%", label: "Pure" },
                 { value: "0", label: "Impurities" },
                 { value: "24/7", label: "Available" },
               ].map((stat, i) => (

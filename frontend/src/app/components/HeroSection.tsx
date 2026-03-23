@@ -1,6 +1,6 @@
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef, useState } from "react";
-import { Volume2, VolumeX, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
 export function HeroSection() {
   const [soundEnabled, setSoundEnabled] = useState(false);
@@ -63,17 +63,6 @@ export function HeroSection() {
         />
       ))}
 
-      {/* Sound toggle */}
-      <button
-        onClick={() => setSoundEnabled(!soundEnabled)}
-        className="absolute top-24 right-4 sm:right-6 md:right-8 z-30 p-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 transition-all duration-300 min-h-11 min-w-11"
-      >
-        {soundEnabled ? (
-          <Volume2 className="w-5 h-5 text-white" />
-        ) : (
-          <VolumeX className="w-5 h-5 text-white" />
-        )}
-      </button>
 
 
       {/* Main content */}

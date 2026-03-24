@@ -65,15 +65,15 @@ export function HeroSection() {
       >
         {/* Bottle container — same sizing as the original SVG wrapper */}
         <motion.div
-          className="relative mb-8 w-[clamp(160px,45vw,280px)]"
-          style={{ height: "clamp(480px,135vw,840px)" }}
+          className="relative mb-8 w-[330px] sm:w-[380px] md:w-[420px] max-w-full mx-auto"
+          style={{ height: "500px" }}
         >
-          {/* Soft glow around bottle */}
-          <div className="absolute inset-0 bg-cyan-400/30 blur-[80px] scale-150 pointer-events-none" />
+          {/* Darker glow around bottle wrapper */}
+          <div className="absolute inset-0 bg-slate-950/55 blur-[80px] scale-150 pointer-events-none" />
 
           {/* Studio lighting orbs */}
           <div className="absolute -top-20 -left-20 w-40 h-40 bg-white/20 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-cyan-400/30 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-blue-950/35 rounded-full blur-3xl pointer-events-none" />
 
           {/* BottleScene — positioned absolute inset-0 inside this sized container */}
           <BottleScene />

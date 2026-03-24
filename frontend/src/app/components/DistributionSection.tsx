@@ -47,7 +47,7 @@ export function DistributionSection() {
       } else {
         setStatus("error: " + (data.error || "Failed to submit distributor request"));
       }
-    } catch (error) {
+    } catch (_error) {
       setStatus("error: Cannot connect to server");
     } finally {
       setLoading(false);
@@ -155,7 +155,7 @@ export function DistributionSection() {
               <p className="text-green-400">✅ Distributor request sent successfully!</p>
             )}
             {status.startsWith("error") && (
-              <p className="text-red-400">❌ {status}</p>
+              <p className="text-red-400">❌ {status.replace(/^error:\s*/i, "")}</p>
             )}
           </motion.div>
 

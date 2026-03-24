@@ -52,6 +52,7 @@ export default function BottleScene() {
 
     /* ── Group ── */
     const G = new THREE.Group();
+    G.scale.set(1.6, 1, 1.6);
     scene.add(G);
 
     /* ── Bottle Shape ── */
@@ -75,14 +76,14 @@ export default function BottleScene() {
     const waterShape = [
       [0.00, -3.68], [0.55, -3.58], [0.57, -3.10], [0.53, -2.88], [0.57, -2.66],
       [0.53, -2.44], [0.57, -2.22], [0.53, -2.00], [0.57, -1.78], [0.57, -1.40],
-      [0.57,  1.25], [0.55,  1.58], [0.47,  1.93], [0.35,  2.23], [0.24,  2.52],
-      [0.19,  2.68], [0.19,  3.38], [0.00,  3.38],
+      [0.57, -1.10], [0.57, -0.80], [0.57, -0.50], [0.57, -0.22], [0.55, -0.06],
+      [0.00, -0.06],
     ].map(([x, y]) => new THREE.Vector2(x, y));
 
     const waterGeo = new THREE.LatheGeometry(waterShape, 96);
     const waterMat = new THREE.MeshPhysicalMaterial({
-      color: 0x50c0f0, transparent: true, opacity: 0.60, roughness: 0.0,
-      transmission: 0.70, thickness: 1.8, ior: 1.33, side: THREE.FrontSide,
+      color: 0x2f9fd6, transparent: true, opacity: 0.82, roughness: 0.0,
+      transmission: 0.40, thickness: 2.2, ior: 1.33, side: THREE.FrontSide,
     });
     G.add(new THREE.Mesh(waterGeo, waterMat));
 
@@ -105,27 +106,27 @@ export default function BottleScene() {
       ctx.fillRect(0, 0, 1024, 200);
 
       ctx.textAlign = 'center';
-      ctx.fillStyle = '#ffffff';
+      ctx.fillStyle = '#0b2a45';
       ctx.font = 'bold 155px Arial, sans-serif';
-      ctx.shadowColor = 'rgba(0,50,100,0.4)'; ctx.shadowBlur = 12;
+      ctx.shadowColor = 'rgba(255,255,255,0.25)'; ctx.shadowBlur = 6;
       ctx.fillText('LIFEE', 512, 195);
       ctx.shadowBlur = 0;
 
       ctx.font = '300 42px Arial, sans-serif';
-      ctx.fillStyle = 'rgba(255,255,255,0.88)';
+      ctx.fillStyle = 'rgba(11,42,69,0.9)';
       ctx.fillText('PREMIUM WATER', 512, 258);
 
       ctx.strokeStyle = 'rgba(255,255,255,0.55)'; ctx.lineWidth = 1.5;
       ctx.beginPath(); ctx.moveTo(170, 284); ctx.lineTo(854, 284); ctx.stroke();
 
-      ctx.fillStyle = '#ffffff';
+      ctx.fillStyle = '#0b2a45';
       ctx.font = 'bold 140px Arial, sans-serif';
       ctx.fillText('1L', 512, 420);
 
       ctx.beginPath(); ctx.moveTo(170, 448); ctx.lineTo(854, 448); ctx.stroke();
 
       ctx.font = '300 38px Arial, sans-serif';
-      ctx.fillStyle = 'rgba(255,255,255,0.88)';
+      ctx.fillStyle = 'rgba(11,42,69,0.9)';
       ctx.fillText('PURE & NATURAL', 512, 528);
 
       const labelTex = new THREE.CanvasTexture(lc);
@@ -192,25 +193,14 @@ export default function BottleScene() {
     refl.position.y = -3.72;
     scene.add(refl);
 
-    /* ── Mouse interaction ── */
-    let targetRotY = 0, currentRotY = 0, autoRotate = true, autoTimer: ReturnType<typeof setTimeout>;
-    const onMouse = (e: MouseEvent) => {
-      targetRotY = ((e.clientX / window.innerWidth) - 0.5) * 1.2;
-      autoRotate = false;
-      clearTimeout(autoTimer);
-      autoTimer = setTimeout(() => { autoRotate = true; }, 3000);
-    };
-    window.addEventListener('mousemove', onMouse);
-
     /* ── Animation loop ── */
     const clock = new THREE.Clock();
     let animId: number;
     const animate = () => {
       animId = requestAnimationFrame(animate);
       const t = clock.getElapsedTime();
-      if (autoRotate) targetRotY = t * 0.55;
-      currentRotY += (targetRotY - currentRotY) * 0.025;
-      G.rotation.y = currentRotY;
+      // Continuous clockwise rotation without cursor interaction.
+      G.rotation.y = t * 0.28;
       G.position.y = Math.sin(t * 0.7) * 0.08;
       renderer.render(scene, camera);
     };
@@ -231,8 +221,6 @@ export default function BottleScene() {
 
     return () => {
       cancelAnimationFrame(animId);
-      clearTimeout(autoTimer);
-      window.removeEventListener('mousemove', onMouse);
       window.removeEventListener('resize', onResize);
       resizeObserver.disconnect();
       renderer.dispose();
@@ -240,5 +228,5 @@ export default function BottleScene() {
     };
   }, []);
 
-  return <div ref={mountRef} className="w-full h-full min-h-[600px] absolute inset-0" />;
+  return <div ref={mountRef} className="w-full h-full absolute inset-0" />;
 }

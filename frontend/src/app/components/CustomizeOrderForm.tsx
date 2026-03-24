@@ -69,7 +69,7 @@ export function CustomizeOrderForm({ title, subtitle }: CustomizeOrderFormProps)
       } else {
         setStatus("error: " + (data.error || "Failed to send custom order"));
       }
-    } catch (error) {
+    } catch (_error) {
       setStatus("error: Cannot connect to server");
     } finally {
       setLoading(false);
@@ -217,7 +217,7 @@ export function CustomizeOrderForm({ title, subtitle }: CustomizeOrderFormProps)
             <p className="text-center text-green-400">✅ Custom order sent successfully!</p>
           )}
           {status.startsWith("error") && (
-            <p className="text-center text-red-400">❌ {status}</p>
+            <p className="text-center text-red-400">❌ {status.replace(/^error:\s*/i, "")}</p>
           )}
         </form>
       </div>

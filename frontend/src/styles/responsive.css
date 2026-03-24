@@ -1,0 +1,95 @@
+@media (max-width: 1023px) {
+  html,
+  body,
+  #root {
+    overflow-x: hidden;
+  }
+
+  img,
+  svg,
+  video,
+  canvas {
+    max-width: 100%;
+    height: auto;
+  }
+
+  #home > div.relative.z-10.h-full {
+    padding-top: 7rem;
+    padding-bottom: 2.5rem;
+  }
+
+  #home .relative.mb-8 {
+    width: min(100%, 350px) !important;
+    height: min(500px, 72vh) !important;
+    margin-bottom: 1.5rem;
+  }
+
+  #about .grid.grid-cols-3,
+  #distribution .grid.grid-cols-3 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+
+  #certifications .grid.grid-cols-1.md\:grid-cols-3 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+
+  #distribution .grid.lg\:grid-cols-2,
+  #contact .grid.lg\:grid-cols-2,
+  #customizer .grid.lg\:grid-cols-2 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 2rem;
+  }
+
+  #customizer .sticky {
+    position: static;
+  }
+
+  #contact .group > div.absolute.right-full {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  #home h1 {
+    font-size: clamp(1.8rem, 10vw, 2.5rem);
+  }
+
+  #home p,
+  #about p,
+  #process p,
+  #products p,
+  #certifications p,
+  #why-us p,
+  #customizer p,
+  #distribution p,
+  #contact p {
+    font-size: 0.95rem;
+  }
+
+  #about,
+  #process,
+  #products,
+  #certifications,
+  #why-us,
+  #customizer,
+  #distribution,
+  #contact {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+
+  #products .grid,
+  #why-us .grid,
+  #certifications .grid,
+  #process .grid {
+    gap: 1rem;
+  }
+
+  #distribution button,
+  #customizer button,
+  #contact button {
+    width: 100%;
+  }
+}

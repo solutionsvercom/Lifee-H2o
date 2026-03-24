@@ -40,7 +40,7 @@ export function ContactSection() {
       } else {
         setStatus("error: " + (data.error || "Failed to send message"));
       }
-    } catch (error) {
+    } catch (_error) {
       setStatus("error: Cannot connect to server");
     } finally {
       setLoading(false);
@@ -194,7 +194,7 @@ export function ContactSection() {
                   <p className="text-sm text-green-400">✅ Message sent successfully!</p>
                 )}
                 {status.startsWith("error") && (
-                  <p className="text-sm text-red-400">❌ {status}</p>
+                  <p className="text-sm text-red-400">❌ {status.replace(/^error:\s*/i, "")}</p>
                 )}
               </form>
             </div>

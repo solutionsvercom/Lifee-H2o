@@ -21,7 +21,7 @@ export default function BottleScene() {
     camera.lookAt(0, 0.05, 0);
 
     /* ── Renderer ── */
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
     renderer.setSize(W, H);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -219,11 +219,34 @@ export default function BottleScene() {
     resizeObserver.observe(container);
     window.addEventListener('resize', onResize);
 
+    const disposeScene = () => {
+      scene.traverse((obj) => {
+        const mesh = obj as THREE.Mesh;
+        if (mesh.geometry) {
+          mesh.geometry.dispose();
+        }
+        const material = (mesh as THREE.Mesh).material;
+        if (Array.isArray(material)) {
+          material.forEach((mat) => {
+            const m = mat as THREE.Material & { map?: THREE.Texture | null };
+            if (m.map) m.map.dispose();
+            m.dispose();
+          });
+        } else if (material) {
+          const m = material as THREE.Material & { map?: THREE.Texture | null };
+          if (m.map) m.map.dispose();
+          m.dispose();
+        }
+      });
+    };
+
     return () => {
       cancelAnimationFrame(animId);
       window.removeEventListener('resize', onResize);
       resizeObserver.disconnect();
+      disposeScene();
       renderer.dispose();
+      renderer.forceContextLoss();
       if (container.contains(renderer.domElement)) container.removeChild(renderer.domElement);
     };
   }, []);

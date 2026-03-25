@@ -123,7 +123,7 @@ export function AboutSection() {
                 className="absolute inset-0 rounded-3xl"
               />
               <img
-                src="https://images.unsplash.com/photo-1772225992558-f47bb5a7bb7f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb3VudGFpbiUyMHNwcmluZyUyMG5hdHVyYWwlMjB3YXRlciUyMHNvdXJjZXxlbnwxfHx8fDE3NzM3NzkzNDJ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+                src="/images/lifee-bottle1L.png"  
                 alt="Natural water source"
                 className="relative w-full h-auto rounded-2xl"
               />

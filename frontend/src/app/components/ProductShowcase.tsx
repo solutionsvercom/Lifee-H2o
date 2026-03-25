@@ -6,31 +6,31 @@ const products = [
     size: "250ml", 
     price: "₹10", 
     use: "On-the-go hydration",
-    image: "https://images.unsplash.com/photo-1670201202862-96b9c3d11375?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZWFsaXN0aWMlMjB3YXRlciUyMGJvdHRsZSUyMHRyYW5zcGFyZW50JTIwcGxhc3RpYyUyMGNvbmRlbnNhdGlvbnxlbnwxfHx8fDE3NzM3NzkzNDJ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+    image: "/images/lifee-bottle250.png" ,
   },
   { 
     size: "500ml", 
     price: "₹15", 
     use: "Daily essential",
-    image: "https://images.unsplash.com/photo-1616118132534-381148898bb4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZWFsaXN0aWMlMjBwbGFzdGljJTIwd2F0ZXIlMjBib3R0bGUlMjBwcm9kdWN0JTIwcGhvdG9ncmFwaHl8ZW58MXx8fHwxNzczNzc5MzQzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+    image: "/images/lifee-bottle500L.png" ,
   },
   { 
     size: "1L", 
     price: "₹25", 
     use: "Family size",
-    image: "https://images.unsplash.com/photo-1760043186309-69c11f4c08ca?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcmVtaXVtJTIwd2F0ZXIlMjBib3R0bGUlMjBzdHVkaW8lMjBsaWdodGluZ3xlbnwxfHx8fDE3NzM3NzkzNDN8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+    image: "/images/lifee-bottle1L.png" ,
   },
   { 
     size: "2L", 
     price: "₹40", 
     use: "Home & Office",
-    image: "https://images.unsplash.com/photo-1670201202862-96b9c3d11375?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZWFsaXN0aWMlMjB3YXRlciUyMGJvdHRsZSUyMHRyYW5zcGFyZW50JTIwcGxhc3RpYyUyMGNvbmRlbnNhdGlvbnxlbnwxfHx8fDE3NzM3NzkzNDJ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+    image: "/images/lifee-bottle2L.png" ,
   },
   { 
     size: "20L Jar", 
     price: "₹60", 
     use: "Bulk needs",
-    image: "https://images.unsplash.com/photo-1616118132534-381148898bb4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZWFsaXN0aWMlMjBwbGFzdGljJTIwd2F0ZXIlMjBib3R0bGUlMjBwcm9kdWN0JTIwcGhvdG9ncmFwaHl8ZW58MXx8fHwxNzczNzc5MzQzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+    image: "/images/lifee-bottle20L.png" ,
   },
 ];
 
@@ -106,18 +106,31 @@ export function ProductShowcase() {
             >
               <div className="h-full p-6 rounded-3xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg border border-white/10 hover:border-cyan-400/50 transition-all duration-500">
                 {/* Realistic bottle image */}
-                <div className="relative mb-6 aspect-[3/4] flex items-center justify-center overflow-hidden rounded-2xl">
+                <div
+                  className="relative mb-6 w-full overflow-hidden rounded-2xl bg-transparent"
+                  style={{
+                    height: "280px",
+                    background: "transparent",
+                  }}
+                >
                   {/* Product lighting */}
                   <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-2xl" />
                   
                   <motion.img
                     src={product.image}
-                    alt={`${product.size} water bottle`}
-                    className="relative w-full h-full object-contain"
-                    whileHover={{ scale: 1.1 }}
-                    transition={{ duration: 0.4 }}
+                    alt={product.size}
+                    className="w-full h-full object-cover"
                     style={{
-                      filter: 'drop-shadow(0 10px 30px rgba(14, 165, 233, 0.3))',
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      objectPosition: "center top",
+                      mixBlendMode: "luminosity",
+                      filter: "brightness(1.12) contrast(1.12) drop-shadow(0 0 25px rgba(14, 165, 233, 0.35))",
                     }}
                   />
 
@@ -145,15 +158,6 @@ export function ProductShowcase() {
                     </span>
                   </div>
                 </div>
-
-                {/* Add to cart button */}
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-full mt-6 py-3 px-4 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all duration-300"
-                >
-                  Order Now
-                </motion.button>
 
                 {/* Hover glow effect */}
                 <motion.div

@@ -1,5 +1,5 @@
 import { motion, useInView } from "motion/react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { MapPin, Users, TrendingUp } from "lucide-react";
 
 const cities = [
@@ -16,20 +16,68 @@ const cities = [
 export function DistributionSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    city: "",
+    businessName: "",
+  });
+  const [showForm, setShowForm] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (loading) return;
+
+    if (!formData.name || !formData.email || !formData.phone) {
+      setStatus("error: Name, email and phone are required.");
+      return;
+    }
+
+    setLoading(true);
+    setStatus("");
+    try {
+      const response = await fetch("http://localhost:5000/api/email/distributor", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          city: formData.city,
+          businessName: formData.businessName,
+        }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        setStatus("success: Distributor request sent successfully!");
+        setFormData({ name: "", email: "", phone: "", city: "", businessName: "" });
+        setShowForm(false);
+      } else {
+        setStatus("error: " + (data.error || "Failed to submit distributor request"));
+      }
+    } catch (_error) {
+      setStatus("error: Cannot connect to server");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <section 
+    <section
       id="distribution"
       ref={ref}
       className="relative py-20 md:py-24 px-4 sm:px-6 bg-gradient-to-br from-[#0A2540] via-slate-900 to-[#0A2540] overflow-hidden scroll-mt-24"
     >
       {/* Background grid */}
       <div className="absolute inset-0 opacity-10">
-        <div 
+        <div
           className="absolute inset-0"
           style={{
             backgroundImage: `linear-gradient(rgba(14, 165, 233, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(14, 165, 233, 0.1) 1px, transparent 1px)`,
-            backgroundSize: '50px 50px',
+            backgroundSize: "50px 50px",
           }}
         />
       </div>
@@ -51,7 +99,7 @@ export function DistributionSection() {
                 </span>
               </h2>
               <p className="text-lg text-cyan-100/80 leading-relaxed">
-                Bring premium hydration to every corner of Madhya Pradesh. 
+                Bring premium hydration to every corner of Madhya Pradesh.
                 Partner with us and grow your business with a trusted brand.
               </p>
             </div>
@@ -101,17 +149,134 @@ export function DistributionSection() {
               ))}
             </div>
 
-            {/* CTA */}
-            <motion.button
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 1, duration: 0.6 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-full font-semibold shadow-lg shadow-cyan-500/50 hover:shadow-cyan-500/70 transition-all duration-300"
-            >
-              Become a Distributor
-            </motion.button>
+            {/* CTA / Form */}
+            {!showForm ? (
+              <motion.button
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ delay: 1, duration: 0.6 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => {
+                  setShowForm(true);
+                  setStatus("");
+                }}
+                disabled={loading}
+                className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-full font-semibold shadow-lg shadow-cyan-500/50 hover:shadow-cyan-500/70 transition-all duration-300"
+              >
+                {loading ? "Sending..." : "Become a Distributor"}
+              </motion.button>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ delay: 1, duration: 0.6 }}
+                className="relative p-5 sm:p-8 rounded-3xl bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl"
+              >
+                <motion.div
+                  animate={{
+                    opacity: [0.3, 0.5, 0.3],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                  }}
+                  className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-3xl blur-xl"
+                />
+
+                <form onSubmit={handleSubmit} className="relative z-10 space-y-6">
+                  <div className="space-y-2">
+                    <label className="text-white/90 text-sm">Full Name</label>
+                    <input
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      placeholder="Enter your name"
+                      className="w-full px-4 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-white/90 text-sm">Phone Number</label>
+                    <input
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      placeholder="Enter your phone number"
+                      className="w-full px-4 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-white/90 text-sm">Email</label>
+                    <input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      placeholder="Enter your email"
+                      className="w-full px-4 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-white/90 text-sm">City</label>
+                    <input
+                      type="text"
+                      value={formData.city}
+                      onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                      placeholder="Enter your city"
+                      className="w-full px-4 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-white/90 text-sm">Business Name</label>
+                    <input
+                      type="text"
+                      value={formData.businessName}
+                      onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
+                      placeholder="Enter your business name"
+                      className="w-full px-4 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
+                    />
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <motion.button
+                      type="submit"
+                      disabled={loading}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="flex-1 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl font-semibold shadow-lg shadow-cyan-500/50 hover:shadow-cyan-500/70 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+                    >
+                      {loading ? "Sending..." : "Submit Request"}
+                    </motion.button>
+
+                    <motion.button
+                      type="button"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => {
+                        setShowForm(false);
+                        setStatus("");
+                      }}
+                      className="flex-1 py-4 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-xl font-semibold hover:bg-white/20 transition-all duration-300"
+                    >
+                      Cancel
+                    </motion.button>
+                  </div>
+                </form>
+              </motion.div>
+            )}
+
+            {status.startsWith("success") && (
+              <p className="text-green-400">✅ Distributor request sent successfully!</p>
+            )}
+            {status.startsWith("error") && (
+              <p className="text-red-400">❌ {status.replace(/^error:\s*/i, "")}</p>
+            )}
           </motion.div>
 
           {/* Right - Futuristic MP Map */}
@@ -128,7 +293,7 @@ export function DistributionSection() {
                 <svg
                   viewBox="0 0 400 400"
                   className="w-full h-full"
-                  style={{ filter: 'drop-shadow(0 0 20px rgba(14, 165, 233, 0.3))' }}
+                  style={{ filter: "drop-shadow(0 0 20px rgba(14, 165, 233, 0.3))" }}
                 >
                   {/* MP state shape (simplified) */}
                   <motion.path
@@ -146,7 +311,7 @@ export function DistributionSection() {
                       <stop offset="100%" stopColor="#06B6D4" />
                     </linearGradient>
                   </defs>
-                  
+
                   {/* Fill with pattern */}
                   <motion.path
                     initial={{ opacity: 0 }}
@@ -168,7 +333,7 @@ export function DistributionSection() {
                     style={{
                       left: `${city.x}%`,
                       top: `${city.y}%`,
-                      transform: 'translate(-50%, -50%)',
+                      transform: "translate(-50%, -50%)",
                     }}
                   >
                     {/* Pulsing effect */}
@@ -207,7 +372,7 @@ export function DistributionSection() {
                         animate={isInView ? { scaleX: 1 } : {}}
                         transition={{ delay: 1.5 + i * 0.1, duration: 0.5 }}
                         className="absolute top-1/2 right-full h-px bg-gradient-to-r from-cyan-400/50 to-transparent origin-right"
-                        style={{ width: '50px' }}
+                        style={{ width: "50px" }}
                       />
                     )}
                   </motion.div>

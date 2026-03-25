@@ -48,10 +48,18 @@ export function Footer() {
             
             {/* Social links */}
             <div className="flex gap-3 pt-4">
-              {[Facebook, Instagram, Twitter, Linkedin, Youtube].map((Icon, i) => (
+              {[
+                { Icon: Facebook, href: "https://facebook.com" },
+                { Icon: Instagram, href: "https://instagram.com" },
+                { Icon: Twitter, href: "https://x.com" },
+                { Icon: Linkedin, href: "https://linkedin.com" },
+                { Icon: Youtube, href: "https://youtube.com" },
+              ].map(({ Icon, href }, i) => (
                 <motion.a
                   key={i}
-                  href="#"
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   whileHover={{ scale: 1.2, rotate: 5 }}
                   whileTap={{ scale: 0.9 }}
                   className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center hover:bg-white/20 hover:border-cyan-400 transition-all"
@@ -66,14 +74,20 @@ export function Footer() {
           <div>
             <h4 className="text-lg font-semibold mb-4 text-white">Quick Links</h4>
             <ul className="space-y-2">
-              {["About Us", "Products", "Quality Process", "Certifications", "Distribution"].map((link, i) => (
+              {[
+                { label: "About Us", href: "#about" },
+                { label: "Products", href: "#products" },
+                { label: "Quality Process", href: "#process" },
+                { label: "Certifications", href: "#certifications" },
+                { label: "Distribution", href: "#distribution" },
+              ].map((link, i) => (
                 <li key={i}>
                   <motion.a
-                    href="#"
+                    href={link.href}
                     whileHover={{ x: 5 }}
                     className="text-cyan-100/70 hover:text-cyan-400 transition-colors text-sm"
                   >
-                    {link}
+                    {link.label}
                   </motion.a>
                 </li>
               ))}
@@ -84,14 +98,20 @@ export function Footer() {
           <div>
             <h4 className="text-lg font-semibold mb-4 text-white">Services</h4>
             <ul className="space-y-2">
-              {["Home Delivery", "Bulk Orders", "Corporate Supply", "Distribution Partnership", "Customer Support"].map((service, i) => (
+              {[
+                { label: "Home Delivery", href: "#contact" },
+                { label: "Bulk Orders", href: "#products" },
+                { label: "Corporate Supply", href: "#contact" },
+                { label: "Distribution Partnership", href: "#distribution" },
+                { label: "Customer Support", href: "#contact" },
+              ].map((service, i) => (
                 <li key={i}>
                   <motion.a
-                    href="#"
+                    href={service.href}
                     whileHover={{ x: 5 }}
                     className="text-cyan-100/70 hover:text-cyan-400 transition-colors text-sm"
                   >
-                    {service}
+                    {service.label}
                   </motion.a>
                 </li>
               ))}
@@ -133,14 +153,18 @@ export function Footer() {
               © 2026 Premium Water. All rights reserved. Designed with precision.
             </p>
             <div className="flex gap-6">
-              {["Privacy Policy", "Terms of Service", "Refund Policy"].map((link, i) => (
+              {[
+                { label: "Privacy Policy", href: "#contact" },
+                { label: "Terms of Service", href: "#contact" },
+                { label: "Refund Policy", href: "#contact" },
+              ].map((link, i) => (
                 <motion.a
                   key={i}
-                  href="#"
+                  href={link.href}
                   whileHover={{ scale: 1.05 }}
                   className="text-cyan-100/60 hover:text-cyan-400 text-sm transition-colors"
                 >
-                  {link}
+                  {link.label}
                 </motion.a>
               ))}
             </div>

@@ -1,6 +1,7 @@
 import { motion, useInView } from "motion/react";
-import { useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Upload, Building2, Cake, Heart } from "lucide-react";
+import BottleSceneCustom from "./BottleSceneCustom";
 
 type OccasionType = "wedding" | "corporate" | "birthday" | null;
 type LabelFinish = "matte" | "glossy";
@@ -14,10 +15,11 @@ const occasions = [
     theme: "Gold/White Luxury",
     backgroundImage:
       "https://images.unsplash.com/photo-1761574044344-394d47e1a96c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxlbGVnYW50JTIwd2VkZGluZyUyMGNlcmVtb255JTIwYnJpZGUlMjBncm9vbXxlbnwxfHx8fDE3NzM3NzkzNDR8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    bottleImage:
-      "https://images.unsplash.com/photo-1760043186309-69c11f4c08ca?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcmVtaXVtJTIwd2F0ZXIlMjBib3R0bGUlMjBzdHVkaW8lMjBsaWdodGluZ3xlbnwxfHx8fDE3NzM3NzkzNDN8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    labelText: "Aarav ❤️ Meera",
-    labelSubtext: "12 December 2026",
+    labelText: "Aarav & Meera",
+    labelSubtext: "Special Edition",
+    bottomText: "12 December 2026",
+    labelBg: ["#f5e6c8", "#fff8ee"],
+    accentColor: "#c9a84c",
     colors: { primary: "#D4AF37", secondary: "#FFFFFF", text: "#000000" },
   },
   {
@@ -28,10 +30,11 @@ const occasions = [
     theme: "Clean Minimal",
     backgroundImage:
       "https://images.unsplash.com/photo-1758630737900-a28682c5aa69?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBvZmZpY2UlMjBjb3Jwb3JhdGUlMjBidXNpbmVzcyUyMHdvcmtzcGFjZXxlbnwxfHx8fDE3NzM3NzkzNDV8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    bottleImage:
-      "https://images.unsplash.com/photo-1616118132534-381148898bb4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZWFsaXN0aWMlMjBwbGFzdGljJTIwd2F0ZXIlMjBib3R0bGUlMjBwcm9kdWN0JTIwcGhvdG9ncmFwaHl8ZW58MXx8fHwxNzczNzc5MzQzfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    labelText: "Vercom Solutions",
-    labelSubtext: "Excellence in Every Drop",
+    labelText: "LIFEE",
+    labelSubtext: "Corporate Edition",
+    bottomText: "PREMIUM WATER",
+    labelBg: ["#ffffff", "#f0f4f8"],
+    accentColor: "#1a2a4a",
     colors: { primary: "#0EA5E9", secondary: "#FFFFFF", text: "#FFFFFF" },
   },
   {
@@ -42,10 +45,11 @@ const occasions = [
     theme: "Soft Vibrant",
     backgroundImage:
       "https://images.unsplash.com/photo-1721804812395-12c7c963ca52?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiaXJ0aGRheSUyMHBhcnR5JTIwY2VsZWJyYXRpb24lMjBjb2xvcmZ1bHxlbnwxfHx8fDE3NzM2ODA5NzV8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    bottleImage:
-      "https://images.unsplash.com/photo-1670201202862-96b9c3d11375?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZWFsaXN0aWMlMjB3YXRlciUyMGJvdHRsZSUyMHRyYW5zcGFyZW50JTIwcGxhc3RpYyUyMGNvbmRlbnNhdGlvbnxlbnwxfHx8fDE3NzM3NzkzNDJ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-    labelText: "Happy Birthday Riya 🎉",
-    labelSubtext: "Sweet 16",
+    labelText: "Riya",
+    labelSubtext: "Birthday Edition",
+    bottomText: "Celebrate!",
+    labelBg: ["#ff6eb0", "#ffb347"],
+    accentColor: "#ffffff",
     colors: { primary: "#EC4899", secondary: "#FDE047", text: "#FFFFFF" },
   },
 ];
@@ -64,8 +68,12 @@ export function BottleCustomizer() {
     quantity: 50,
     location: "",
   });
-  const [rotation, setRotation] = useState(0);
-
+  const [previewRotationEnabled, setPreviewRotationEnabled] = useState(false);
+  const [previewLabel, setPreviewLabel] = useState({
+    nameText: "LIFEE",
+    subText: "Corporate Edition",
+    bottomText: "PREMIUM WATER",
+  });
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -77,8 +85,27 @@ export function BottleCustomizer() {
     }
   };
 
-  const currentTheme = selectedOccasion ? occasions.find((o) => o.id === selectedOccasion)?.colors : null;
   const currentOccasion = selectedOccasion ? occasions.find((o) => o.id === selectedOccasion) : null;
+  const targetPreviewLabel = useMemo(
+    () => ({
+      nameText: customData.name || currentOccasion?.labelText || "LIFEE",
+      subText: customData.message || currentOccasion?.labelSubtext || "Corporate Edition",
+      bottomText: customData.eventDate || currentOccasion?.bottomText || "PREMIUM WATER",
+    }),
+    [customData.name, customData.message, customData.eventDate, currentOccasion]
+  );
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setPreviewLabel(targetPreviewLabel);
+    }, 100);
+    return () => window.clearTimeout(timeoutId);
+  }, [targetPreviewLabel]);
+
+  const handleSelectOccasion = (occasionId: OccasionType) => {
+    setSelectedOccasion(occasionId);
+    setPreviewRotationEnabled(false);
+  };
 
   return (
     <section
@@ -121,7 +148,7 @@ export function BottleCustomizer() {
                   initial={{ opacity: 0, y: 50 }}
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ delay: index * 0.15, duration: 0.6 }}
-                  onClick={() => setSelectedOccasion(occasion.id)}
+                  onClick={() => handleSelectOccasion(occasion.id)}
                   className="group cursor-pointer"
                 >
                   <div className="relative h-full rounded-3xl overflow-hidden bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg border border-white/10 hover:border-white/30 transition-all duration-500">
@@ -135,11 +162,15 @@ export function BottleCustomizer() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/70 to-slate-900/30" />
 
-                      <div className="absolute inset-0 flex items-end justify-center pb-8">
-                        <motion.div whileHover={{ scale: 1.1, y: -10 }} transition={{ duration: 0.4 }} className="relative" style={{ filter: "drop-shadow(0 20px 40px rgba(0, 0, 0, 0.5))" }}>
-                          <div className="relative w-32 h-48">
-                            <img src={occasion.bottleImage} alt={`${occasion.title} bottle`} className="w-full h-full object-contain" />
-                          </div>
+                      <div className="absolute left-4 right-4 bottom-4">
+                        <motion.div whileHover={{ scale: 1.03, y: -6 }} transition={{ duration: 0.35 }} className="relative w-full h-[320px]">
+                          <BottleSceneCustom
+                            labelBg={occasion.labelBg}
+                            nameText={occasion.labelText}
+                            subText={occasion.labelSubtext}
+                            accentColor={occasion.accentColor}
+                            bottomText={occasion.bottomText}
+                          />
                         </motion.div>
                       </div>
                     </div>
@@ -188,30 +219,21 @@ export function BottleCustomizer() {
                     <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyan-400/20 rounded-full blur-3xl" />
                     <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl" />
 
-                    <motion.div
-                      animate={{ rotateY: rotation }}
-                      transition={{ type: "spring", stiffness: 100 }}
-                      className="relative cursor-grab active:cursor-grabbing"
-                      style={{ transformStyle: "preserve-3d" }}
-                      drag="x"
-                      onDrag={(_, info) => {
-                        setRotation((r) => r + info.delta.x * 0.5);
-                      }}
-                    >
-                      <RealisticCustomBottle
-                        labelColor={currentTheme?.primary || "#0EA5E9"}
-                        labelSecondary={currentTheme?.secondary || "#FFFFFF"}
-                        labelTextColor={currentTheme?.text || "#FFFFFF"}
-                        text={customData.name || currentOccasion?.labelText || ""}
-                        subtext={customData.eventDate || currentOccasion?.labelSubtext || ""}
-                        message={customData.message}
-                        image={customData.image}
-                        finish={customData.finish}
+                    <div className="relative w-full h-[320px] cursor-grab active:cursor-grabbing">
+                      <BottleSceneCustom
+                        labelBg={currentOccasion?.labelBg || ["#ffffff", "#f0f4f8"]}
+                        nameText={previewLabel.nameText}
+                        subText={previewLabel.subText}
+                        accentColor={currentOccasion?.accentColor || "#1a2a4a"}
+                        bottomText={previewLabel.bottomText}
+                        autoRotate={previewRotationEnabled}
                       />
-                    </motion.div>
+                    </div>
 
                     <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center">
-                      <p className="text-cyan-100/60 text-sm">Drag to rotate • Changes update in real-time</p>
+                      <p className="text-cyan-100/60 text-sm">
+                        {previewRotationEnabled ? "Preview rotation is active • Drag to rotate" : "Bottle is still • Click Bottle Preview to start slow rotation"}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -317,11 +339,24 @@ export function BottleCustomizer() {
                     </div>
                   </div>
 
-                  <div className="pt-4">
+                  <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center">
+                    <motion.button
+                      type="button"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => setPreviewRotationEnabled((prev) => !prev)}
+                      className={`w-full max-w-[300px] py-4 px-6 text-center rounded-xl font-semibold transition-all border ${
+                        previewRotationEnabled
+                          ? "bg-cyan-400/20 border-cyan-300 text-cyan-100"
+                          : "bg-white/10 border-white/20 text-white hover:bg-white/15"
+                      }`}
+                    >
+                      {previewRotationEnabled ? "Bottle Preview On" : "Bottle Preview"}
+                    </motion.button>
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className="block mx-auto w-full max-w-[300px] py-4 px-6 text-center rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold shadow-lg shadow-cyan-500/50 hover:shadow-cyan-500/70 transition-all"
+                      className="w-full max-w-[300px] py-4 px-6 text-center rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold shadow-lg shadow-cyan-500/50 hover:shadow-cyan-500/70 transition-all"
                     >
                       Request Custom Order
                     </motion.button>
@@ -333,95 +368,5 @@ export function BottleCustomizer() {
         )}
       </div>
     </section>
-  );
-}
-
-interface RealisticCustomBottleProps {
-  labelColor: string;
-  labelSecondary: string;
-  labelTextColor: string;
-  text?: string;
-  subtext?: string;
-  message?: string;
-  image?: string;
-  finish: LabelFinish;
-}
-
-function RealisticCustomBottle({
-  labelColor,
-  labelSecondary,
-  labelTextColor,
-  text,
-  subtext,
-  message,
-  image,
-  finish,
-}: RealisticCustomBottleProps) {
-  return (
-    <div className="relative w-[clamp(150px,45vw,220px)] aspect-[2/5]" style={{ filter: "drop-shadow(0 30px 60px rgba(0, 0, 0, 0.4))" }}>
-      <svg
-        viewBox="0 0 220 550"
-        className="w-full h-full"
-        style={{
-          filter: finish === "glossy" ? "drop-shadow(0 0 30px rgba(14, 165, 233, 0.4))" : "drop-shadow(0 0 15px rgba(14, 165, 233, 0.2))",
-        }}
-      >
-        <defs>
-          <linearGradient id="customBottleGlass" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#E0F7FF" stopOpacity="0.25" />
-            <stop offset="30%" stopColor="#FFFFFF" stopOpacity="0.7" />
-            <stop offset="50%" stopColor="#B3E5FC" stopOpacity="0.5" />
-            <stop offset="70%" stopColor="#FFFFFF" stopOpacity="0.6" />
-            <stop offset="100%" stopColor="#E0F7FF" stopOpacity="0.2" />
-          </linearGradient>
-          <linearGradient id="customWater" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#B3E5FC" stopOpacity="0.9" />
-            <stop offset="50%" stopColor="#81D4FA" stopOpacity="0.8" />
-            <stop offset="100%" stopColor="#4FC3F7" stopOpacity="0.85" />
-          </linearGradient>
-          <linearGradient id="customLabel" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor={labelColor} stopOpacity={finish === "glossy" ? "0.95" : "0.85"} />
-            <stop offset="100%" stopColor={labelSecondary} stopOpacity={finish === "glossy" ? "1" : "0.9"} />
-          </linearGradient>
-          <linearGradient id="customShine" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#FFFFFF" stopOpacity={finish === "glossy" ? "0.9" : "0.5"} />
-            <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
-          </linearGradient>
-          <clipPath id="labelClip">
-            <rect x="65" y="240" width="90" height="140" rx="8" />
-          </clipPath>
-        </defs>
-
-        <rect x="70" y="25" width="80" height="40" rx="6" fill="#1E40AF" />
-        <ellipse cx="110" cy="25" rx="40" ry="12" fill="#2563EB" />
-        <ellipse cx="110" cy="28" rx="37" ry="10" fill="#3B82F6" />
-        <path d="M 80 65 L 70 85 L 70 115 L 150 115 L 150 85 L 140 65 Z" fill="url(#customBottleGlass)" stroke="rgba(255, 255, 255, 0.4)" strokeWidth="1" />
-        <rect x="60" y="115" width="100" height="400" rx="22" fill="url(#customBottleGlass)" stroke="rgba(255, 255, 255, 0.3)" strokeWidth="1" />
-        <rect x="63" y="145" width="94" height="360" rx="20" fill="url(#customWater)" />
-        <rect x="65" y="240" width="90" height="140" rx="8" fill="url(#customLabel)" opacity={finish === "glossy" ? "0.95" : "0.85"} />
-
-        {image && <image href={image} x="70" y="250" width="80" height="50" clipPath="url(#labelClip)" preserveAspectRatio="xMidYMid slice" opacity="0.3" />}
-        {text && (
-          <text x="110" y="325" textAnchor="middle" fill={labelTextColor} fontSize="12" fontWeight="bold">
-            {text.substring(0, 15)}
-          </text>
-        )}
-        {subtext && (
-          <text x="110" y="345" textAnchor="middle" fill={labelTextColor} fontSize="8" opacity="0.9">
-            {subtext.substring(0, 20)}
-          </text>
-        )}
-        {message && (
-          <text x="110" y="365" textAnchor="middle" fill={labelTextColor} fontSize="7" opacity="0.8">
-            {message.substring(0, 25)}
-          </text>
-        )}
-      </svg>
-
-      <div
-        className="absolute bottom-0 left-1/2 -translate-x-1/2"
-        style={{ width: "50%", height: 30, background: "radial-gradient(ellipse, rgba(0, 0, 0, 0.4), transparent)", filter: "blur(12px)" }}
-      />
-    </div>
   );
 }

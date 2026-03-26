@@ -2,6 +2,9 @@ import { m, useInView } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Send, Phone, Mail, MapPin, MessageCircle } from "lucide-react";
 
+const STATUS_HIDE_MS = 10000;
+const REQUEST_TIMEOUT_MS = 12000;
+
 export function ContactSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
@@ -15,12 +18,26 @@ export function ContactSection() {
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState("");
   const fetchAbortRef = useRef<AbortController | null>(null);
+  const statusTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     return () => {
       fetchAbortRef.current?.abort();
+      if (statusTimeoutRef.current) {
+        window.clearTimeout(statusTimeoutRef.current);
+      }
     };
   }, []);
+
+  useEffect(() => {
+    if (!status) return;
+    if (statusTimeoutRef.current) {
+      window.clearTimeout(statusTimeoutRef.current);
+    }
+    statusTimeoutRef.current = window.setTimeout(() => {
+      setStatus("");
+    }, STATUS_HIDE_MS);
+  }, [status]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -30,6 +47,11 @@ export function ContactSection() {
       fetchAbortRef.current = ac;
       setLoading(true);
       setStatus("");
+      let didTimeout = false;
+      const requestTimeout = window.setTimeout(() => {
+        didTimeout = true;
+        ac.abort();
+      }, REQUEST_TIMEOUT_MS);
 
       try {
         const response = await fetch("http://localhost:5000/api/email/contact", {
@@ -40,6 +62,7 @@ export function ContactSection() {
             name: formData.name,
             email: formData.email,
             phone: formData.phone,
+            location: formData.location,
             message: formData.requirement,
           }),
         });
@@ -53,9 +76,14 @@ export function ContactSection() {
           setStatus("error: " + (data.error || "Failed to send message"));
         }
       } catch (error) {
-        if (error instanceof Error && error.name === "AbortError") return;
+        if (error instanceof Error && error.name === "AbortError" && !didTimeout) return;
+        if (didTimeout) {
+          setStatus("error: Request timed out. Please try again.");
+          return;
+        }
         setStatus("error: Cannot connect to server");
       } finally {
+        window.clearTimeout(requestTimeout);
         setLoading(false);
       }
     },

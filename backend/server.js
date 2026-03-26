@@ -68,7 +68,7 @@ app.use(
     })
 );
 
-app.use(express.json({ limit: '10kb' }));
+app.use(express.json({ limit: '25mb' }));
 app.use('/api', limiter);
 
 // ✅ Use routes only if loaded
@@ -96,6 +96,12 @@ app.use((req, res) => {
 
 // Error handler
 app.use((err, req, res, next) => {
+    if (err && err.type === 'entity.too.large') {
+        return res.status(413).json({
+            success: false,
+            error: 'Uploaded image is too large. Please use a smaller image.',
+        });
+    }
     console.error("🔥 Server Error:", err.stack);
     res.status(500).json({ success: false, error: 'Server error' });
 });

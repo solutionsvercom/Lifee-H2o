@@ -2,6 +2,9 @@ import { m, useInView } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MapPin, Users, TrendingUp } from "lucide-react";
 
+const STATUS_HIDE_MS = 10000;
+const REQUEST_TIMEOUT_MS = 12000;
+
 const cities = [
   { name: "Bhopal", x: 50, y: 45 },
   { name: "Indore", x: 35, y: 60 },
@@ -35,12 +38,26 @@ export function DistributionSection() {
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState("");
   const fetchAbortRef = useRef<AbortController | null>(null);
+  const statusTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     return () => {
       fetchAbortRef.current?.abort();
+      if (statusTimeoutRef.current) {
+        window.clearTimeout(statusTimeoutRef.current);
+      }
     };
   }, []);
+
+  useEffect(() => {
+    if (!status) return;
+    if (statusTimeoutRef.current) {
+      window.clearTimeout(statusTimeoutRef.current);
+    }
+    statusTimeoutRef.current = window.setTimeout(() => {
+      setStatus("");
+    }, STATUS_HIDE_MS);
+  }, [status]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -57,6 +74,11 @@ export function DistributionSection() {
       fetchAbortRef.current = ac;
       setLoading(true);
       setStatus("");
+      let didTimeout = false;
+      const requestTimeout = window.setTimeout(() => {
+        didTimeout = true;
+        ac.abort();
+      }, REQUEST_TIMEOUT_MS);
       try {
         const response = await fetch("http://localhost:5000/api/email/distributor", {
           method: "POST",
@@ -79,9 +101,14 @@ export function DistributionSection() {
           setStatus("error: " + (data.error || "Failed to submit distributor request"));
         }
       } catch (error) {
-        if (error instanceof Error && error.name === "AbortError") return;
+        if (error instanceof Error && error.name === "AbortError" && !didTimeout) return;
+        if (didTimeout) {
+          setStatus("error: Request timed out. Please try again.");
+          return;
+        }
         setStatus("error: Cannot connect to server");
       } finally {
+        window.clearTimeout(requestTimeout);
         setLoading(false);
       }
     },

@@ -39,6 +39,9 @@ export function DistributionSection() {
   const [status, setStatus] = useState("");
   const fetchAbortRef = useRef<AbortController | null>(null);
   const statusTimeoutRef = useRef<number | null>(null);
+  const resetDistributorForm = useCallback(() => {
+    setFormData({ name: "", email: "", phone: "", city: "", businessName: "" });
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -95,7 +98,7 @@ export function DistributionSection() {
         const data = await response.json();
         if (data.success) {
           setStatus("success: Distributor request sent successfully!");
-          setFormData({ name: "", email: "", phone: "", city: "", businessName: "" });
+          resetDistributorForm();
           setShowForm(false);
         } else {
           setStatus("error: " + (data.error || "Failed to submit distributor request"));
@@ -112,7 +115,7 @@ export function DistributionSection() {
         setLoading(false);
       }
     },
-    [formData, loading]
+    [formData, loading, resetDistributorForm]
   );
 
   return (

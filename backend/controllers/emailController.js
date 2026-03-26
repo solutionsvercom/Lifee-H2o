@@ -3,55 +3,64 @@ const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-  tls: {
-    rejectUnauthorized: false,
-  },
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
-  socketTimeout: 15000,
+    service: 'gmail',
+    auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+    },
+    tls: {
+        rejectUnauthorized: false,
+    },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
 });
 
 transporter.verify((error, success) => {
-  if (error) {
-    console.error('SMTP FULL ERROR:', error);
-    console.error('SMTP ERROR CODE:', error.code);
-    console.error('SMTP ERROR MESSAGE:', error.message);
-  } else {
-    console.log('SMTP Server Ready to Send Emails');
-  }
+    if (error) {
+        console.error('SMTP FULL ERROR:', error);
+        console.error('SMTP ERROR CODE:', error.code);
+        console.error('SMTP ERROR MESSAGE:', error.message);
+    } else {
+        console.log('SMTP Server Ready to Send Emails');
+    }
 });
 
 const ICONS = {
-  '👤': `<span style="font-size:16px;line-height:1;">&#128100;</span>`,
-  '📧': `<span style="font-size:16px;line-height:1;">&#9993;</span>`,
-  '📱': `<span style="font-size:16px;line-height:1;">&#9742;</span>`,
-  '🏙️': `<span style="font-size:16px;line-height:1;">&#127961;</span>`,
-  '🏢': `<span style="font-size:16px;line-height:1;">&#127970;</span>`,
-  '📦': `<span style="font-size:16px;line-height:1;">&#128230;</span>`,
-  '📍': `<span style="font-size:16px;line-height:1;">&#128205;</span>`,
-  '📅': `<span style="font-size:16px;line-height:1;">&#128197;</span>`,
-  '✨': `<span style="font-size:16px;line-height:1;">&#10024;</span>`,
-  '💬': `<span style="font-size:16px;line-height:1;">&#128172;</span>`,
-  '🎯': `<span style="font-size:16px;line-height:1;">&#127919;</span>`,
+    '👤': `<span style="font-size:16px;line-height:1;">&#128100;</span>`,
+    '📧': `<span style="font-size:16px;line-height:1;">&#9993;</span>`,
+    '📱': `<span style="font-size:16px;line-height:1;">&#9742;</span>`,
+    '🏙️': `<span style="font-size:16px;line-height:1;">&#127961;</span>`,
+    '🏢': `<span style="font-size:16px;line-height:1;">&#127970;</span>`,
+    '📦': `<span style="font-size:16px;line-height:1;">&#128230;</span>`,
+    '📍': `<span style="font-size:16px;line-height:1;">&#128205;</span>`,
+    '📅': `<span style="font-size:16px;line-height:1;">&#128197;</span>`,
+    '✨': `<span style="font-size:16px;line-height:1;">&#10024;</span>`,
+    '💬': `<span style="font-size:16px;line-height:1;">&#128172;</span>`,
+    '🎯': `<span style="font-size:16px;line-height:1;">&#127919;</span>`,
 };
 
 const iconOf = (token) => ICONS[token] || token;
 const EMAIL_TIMEOUT_MS = 10000;
+const formatEventDate = (dateValue) => {
+    if (!dateValue) return 'Not specified';
+    const date = new Date(dateValue);
+    if (Number.isNaN(date.getTime())) return dateValue;
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = date.toLocaleString('en-US', { month: 'short' });
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+};
 
 const sendMailWithTimeout = (mailOptions, timeoutMs = EMAIL_TIMEOUT_MS) =>
-  Promise.race([
-    transporter.sendMail(mailOptions),
-    new Promise((_, reject) => {
-      setTimeout(() => {
-        reject(new Error('Email service timeout'));
-      }, timeoutMs);
-    }),
-  ]);
+    Promise.race([
+        transporter.sendMail(mailOptions),
+        new Promise((_, reject) => {
+            setTimeout(() => {
+                reject(new Error('Email service timeout'));
+            }, timeoutMs);
+        }),
+    ]);
 
 const emailWrapper = (content, accentColor = '#0EA5E9') => `
   <!DOCTYPE html>
@@ -628,6 +637,7 @@ exports.sendCustomOrderEmail = async (req, res) => {
   }
 
   const displayName = names || companyName || birthdayName || 'Not specified';
+  const formattedEventDate = eventDate ? formatEventDate(eventDate) : 'Not specified';
   console.log('uploadedImage received:', 
     uploadedImage ? 
       `YES - length: ${uploadedImage.length}` : 
@@ -676,8 +686,8 @@ exports.sendCustomOrderEmail = async (req, res) => {
           { icon:'🎯', label:'Order Type', value: orderType },
           { icon:'👤', label:'Name on Bottle', value: displayName },
           { icon:'💬', label:'Message / Tagline', value: customMessage || tagline || 'None' },
-          { icon:'📅', label:'Event Date', value: eventDate || 'Not specified' },
-          ...(age ? [{ icon:'📅', label:'Age', value: age }] : []),
+          { icon:'📅', label:'Event Date', value: formattedEventDate },
+          ...(age ? [{ icon:'🎂', label:'Age', value: age }] : []),
           { icon:'✨', label:'Label Finish', value: labelFinish || 'Not specified' },
           { icon:'📦', label:'Quantity', value: quantity || 'Not specified' },
           { icon:'📍', label:'Delivery Location', value: deliveryLocation || 'Not specified' },
@@ -782,11 +792,11 @@ exports.sendCustomOrderEmail = async (req, res) => {
           { icon:'👤', label:'Name on Bottle', value: displayName },
           { icon:'📦', label:'Quantity', value: quantity || 'To be confirmed' },
           { icon:'📍', label:'Delivery Location', value: deliveryLocation || 'To be confirmed' },
-          { icon:'📅', label:'Event Date', value: eventDate || 'To be confirmed' },
+          { icon:'📅', label:'Event Date', value: eventDate ? formatEventDate(eventDate) : 'To be confirmed' },
         ])}
 
         <div style="
-          background:linear-gradient(135deg,#EFF6FF,#F0FDFF);
+          
           border:1px solid #BFDBFE;border-radius:14px;
           padding:20px;text-align:center;margin:20px 0;
         ">

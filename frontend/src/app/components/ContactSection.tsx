@@ -20,6 +20,9 @@ export function ContactSection() {
   const [status, setStatus] = useState("");
   const fetchAbortRef = useRef<AbortController | null>(null);
   const statusTimeoutRef = useRef<number | null>(null);
+  const resetContactForm = useCallback(() => {
+    setFormData({ name: "", email: "", phone: "", location: "", requirement: "" });
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -72,7 +75,7 @@ export function ContactSection() {
 
         if (data.success) {
           setStatus("success: Message sent successfully!");
-          setFormData({ name: "", email: "", phone: "", location: "", requirement: "" });
+          resetContactForm();
         } else {
           setStatus("error: " + (data.error || "Failed to send message"));
         }
@@ -88,7 +91,7 @@ export function ContactSection() {
         setLoading(false);
       }
     },
-    [formData]
+    [formData, resetContactForm]
   );
 
   return (

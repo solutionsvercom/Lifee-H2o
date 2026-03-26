@@ -272,6 +272,23 @@ export function BottleCustomizer() {
         const data = await response.json();
 
         if (data.success) {
+          setFormData({
+            image: "",
+            contactName: "",
+            phone: "",
+            email: "",
+            names: "",
+            companyName: "",
+            tagline: "",
+            birthdayName: "",
+            age: "",
+            eventDate: "",
+            customMessage: "",
+            labelFinish: "glossy",
+            quantity: 50,
+            deliveryLocation: "",
+          });
+          setPreviewRotationEnabled(false);
           setStatus("success");
         } else {
           setStatus("error");
@@ -418,7 +435,7 @@ export function BottleCustomizer() {
               </div>
 
               <div className="space-y-6">
-                <m.button onClick={() => setSelectedOccasion(null)} whileHover={{ x: -5 }} className="text-cyan-400 hover:text-cyan-300 flex items-center gap-2 mb-4">
+                <m.button type="button" onClick={() => setSelectedOccasion(null)} whileHover={{ x: -5 }} className="text-cyan-400 hover:text-cyan-300 flex items-center gap-2 mb-4">
                   ← Back to occasions
                 </m.button>
 
@@ -545,6 +562,16 @@ export function BottleCustomizer() {
                           className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
                         />
                       </div>
+
+                      <div className="space-y-3">
+                        <label className="text-white font-semibold">Event Date</label>
+                        <input
+                          type="date"
+                          value={formData.eventDate}
+                          onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
+                          className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-cyan-400 transition-all"
+                        />
+                      </div>
                     </>
                   )}
 
@@ -601,6 +628,7 @@ export function BottleCustomizer() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {(["matte", "glossy"] as const).map((finish) => (
                         <m.button
+                          type="button"
                           key={finish}
                           onClick={() => setFormData({ ...formData, labelFinish: finish })}
                           whileHover={{ scale: 1.02 }}

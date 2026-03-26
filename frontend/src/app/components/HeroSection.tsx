@@ -76,12 +76,12 @@ export function HeroSection() {
       {/* Main content — original centered column layout */}
       <m.div
         style={{ opacity, willChange: "opacity" }}
-        className="relative z-10 h-full flex flex-col items-center justify-center px-4 sm:px-6 pt-28 pb-12 sm:pb-16"
+        className="relative z-10 h-full flex flex-col items-center justify-center px-4 sm:px-6 pt-20 lg:pt-8 pb-12 sm:pb-16"
       >
         {/* Bottle container — same sizing as the original SVG wrapper */}
         <m.div
-          className="relative mb-8 w-[330px] sm:w-[380px] md:w-[420px] max-w-full mx-auto"
-          style={{ height: "500px", transform: "translateZ(0)" }}
+          className="relative mb-8 w-[330px] sm:w-[380px] md:w-[420px] lg:w-[clamp(260px,32vw,420px)] h-[500px] lg:h-[clamp(460px,80vh,760px)] max-w-full mx-auto"
+          style={{ transform: "translateZ(0)" }}
         >
           {/* Darker glow around bottle wrapper */}
           <div className="absolute inset-0 bg-slate-950/55 blur-[80px] scale-150 pointer-events-none" />

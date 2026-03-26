@@ -59,8 +59,8 @@ export function Navbar() {
         isScrolled ? "bg-[#0a2540]/75" : ""
       }`}
     >
-      <div className="container mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="h-20 flex items-center justify-between gap-4">
+      <div className="container mx-auto max-w-7xl px-4 sm:px-6 section-container">
+        <div className="navbar-content h-20 flex items-center justify-between gap-4">
           <Link to="/" prefetch="intent" className="flex items-center gap-2 text-white min-h-11">
             <span className="text-2xl" aria-hidden="true">
               💧
@@ -108,7 +108,8 @@ export function Navbar() {
             transition={{ duration: 0.2 }}
             className="md:hidden border-t border-white/10 bg-[#071b2f]/95 backdrop-blur-xl"
           >
-            <div className="container mx-auto max-w-7xl px-4 sm:px-6 py-3 flex flex-col">
+            <div className="mobile-nav-container container mx-auto max-w-7xl px-4 sm:px-6 py-3 flex flex-col">
+              <div className="mobile-nav">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 return (
@@ -123,6 +124,7 @@ export function Navbar() {
                   </button>
                 );
               })}
+              </div>
             </div>
           </m.nav>
         )}

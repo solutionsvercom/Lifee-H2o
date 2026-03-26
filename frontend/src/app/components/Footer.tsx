@@ -23,10 +23,10 @@ export function Footer() {
         />
       </div>
 
-      <div className="container mx-auto max-w-7xl">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+      <div className="container mx-auto max-w-7xl section-container">
+        <div className="footer-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
-          <div className="space-y-4">
+          <div className="footer-brand space-y-4">
             <m.div
               animate={{
                 filter: ['drop-shadow(0 0 10px rgba(14, 165, 233, 0.5))', 'drop-shadow(0 0 20px rgba(14, 165, 233, 0.8))', 'drop-shadow(0 0 10px rgba(14, 165, 233, 0.5))'],
@@ -35,12 +35,12 @@ export function Footer() {
                 duration: 3,
                 repeat: Infinity,
               }}
-              className="flex items-center gap-3"
+              className="footer-brand-title flex items-center gap-3"
             >
               <div className="text-4xl">💧</div>
-              <div>
-                <h3 className="text-2xl font-bold">LIFEE Water</h3>
-                <p className="text-cyan-400 text-sm">Purity Engineered</p>
+              <div className="text-left">
+                <h3 className="text-2xl font-bold">LIFEE Premium Water</h3>
+                <p className="text-cyan-400 text-sm">Purity Engineered.</p>
               </div>
             </m.div>
             <p className="text-cyan-100/70 text-sm">
@@ -48,7 +48,7 @@ export function Footer() {
             </p>
             
             {/* Social links */}
-            <div className="flex gap-3 pt-4">
+            <div className="social-icons flex gap-3 pt-4">
               {[
                 { Icon: Facebook, href: "https://facebook.com" },
                 { Icon: Instagram, href: "https://instagram.com" },
@@ -120,7 +120,7 @@ export function Footer() {
           </div>
 
           {/* Contact */}
-          <div>
+          <div className="footer-contact">
             <h4 className="text-lg font-semibold mb-4 text-white">Contact Info</h4>
             <ul className="space-y-3 text-sm">
               <li className="text-cyan-100/70">
@@ -148,27 +148,77 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="pt-8 border-t border-white/10">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-cyan-100/60 text-sm text-center md:text-left">
-              © 2026 Premium Water. All rights reserved. Designed with precision.
-            </p>
-            <div className="flex gap-6">
-              {[
-                { label: "Privacy Policy", to: "/#contact" },
-                { label: "Terms of Service", to: "/#contact" },
-                { label: "Refund Policy", to: "/#contact" },
-              ].map((link, i) => (
-                <Link
-                  key={i}
-                  to={link.to}
-                  prefetch="intent"
-                  className="text-cyan-100/60 hover:text-cyan-400 text-sm transition-colors hover:scale-105 inline-block duration-200"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
+        <div
+          style={{
+            borderTop: "1px solid rgba(255,255,255,0.1)",
+            paddingTop: "24px",
+            paddingBottom: "24px",
+            textAlign: "center",
+          }}
+        >
+          <p
+            style={{
+              color: "rgba(255,255,255,0.4)",
+              fontSize: "13px",
+              marginBottom: "12px",
+            }}
+          >
+            © 2026 LIFEE Premium Water. All rights reserved. Designed with precision.
+          </p>
+          <div
+            className="footer-bottom-links"
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: "24px",
+              flexWrap: "wrap",
+            }}
+          >
+            <a
+              href="/privacy"
+              style={{
+                color: "rgba(255,255,255,0.5)",
+                fontSize: "13px",
+                textDecoration: "none",
+              }}
+            >
+              Privacy Policy
+            </a>
+            <span
+              style={{
+                color: "rgba(255,255,255,0.2)",
+              }}
+            >
+              |
+            </span>
+            <a
+              href="/terms"
+              style={{
+                color: "rgba(255,255,255,0.5)",
+                fontSize: "13px",
+                textDecoration: "none",
+              }}
+            >
+              Terms of Service
+            </a>
+            <span
+              style={{
+                color: "rgba(255,255,255,0.2)",
+              }}
+            >
+              |
+            </span>
+            <a
+              href="/refund"
+              style={{
+                color: "rgba(255,255,255,0.5)",
+                fontSize: "13px",
+                textDecoration: "none",
+              }}
+            >
+              Refund Policy
+            </a>
           </div>
         </div>
       </div>

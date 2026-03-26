@@ -119,7 +119,7 @@ export function DistributionSection() {
     <section
       id="distribution"
       ref={ref}
-      className="relative py-20 md:py-24 px-4 sm:px-6 bg-gradient-to-br from-[#0A2540] via-slate-900 to-[#0A2540] overflow-hidden scroll-mt-24"
+      className="relative py-16 px-4 sm:px-6 bg-gradient-to-br from-[#0A2540] via-slate-900 to-[#0A2540] overflow-hidden scroll-mt-24"
     >
       {/* Background grid */}
       <div className="absolute inset-0 opacity-10">
@@ -132,8 +132,8 @@ export function DistributionSection() {
         />
       </div>
 
-      <div className="container mx-auto max-w-7xl relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+      <div className="container mx-auto max-w-7xl relative z-10 section-container">
+        <div className="grid lg:grid-cols-2 gap-12 items-center" style={{ maxWidth: "1100px", margin: "0 auto" }}>
           {/* Left content */}
           <m.div
             initial={{ opacity: 0, x: -50 }}
@@ -221,6 +221,11 @@ export function DistributionSection() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 1, duration: 0.6 }}
+                style={{
+                  maxWidth: "560px",
+                  width: "100%",
+                  margin: "0 auto",
+                }}
                 className="relative p-5 sm:p-8 rounded-3xl bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl"
               >
                 <m.div
@@ -242,7 +247,7 @@ export function DistributionSection() {
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder="Enter your name"
-                      className="w-full px-4 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
+                      className="w-full px-3 py-2.5 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
                       required
                     />
                   </div>
@@ -254,7 +259,7 @@ export function DistributionSection() {
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       placeholder="Enter your phone number"
-                      className="w-full px-4 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
+                      className="w-full px-3 py-2.5 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
                       required
                     />
                   </div>
@@ -266,7 +271,7 @@ export function DistributionSection() {
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       placeholder="Enter your email"
-                      className="w-full px-4 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
+                      className="w-full px-3 py-2.5 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
                       required
                     />
                   </div>
@@ -278,7 +283,7 @@ export function DistributionSection() {
                       value={formData.city}
                       onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                       placeholder="Enter your city"
-                      className="w-full px-4 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
+                      className="w-full px-3 py-2.5 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
                     />
                   </div>
 
@@ -289,7 +294,7 @@ export function DistributionSection() {
                       value={formData.businessName}
                       onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
                       placeholder="Enter your business name"
-                      className="w-full px-4 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
+                      className="w-full px-3 py-2.5 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
                     />
                   </div>
 

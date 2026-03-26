@@ -4,6 +4,7 @@
 @import './responsive.css';
 
 html {
+  font-size: 15px;
   scroll-behavior: smooth;
   overscroll-behavior: none;
   -webkit-overflow-scrolling: touch;
@@ -13,4 +14,142 @@ body {
   overflow-x: clip;
   overscroll-behavior: none;
   -webkit-overflow-scrolling: touch;
+}
+
+.section-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  width: 100%;
+}
+
+section {
+  padding-top: 64px !important;
+  padding-bottom: 64px !important;
+}
+
+@media (max-width: 1280px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 1024px) {
+  html {
+    font-size: 13px;
+  }
+}
+
+/* Mobile nav, footer and layout fixes */
+@media (max-width: 768px) {
+  html {
+    font-size: 13px;
+  }
+
+  section {
+    padding-top: 48px !important;
+    padding-bottom: 48px !important;
+  }
+
+  /* Center all footer content on mobile */
+  footer {
+    text-align: center !important;
+  }
+  footer h3 {
+    text-align: center !important;
+  }
+  footer p {
+    text-align: center !important;
+  }
+  footer a {
+    text-align: center !important;
+  }
+  footer ul {
+    text-align: center !important;
+    padding-left: 0 !important;
+    list-style: none !important;
+  }
+  footer ul li {
+    text-align: center !important;
+  }
+  footer .social-icons {
+    justify-content: center !important;
+  }
+  footer .footer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+  footer .footer-brand {
+    text-align: center !important;
+  }
+  footer .footer-brand-title {
+    justify-content: center !important;
+  }
+  footer .footer-contact {
+    margin-top: 4px !important;
+  }
+  footer .footer-bottom-links {
+    gap: 12px !important;
+  }
+
+  /* Mobile nav links centered */
+  .mobile-nav {
+    text-align: center !important;
+  }
+  .mobile-nav a,
+  .mobile-nav button {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 10px !important;
+    text-align: center !important;
+    padding: 12px 0 !important;
+  }
+  .mobile-nav-container {
+    align-items: center !important;
+  }
+  .navbar-content {
+    justify-content: space-between;
+  }
+
+  /* Contact section mobile stack */
+  .contact-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* All headings smaller on mobile */
+  h1 {
+    font-size: clamp(1.8rem, 6vw, 2.5rem) !important;
+  }
+  h2 {
+    font-size: clamp(1.4rem, 5vw, 2rem) !important;
+  }
+  h3 {
+    font-size: clamp(1.1rem, 4vw, 1.5rem) !important;
+  }
+
+  /* Containers full width on mobile */
+  .container,
+  [class*="max-w-"] {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  /* Stack all grids on mobile */
+  [class*="grid-cols-2"],
+  [class*="grid-cols-3"],
+  [class*="grid-cols-4"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Center text on mobile */
+  footer * {
+    text-align: center;
+  }
+
+  /* Full width buttons on mobile */
+  .btn,
+  button[type="submit"] {
+    width: 100% !important;
+  }
 }

@@ -38,7 +38,7 @@ export function WhyChooseUs() {
     <section 
       id="why-us"
       ref={ref}
-      className="relative py-20 md:py-24 px-4 sm:px-6 bg-gradient-to-b from-slate-900 to-[#0A2540] scroll-mt-24"
+      className="relative py-16 px-4 sm:px-6 bg-gradient-to-b from-slate-900 to-[#0A2540] scroll-mt-24"
     >
       <div className="container mx-auto max-w-7xl relative z-10">
         {/* Header */}

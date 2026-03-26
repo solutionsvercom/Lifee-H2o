@@ -50,7 +50,7 @@ export function PurificationProcess() {
     <section 
       id="process"
       ref={ref}
-      className="relative py-20 md:py-24 px-4 sm:px-6 bg-gradient-to-b from-slate-800 to-[#0A2540] overflow-hidden scroll-mt-20"
+      className="relative py-16 px-4 sm:px-6 bg-gradient-to-b from-slate-800 to-[#0A2540] overflow-hidden scroll-mt-20"
     >
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-10">

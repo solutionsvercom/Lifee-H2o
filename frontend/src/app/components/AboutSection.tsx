@@ -9,14 +9,14 @@ export function AboutSection() {
     <section 
       id="about"
       ref={ref}
-      className="relative min-h-screen flex items-center py-20 md:py-24 px-4 sm:px-6 overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800 scroll-mt-20"
+      className="relative min-h-screen flex items-center py-16 px-4 sm:px-6 overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800 scroll-mt-20"
     >
       {/* Flowing water visual */}
       <m.div
         initial={{ opacity: 0, scale: 1.2 }}
         animate={isInView ? { opacity: 0.2, scale: 1 } : {}}
         transition={{ duration: 1.5 }}
-        className="absolute right-0 top-0 w-1/2 h-full"
+        className="absolute inset-0 w-full h-full md:inset-y-0 md:right-0 md:left-auto md:w-1/2"
       >
         <m.div
           animate={{
@@ -47,12 +47,13 @@ export function AboutSection() {
             initial={{ opacity: 0, x: -50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8 }}
-            className="space-y-8"
+            className="space-y-8 md:pr-8 flex flex-col items-center"
           >
             <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.2, duration: 0.8 }}
+              className="text-center"
             >
               <h2 className="text-[clamp(1.8rem,6vw,3rem)] font-bold text-white mb-6 leading-tight">
                 Elegant{" "}
@@ -66,7 +67,7 @@ export function AboutSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.4, duration: 0.8 }}
-              className="space-y-6 text-cyan-100/90 leading-relaxed"
+              className="space-y-6 text-cyan-100/90 leading-relaxed text-center max-w-xl"
             >
               <p className="text-lg">
                 Our water is refined through{" "}
@@ -88,7 +89,7 @@ export function AboutSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.6, duration: 0.8 }}
-              className="grid grid-cols-3 gap-6 pt-4"
+              className="grid grid-cols-3 gap-6 pt-4 max-w-md w-full"
             >
               {[
                 { value: "99.9%", label: "Pure" },
@@ -109,9 +110,9 @@ export function AboutSection() {
             initial={{ opacity: 0, x: 50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="relative"
+            className="relative flex justify-center"
           >
-            <div className="relative p-8 rounded-3xl bg-white/5 backdrop-blur-lg border border-white/10 shadow-2xl">
+            <div className="relative w-full max-w-[440px] mx-auto p-8 rounded-3xl bg-white/5 backdrop-blur-lg border border-white/10 shadow-2xl">
               <m.div
                 animate={{
                   boxShadow: [

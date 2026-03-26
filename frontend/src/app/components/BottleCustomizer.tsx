@@ -298,7 +298,7 @@ export function BottleCustomizer() {
     <section
       id="customizer"
       ref={ref}
-      className="relative py-20 md:py-24 px-4 sm:px-6 bg-gradient-to-br from-slate-900 to-[#0A2540] overflow-hidden scroll-mt-24"
+      className="relative py-16 px-4 sm:px-6 bg-gradient-to-br from-slate-900 to-[#0A2540] overflow-hidden scroll-mt-24"
     >
       <div className="absolute inset-0 opacity-10">
         <div

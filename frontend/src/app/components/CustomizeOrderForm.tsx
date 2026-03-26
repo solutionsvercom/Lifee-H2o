@@ -183,18 +183,25 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-900 to-[#0A2540] px-4 sm:px-6 py-10">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto section-container">
         <Link to="/" prefetch="intent" className="inline-flex items-center text-cyan-300 hover:text-cyan-200 mb-8">
           ← Back
         </Link>
         <div className="text-center mb-10">
-          <h1 className="text-3xl md:text-4xl font-bold text-white">{title}</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-white">{title}</h1>
           <p className="text-cyan-100/80 mt-3">{subtitle}</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-5 sm:p-8 rounded-3xl bg-white/10 backdrop-blur-lg border border-white/20 space-y-6">
+        <div
+          style={{
+            maxWidth: "560px",
+            width: "100%",
+            margin: "0 auto",
+          }}
+        >
+          <form onSubmit={handleSubmit} className="p-5 sm:p-8 rounded-3xl bg-white/10 backdrop-blur-lg border border-white/20 space-y-6">
           <div className="space-y-3">
-            <label className="text-white font-semibold">Upload Image</label>
+            <label className="text-white text-sm font-semibold">Upload Image</label>
             <div className="relative">
               <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" id="image-upload-page" />
               <label
@@ -219,37 +226,37 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
           </div>
 
           <div className="space-y-3">
-            <label className="text-white font-semibold">Contact Person Name *</label>
+            <label className="text-white text-sm font-semibold">Contact Person Name *</label>
             <input
               type="text"
               value={customData.contactName}
               onChange={(e) => setCustomData({ ...customData, contactName: e.target.value })}
               placeholder="Who should we contact?"
-              className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
+              className="w-full px-3 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
               required
             />
           </div>
 
           <div className="space-y-3">
-            <label className="text-white font-semibold">Phone Number *</label>
+            <label className="text-white text-sm font-semibold">Phone Number *</label>
             <input
               type="tel"
               value={customData.phone}
               onChange={(e) => setCustomData({ ...customData, phone: e.target.value })}
               placeholder="Enter your phone number"
-              className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
+              className="w-full px-3 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
               required
             />
           </div>
 
           <div className="space-y-3">
-            <label className="text-white font-semibold">Email Address *</label>
+            <label className="text-white text-sm font-semibold">Email Address *</label>
             <input
               type="email"
               value={customData.email}
               onChange={(e) => setCustomData({ ...customData, email: e.target.value })}
               placeholder="Enter your email address"
-              className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
+              className="w-full px-3 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
               required
             />
           </div>
@@ -257,39 +264,39 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
           <div className="border-t border-white/10 my-2" />
 
           <div className="space-y-3">
-            <label className="text-white font-semibold">Name(s)</label>
+            <label className="text-white text-sm font-semibold">Name(s)</label>
             <input
               type="text"
               value={customData.names}
               onChange={(e) => setCustomData({ ...customData, names: e.target.value })}
               placeholder="Enter name"
-              className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
+              className="w-full px-3 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
             />
           </div>
 
           <div className="space-y-3">
-            <label className="text-white font-semibold">Event Date</label>
+            <label className="text-white text-sm font-semibold">Event Date</label>
             <input
               type="date"
               value={customData.eventDate}
               onChange={(e) => setCustomData({ ...customData, eventDate: e.target.value })}
-              className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-cyan-400 transition-all"
+              className="w-full px-3 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-cyan-400 transition-all"
             />
           </div>
 
           <div className="space-y-3">
-            <label className="text-white font-semibold">Custom Message</label>
+            <label className="text-white text-sm font-semibold">Custom Message</label>
             <textarea
               value={customData.message}
               onChange={(e) => setCustomData({ ...customData, message: e.target.value })}
               placeholder="Add a special message..."
               rows={3}
-              className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all resize-none"
+              className="w-full px-3 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all resize-none"
             />
           </div>
 
           <div className="space-y-3">
-            <label className="text-white font-semibold">Label Finish</label>
+            <label className="text-white text-sm font-semibold">Label Finish</label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {(["matte", "glossy"] as const).map((finish) => (
                 <button
@@ -317,7 +324,7 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
                   value={customData.quantity}
                   onChange={(e) => setCustomData({ ...customData, quantity: parseInt(e.target.value || "0") })}
                   min="25"
-                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-cyan-400 transition-all"
+                  className="w-full px-3 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-cyan-400 transition-all"
                 />
               </div>
               <div className="space-y-2">
@@ -327,7 +334,7 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
                   value={customData.location}
                   onChange={(e) => setCustomData({ ...customData, location: e.target.value })}
                   placeholder="City"
-                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
+                  className="w-full px-3 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
                 />
               </div>
             </div>
@@ -350,7 +357,8 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
           {status === "error" && (
             <div className="p-4 rounded-xl bg-red-500/20 border border-red-500/30 text-red-300 text-center text-sm">❌ {errorMessage}</div>
           )}
-        </form>
+          </form>
+        </div>
       </div>
     </main>
   );

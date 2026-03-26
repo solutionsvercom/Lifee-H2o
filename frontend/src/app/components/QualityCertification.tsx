@@ -33,7 +33,7 @@ export function QualityCertification() {
     <section 
       id="certifications"
       ref={ref}
-      className="relative py-20 md:py-24 px-4 sm:px-6 bg-gradient-to-br from-slate-900 via-[#0A2540] to-slate-900 scroll-mt-24"
+      className="relative py-16 px-4 sm:px-6 bg-gradient-to-br from-slate-900 via-[#0A2540] to-slate-900 scroll-mt-24"
     >
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-5">

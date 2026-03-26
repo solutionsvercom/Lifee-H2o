@@ -74,7 +74,7 @@ export function ProductShowcase() {
     <section 
       id="products"
       ref={ref}
-      className="relative py-20 md:py-24 px-4 sm:px-6 bg-gradient-to-br from-[#0A2540] to-slate-900 overflow-hidden scroll-mt-20"
+      className="relative py-16 px-4 sm:px-6 bg-gradient-to-br from-[#0A2540] to-slate-900 overflow-hidden scroll-mt-20"
     >
       {/* Animated background elements */}
       <div className="absolute inset-0">
@@ -97,7 +97,7 @@ export function ProductShowcase() {
         ))}
       </div>
 
-      <div className="container mx-auto max-w-7xl relative z-10">
+      <div className="container mx-auto max-w-7xl relative z-10 section-container">
         {/* Header */}
         <m.div
           initial={{ opacity: 0, y: 30 }}

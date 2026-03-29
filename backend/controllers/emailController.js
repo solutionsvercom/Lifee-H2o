@@ -26,6 +26,10 @@ transporter.verify((error, success) => {
     }
 });
 
+/** Inbox for form notifications — RECEIVER_EMAIL, or SMTP_USER when unset */
+const getInboxRecipient = () =>
+  (process.env.RECEIVER_EMAIL || process.env.SMTP_USER || '').trim();
+
 const ICONS = {
     '👤': `<span style="font-size:16px;line-height:1;">&#128100;</span>`,
     '📧': `<span style="font-size:16px;line-height:1;">&#9993;</span>`,
@@ -223,10 +227,19 @@ exports.sendContactEmail = async (req, res) => {
     });
   }
 
+  const inboxTo = getInboxRecipient();
+  if (!inboxTo) {
+    return res.status(503).json({
+      success: false,
+      error:
+        'Email inbox is not configured. Set RECEIVER_EMAIL or SMTP_USER in backend/.env.',
+    });
+  }
+
   try {
     await sendMailWithTimeout({
       from: `"LIFEE Premium Water" <${process.env.SMTP_USER}>`,
-      to: process.env.RECEIVER_EMAIL,
+      to: inboxTo,
       subject: `New Message from ${name} — LIFEE`,
       html: emailWrapper(`
         <!-- Alert Banner -->
@@ -388,10 +401,19 @@ exports.sendOrderEmail = async (req, res) => {
     });
   }
 
+  const inboxTo = getInboxRecipient();
+  if (!inboxTo) {
+    return res.status(503).json({
+      success: false,
+      error:
+        'Email inbox is not configured. Set RECEIVER_EMAIL or SMTP_USER in backend/.env.',
+    });
+  }
+
   try {
     await sendMailWithTimeout({
       from: `"LIFEE Premium Water" <${process.env.SMTP_USER}>`,
-      to: process.env.RECEIVER_EMAIL,
+      to: inboxTo,
       subject: `New Order Request - ${name}`,
       html: `
         <h2>New Order Request</h2>
@@ -452,10 +474,19 @@ exports.sendDistributorEmail = async (req, res) => {
     });
   }
 
+  const inboxTo = getInboxRecipient();
+  if (!inboxTo) {
+    return res.status(503).json({
+      success: false,
+      error:
+        'Email inbox is not configured. Set RECEIVER_EMAIL or SMTP_USER in backend/.env.',
+    });
+  }
+
   try {
     await sendMailWithTimeout({
       from: `"LIFEE Premium Water" <${process.env.SMTP_USER}>`,
-      to: process.env.RECEIVER_EMAIL,
+      to: inboxTo,
       subject: `New Distributor Application — ${name}`,
       html: emailWrapper(`
         <div style="
@@ -636,6 +667,15 @@ exports.sendCustomOrderEmail = async (req, res) => {
     });
   }
 
+  const inboxTo = getInboxRecipient();
+  if (!inboxTo) {
+    return res.status(503).json({
+      success: false,
+      error:
+        'Email inbox is not configured. Set RECEIVER_EMAIL or SMTP_USER in backend/.env.',
+    });
+  }
+
   const displayName = names || companyName || birthdayName || 'Not specified';
   const formattedEventDate = eventDate ? formatEventDate(eventDate) : 'Not specified';
   console.log('uploadedImage received:', 
@@ -647,7 +687,7 @@ exports.sendCustomOrderEmail = async (req, res) => {
   try {
     await sendMailWithTimeout({
       from: `"LIFEE Premium Water" <${process.env.SMTP_USER}>`,
-      to: process.env.RECEIVER_EMAIL,
+      to: inboxTo,
       subject: `New ${orderType} Order — ${contactName}`,
       html: emailWrapper(`
         <div style="

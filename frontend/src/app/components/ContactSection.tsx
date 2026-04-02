@@ -6,8 +6,8 @@ import { FaWhatsapp } from "react-icons/fa";
 const STATUS_HIDE_MS = 10000;
 const REQUEST_TIMEOUT_MS = 12000;
 
-/** Served from `frontend/public/file/CV-YADAV.pdf` → URL path `/file/CV-YADAV.pdf`. */
-const BROCHURE_PDF_HREF = `${import.meta.env.BASE_URL}file/CV-YADAV.pdf`;
+/** Served from `frontend/public/file/Brochure.pdf` → URL path `/file/Brochure.pdf`. */
+const BROCHURE_PDF_HREF = `${import.meta.env.BASE_URL}file/Brochure.pdf`;
 
 export function ContactSection() {
   const ref = useRef(null);
@@ -345,7 +345,7 @@ export function ContactSection() {
                 
                 <m.a
                   href={BROCHURE_PDF_HREF}
-                  download="CV-YADAV.pdf"
+                  download=" Brochure.pdf"
                   whileHover={{ scale: 1.02, x: 5 }}
                   className="w-full p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white font-semibold hover:bg-white/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >

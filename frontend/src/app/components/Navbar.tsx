@@ -65,7 +65,7 @@ export function Navbar() {
             <span className="text-2xl" aria-hidden="true">
               💧
             </span>
-            <span className="text-lg sm:text-xl font-bold tracking-wide">LIFEE</span>
+            <span className="text-lg sm:text-xl font-bold tracking-wide">LIFEE WATER</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-8">

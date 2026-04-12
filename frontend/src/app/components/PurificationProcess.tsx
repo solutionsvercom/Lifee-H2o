@@ -50,7 +50,7 @@ export function PurificationProcess() {
     <section 
       id="process"
       ref={ref}
-      className="relative py-16 px-4 sm:px-6 bg-gradient-to-b from-slate-800 to-[#0A2540] overflow-hidden scroll-mt-20"
+      className="relative overflow-hidden bg-gradient-to-b from-slate-800 to-[#0A2540] scroll-mt-20"
     >
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-10">
@@ -63,21 +63,21 @@ export function PurificationProcess() {
         />
       </div>
 
-      <div className="container mx-auto max-w-7xl relative z-10">
+      <div className="container relative z-10 mx-auto w-full max-w-[min(100%,1400px)]">
         {/* Header */}
         <m.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
-          className="text-center mb-16"
+          className="mb-[clamp(2rem,5vh,4rem)] text-center"
         >
-          <h2 className="text-[clamp(1.8rem,6vw,3rem)] font-bold text-white mb-4 leading-tight">
+          <h2 className="mb-[clamp(0.75rem,2vh,1rem)] text-[clamp(1.5rem,3vw,2.5rem)] font-bold leading-tight text-white">
             Purification{" "}
             <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
               Process
             </span>
           </h2>
-          <p className="text-cyan-100/80 text-lg max-w-2xl mx-auto">
+          <p className="mx-auto max-w-2xl text-[clamp(0.9rem,1.5vw,1.1rem)] text-cyan-100/80">
             Tech Visual Flow: Advanced 6-stage purification system
           </p>
         </m.div>
@@ -109,7 +109,7 @@ export function PurificationProcess() {
           </div>
 
           {/* Steps */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="process-cards-grid">
             {steps.map((step, index) => {
               const Icon = step.icon;
               return (
@@ -120,9 +120,9 @@ export function PurificationProcess() {
                   transition={{ delay: index * 0.1, duration: 0.6 }}
                   onMouseEnter={() => setHoveredIndex(index)}
                   onMouseLeave={() => setHoveredIndex(null)}
-                  className="relative group"
+                  className="relative group flex h-full min-h-0 flex-col"
                 >
-                  <div className="h-full p-8 rounded-3xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg border border-white/10 hover:border-white/30 transition-all duration-500">
+                  <div className="section-mobile-card h-full rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-[clamp(1rem,2vw,2rem)] backdrop-blur-lg transition-all duration-500 hover:border-white/30">
                     {/* Realistic 3D-style icon with glass/neon effect */}
                     <div className="relative mb-6 flex justify-center">
                       {/* Glow effect behind icon */}
@@ -202,10 +202,10 @@ export function PurificationProcess() {
 
                     {/* Content */}
                     <div className="space-y-3 text-center">
-                      <h3 className="text-xl font-bold text-white">
+                      <h3 className="text-[clamp(1.1rem,2vw,1.5rem)] font-bold text-white">
                         {step.title}
                       </h3>
-                      <p className="text-cyan-100/70 text-sm leading-relaxed">
+                      <p className="text-[clamp(0.75rem,1.2vw,0.95rem)] leading-relaxed text-cyan-100/70">
                         {step.description}
                       </p>
                     </div>
@@ -234,11 +234,11 @@ export function PurificationProcess() {
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.8, duration: 0.8 }}
-          className="mt-16 text-center"
+          className="mt-[clamp(2rem,5vh,4rem)] text-center"
         >
-          <div className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-cyan-500/20 to-blue-500/20 backdrop-blur-lg border border-white/20">
+          <div className="inline-flex flex-wrap items-center gap-[clamp(0.75rem,2vw,1rem)] rounded-full border border-white/20 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 px-[clamp(1rem,3vw,2rem)] py-[clamp(0.75rem,2vh,1rem)] backdrop-blur-lg">
             <Shield className="w-6 h-6 text-cyan-400" />
-            <span className="text-white font-semibold">
+            <span className="text-[clamp(0.85rem,1.3vw,1rem)] font-semibold text-white">
               ISO 9001:2015 Certified Process
             </span>
           </div>

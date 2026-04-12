@@ -12,7 +12,7 @@ const BROCHURE_PDF_HREF = `${import.meta.env.BASE_URL}file/Brochure.pdf`;
 export function ContactSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const whatsappPhoneNumber = "919876543210";
+  const whatsappPhoneNumber = "919244372603";
   const whatsappMessage = "Hello, I am interested in your service";
   const whatsappLink = `https://wa.me/${whatsappPhoneNumber}?text=${encodeURIComponent(whatsappMessage)}`;
   const [formData, setFormData] = useState({
@@ -104,7 +104,7 @@ export function ContactSection() {
     <section 
       id="contact"
       ref={ref}
-      className="relative py-16 px-4 sm:px-6 bg-gradient-to-br from-slate-900 to-[#0A2540] overflow-hidden scroll-mt-20"
+      className="relative overflow-hidden bg-gradient-to-br from-slate-900 to-[#0A2540] scroll-mt-20"
     >
       {/* Background effects */}
       <div className="absolute inset-0">
@@ -133,50 +133,34 @@ export function ContactSection() {
         />
       </div>
 
-      <div className="container mx-auto max-w-6xl relative z-10 section-container">
+      <div className="section-container container relative z-10 mx-auto w-full max-w-[min(100%,1400px)]">
         {/* Header */}
         <m.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
-          className="text-center mb-16"
+          className="mb-[clamp(2rem,5vh,4rem)] text-center"
         >
-          <h2 className="text-[clamp(1.8rem,6vw,3rem)] font-bold text-white mb-6 leading-tight">
+          <h2 className="mb-[clamp(1rem,3vh,1.5rem)] text-[clamp(1.5rem,3vw,2.5rem)] font-bold leading-tight text-white">
             Get In{" "}
             <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
               Touch
             </span>
           </h2>
-          <p className="text-cyan-100/80 text-lg max-w-2xl mx-auto">
+          <p className="mx-auto max-w-2xl text-[clamp(0.9rem,1.5vw,1.1rem)] text-cyan-100/80">
             Ready to experience premium hydration? Contact us for orders or distribution inquiries
           </p>
         </m.div>
 
-        <div
-          className="contact-grid"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "48px",
-            maxWidth: "1100px",
-            margin: "0 auto",
-            padding: "0 24px",
-          }}
-        >
+        <div className="contact-grid">
           {/* Contact Form - Glassmorphism */}
           <m.div
             initial={{ opacity: 0, x: -50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8 }}
           >
-            <div
-              style={{
-                maxWidth: "560px",
-                width: "100%",
-                margin: "0 auto",
-              }}
-            >
-              <div className="relative p-5 sm:p-8 rounded-3xl bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl">
+            <div className="mx-auto w-full max-w-[min(100%,560px)]">
+              <div className="relative rounded-3xl border border-white/20 bg-white/10 p-[clamp(1rem,2vw,2rem)] shadow-2xl backdrop-blur-lg">
               {/* Glow effect */}
               <m.div
                 animate={{
@@ -191,7 +175,7 @@ export function ContactSection() {
 
               <form onSubmit={handleSubmit} className="relative z-10 space-y-6">
                 <div className="space-y-2">
-                  <label className="text-white/90 text-sm">Full Name</label>
+                  <label className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-white/90">Full Name</label>
                   <input
                     type="text"
                     value={formData.name}
@@ -203,7 +187,7 @@ export function ContactSection() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-white/90 text-sm">Phone Number</label>
+                  <label className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-white/90">Phone Number</label>
                   <input
                     type="tel"
                     value={formData.phone}
@@ -215,7 +199,7 @@ export function ContactSection() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-white/90 text-sm">Email</label>
+                  <label className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-white/90">Email</label>
                   <input
                     type="email"
                     value={formData.email}
@@ -227,7 +211,7 @@ export function ContactSection() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-white/90 text-sm">Location</label>
+                  <label className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-white/90">Location</label>
                   <input
                     type="text"
                     value={formData.location}
@@ -239,7 +223,7 @@ export function ContactSection() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-white/90 text-sm">Requirement</label>
+                  <label className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-white/90">Requirement</label>
                   <textarea
                     value={formData.requirement}
                     onChange={(e) => setFormData({ ...formData, requirement: e.target.value })}
@@ -255,16 +239,16 @@ export function ContactSection() {
                   disabled={loading}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl font-semibold shadow-lg shadow-cyan-500/50 hover:shadow-cyan-500/70 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 py-4 text-[clamp(0.85rem,1.3vw,1rem)] font-semibold text-white shadow-lg shadow-cyan-500/50 transition-all duration-300 hover:shadow-cyan-500/70 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   <Send className="w-5 h-5" />
                   {loading ? "Sending..." : "Send Message"}
                 </m.button>
                 {status.startsWith("success") && (
-                  <p className="text-sm text-green-400">✅ Message sent successfully!</p>
+                  <p className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-green-400">✅ Message sent successfully!</p>
                 )}
                 {status.startsWith("error") && (
-                  <p className="text-sm text-red-400">❌ {status.replace(/^error:\s*/i, "")}</p>
+                  <p className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-red-400">❌ {status.replace(/^error:\s*/i, "")}</p>
                 )}
               </form>
               </div>
@@ -283,19 +267,19 @@ export function ContactSection() {
               {
                 icon: Phone,
                 title: "Call Us",
-                info: "+91 98765 43210",
+                info: "+91 92443 72603",
                 subinfo: "Mon-Sat, 9AM - 6PM",
               },
               {
                 icon: Mail,
                 title: "Email Us",
-                info: "contact@premiumwater.com",
+                info: "bipinbatham7@gmail.com",
                 subinfo: "We'll respond within 24 hours",
               },
               {
                 icon: MapPin,
                 title: "Visit Us",
-                info: "Bhopal, Madhya Pradesh",
+                info: "Infront New Police Line Lahar Chungi Bhind, Madhya Pradesh 477001",
                 subinfo: "Corporate Office",
               },
             ].map((contact, i) => {
@@ -314,9 +298,9 @@ export function ContactSection() {
                       <Icon className="w-6 h-6 text-cyan-400" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-white font-semibold mb-1">{contact.title}</h3>
-                      <p className="text-cyan-300">{contact.info}</p>
-                      <p className="text-cyan-100/50 text-sm mt-1">{contact.subinfo}</p>
+                      <h3 className="mb-1 text-[clamp(1.1rem,2vw,1.5rem)] font-semibold text-white">{contact.title}</h3>
+                      <p className="text-[clamp(0.9rem,1.5vw,1.1rem)] text-cyan-300">{contact.info}</p>
+                      <p className="mt-1 text-[clamp(0.75rem,1.2vw,0.95rem)] text-cyan-100/50">{contact.subinfo}</p>
                     </div>
                   </div>
                 </m.div>
@@ -330,14 +314,14 @@ export function ContactSection() {
               transition={{ delay: 0.6, duration: 0.6 }}
               className="pt-6"
             >
-              <h3 className="text-white font-semibold mb-4">Quick Actions</h3>
+              <h3 className="mb-4 text-[clamp(1.1rem,2vw,1.5rem)] font-semibold text-white">Quick Actions</h3>
               <div className="space-y-3">
                 <m.a
                   href={whatsappLink}
                   target="_blank"
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.02, x: 5 }}
-                  className="w-full p-4 rounded-xl bg-gradient-to-r from-green-600 to-green-500 text-white font-semibold flex items-center justify-center gap-2 shadow-lg shadow-green-500/30 hover:shadow-green-500/50 transition-all cursor-pointer hover:brightness-110"
+                  className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-green-600 to-green-500 p-4 text-[clamp(0.85rem,1.3vw,1rem)] font-semibold text-white shadow-lg shadow-green-500/30 transition-all hover:brightness-110 hover:shadow-green-500/50"
                 >
                   <FaWhatsapp size={20} color="#FFFFFF" />
                   WhatsApp Us
@@ -347,7 +331,7 @@ export function ContactSection() {
                   href={BROCHURE_PDF_HREF}
                   download=" Brochure.pdf"
                   whileHover={{ scale: 1.02, x: 5 }}
-                  className="w-full p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white font-semibold hover:bg-white/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 p-4 text-[clamp(0.85rem,1.3vw,1rem)] font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
                 >
                   <Download className="w-5 h-5 shrink-0" />
                   Download Brochure
@@ -386,7 +370,7 @@ export function ContactSection() {
         />
 
         {/* Tooltip */}
-        <div className="absolute right-full mr-3 px-3 py-2 bg-black/80 text-white text-sm rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+        <div className="pointer-events-none absolute right-full mr-3 whitespace-nowrap rounded-lg bg-black/80 px-3 py-2 text-[clamp(0.75rem,1.2vw,0.95rem)] text-white opacity-0 transition-opacity group-hover:opacity-100">
           Chat with us on WhatsApp
         </div>
       </m.a>

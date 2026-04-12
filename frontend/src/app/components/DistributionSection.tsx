@@ -122,7 +122,7 @@ export function DistributionSection() {
     <section
       id="distribution"
       ref={ref}
-      className="relative py-16 px-4 sm:px-6 bg-gradient-to-br from-[#0A2540] via-slate-900 to-[#0A2540] overflow-hidden scroll-mt-24"
+      className="relative overflow-hidden bg-gradient-to-br from-[#0A2540] via-slate-900 to-[#0A2540] scroll-mt-24"
     >
       {/* Background grid */}
       <div className="absolute inset-0 opacity-10">
@@ -135,8 +135,8 @@ export function DistributionSection() {
         />
       </div>
 
-      <div className="container mx-auto max-w-7xl relative z-10 section-container">
-        <div className="grid lg:grid-cols-2 gap-12 items-center" style={{ maxWidth: "1100px", margin: "0 auto" }}>
+      <div className="section-container container relative z-10 mx-auto w-full max-w-[min(100%,1400px)]">
+        <div className="mx-auto grid w-full max-w-[min(100%,1100px)] items-center gap-[clamp(1rem,3vw,3rem)] [grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr))]">
           {/* Left content */}
           <m.div
             initial={{ opacity: 0, x: -50 }}
@@ -145,23 +145,23 @@ export function DistributionSection() {
             className="space-y-8"
           >
             <div className="space-y-4">
-              <h2 className="text-[clamp(1.8rem,6vw,3rem)] font-bold text-white leading-tight">
+              <h2 className="text-[clamp(1.5rem,3vw,2.5rem)] font-bold leading-tight text-white">
                 Join Our Growing{" "}
                 <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
                   Distribution Network
                 </span>
               </h2>
-              <p className="text-lg text-cyan-100/80 leading-relaxed">
+              <p className="text-[clamp(0.9rem,1.5vw,1.1rem)] leading-relaxed text-cyan-100/80">
                 Bring premium hydration to every corner of Madhya Pradesh.
                 Partner with us and grow your business with a trusted brand.
               </p>
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-6">
+            <div className="dist-stats-grid">
               {[
-                { icon: Users, value: "500+", label: "Distributors" },
-                { icon: MapPin, value: "50+", label: "Cities" },
+                { icon: Users, value: "50+", label: "Distributors" },
+                { icon: MapPin, value: "5+", label: "Cities" },
                 { icon: TrendingUp, value: "95%", label: "Growth Rate" },
               ].map((stat, i) => {
                 const Icon = stat.icon;
@@ -171,11 +171,11 @@ export function DistributionSection() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={isInView ? { opacity: 1, y: 0 } : {}}
                     transition={{ delay: 0.3 + i * 0.1, duration: 0.6 }}
-                    className="p-4 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 text-center"
+                    className="section-mobile-card rounded-xl border border-white/10 bg-white/5 p-[clamp(0.75rem,2vw,1rem)] text-center backdrop-blur-sm"
                   >
-                    <Icon className="w-6 h-6 text-cyan-400 mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-white">{stat.value}</div>
-                    <div className="text-xs text-cyan-100/60">{stat.label}</div>
+                    <Icon className="mx-auto mb-2 h-6 w-6 text-cyan-400" />
+                    <div className="text-[clamp(1.1rem,2.5vw,1.5rem)] font-bold text-white">{stat.value}</div>
+                    <div className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-cyan-100/60">{stat.label}</div>
                   </m.div>
                 );
               })}
@@ -215,7 +215,7 @@ export function DistributionSection() {
                   setStatus("");
                 }}
                 disabled={loading}
-                className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-full font-semibold shadow-lg shadow-cyan-500/50 hover:shadow-cyan-500/70 transition-all duration-300"
+                className="rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 px-[clamp(1rem,3vw,2rem)] py-[clamp(0.75rem,2vh,1rem)] text-[clamp(0.85rem,1.3vw,1rem)] font-semibold text-white shadow-lg shadow-cyan-500/50 transition-all duration-300 hover:shadow-cyan-500/70"
               >
                 {loading ? "Sending..." : "Become a Distributor"}
               </m.button>
@@ -224,12 +224,7 @@ export function DistributionSection() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 1, duration: 0.6 }}
-                style={{
-                  maxWidth: "560px",
-                  width: "100%",
-                  margin: "0 auto",
-                }}
-                className="relative p-5 sm:p-8 rounded-3xl bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl"
+                className="relative mx-auto w-full max-w-[min(100%,560px)] rounded-3xl border border-white/20 bg-white/10 p-[clamp(1rem,2vw,2rem)] shadow-2xl backdrop-blur-lg"
               >
                 <m.div
                   animate={{

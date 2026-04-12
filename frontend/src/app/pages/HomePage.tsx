@@ -15,7 +15,7 @@ export default function HomePage() {
   useSectionNavigation();
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white">
+    <div className="w-full max-md:min-h-0 md:min-h-[100svh] bg-slate-900 text-white">
       <Navbar />
       <HeroSection />
       <AboutSection />

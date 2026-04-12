@@ -38,29 +38,29 @@ export function WhyChooseUs() {
     <section 
       id="why-us"
       ref={ref}
-      className="relative py-16 px-4 sm:px-6 bg-gradient-to-b from-slate-900 to-[#0A2540] scroll-mt-24"
+      className="relative bg-gradient-to-b from-slate-900 to-[#0A2540] scroll-mt-24"
     >
-      <div className="container mx-auto max-w-7xl relative z-10">
+      <div className="container relative z-10 mx-auto w-full max-w-[min(100%,1400px)]">
         {/* Header */}
         <m.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
-          className="text-center mb-16"
+          className="mb-[clamp(2rem,5vh,4rem)] text-center"
         >
-          <h2 className="text-[clamp(1.8rem,6vw,3rem)] font-bold text-white mb-6 leading-tight">
+          <h2 className="mb-[clamp(1rem,3vh,1.5rem)] text-[clamp(1.5rem,3vw,2.5rem)] font-bold leading-tight text-white">
             Why Choose{" "}
             <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
               Us
             </span>
           </h2>
-          <p className="text-cyan-100/80 text-lg max-w-2xl mx-auto">
+          <p className="mx-auto max-w-2xl text-[clamp(0.9rem,1.5vw,1.1rem)] text-cyan-100/80">
             Experience the difference of truly premium water with technology-driven quality
           </p>
         </m.div>
 
-        {/* Reasons grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+        {/* Reasons grid — same column rules as product grid (5 / 3+2 / 1) */}
+        <div className="product-cards-grid">
           {reasons.map((reason, index) => {
             const Icon = reason.icon;
             return (
@@ -70,9 +70,9 @@ export function WhyChooseUs() {
                 animate={isInView ? { opacity: 1, scale: 1 } : {}}
                 transition={{ delay: index * 0.1, duration: 0.6 }}
                 whileHover={{ scale: 1.05, y: -5 }}
-                className="group"
+                className="group flex h-full min-h-0 w-full min-w-0 flex-col"
               >
-                <div className="relative p-6 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg border border-white/10 shadow-xl h-full">
+                <div className="section-mobile-card relative flex h-full min-h-0 w-full min-w-0 flex-col rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-[clamp(1rem,2vw,2rem)] shadow-xl backdrop-blur-lg">
                   {/* Soft glow on hover */}
                   <m.div
                     className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 to-blue-500/0 group-hover:from-cyan-500/10 group-hover:to-blue-500/10 rounded-2xl transition-all duration-500"
@@ -106,10 +106,10 @@ export function WhyChooseUs() {
 
                     {/* Text */}
                     <div className="space-y-2">
-                      <h3 className="font-semibold text-white">
+                      <h3 className="text-[clamp(1.1rem,2vw,1.5rem)] font-semibold text-white">
                         {reason.title}
                       </h3>
-                      <p className="text-sm text-cyan-100/70 leading-relaxed">
+                      <p className="text-[clamp(0.75rem,1.2vw,0.95rem)] leading-relaxed text-cyan-100/70">
                         {reason.description}
                       </p>
                     </div>

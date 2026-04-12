@@ -59,16 +59,16 @@ export function Navbar() {
         isScrolled ? "bg-[#0a2540]/75" : ""
       }`}
     >
-      <div className="container mx-auto max-w-7xl px-4 sm:px-6 section-container">
-        <div className="navbar-content h-20 flex items-center justify-between gap-4">
-          <Link to="/" prefetch="intent" className="flex items-center gap-2 text-white min-h-11">
+      <div className="container mx-auto w-full max-w-[min(100%,1400px)] px-[clamp(1rem,4vw,3rem)]">
+        <div className="navbar-content flex h-[clamp(50px,8vh,70px)] min-h-[clamp(50px,8vh,70px)] flex-wrap items-center justify-between gap-[clamp(1rem,3vw,3rem)]">
+          <Link to="/" prefetch="intent" className="flex min-h-11 flex-wrap items-center gap-2 text-white">
             <span className="text-2xl" aria-hidden="true">
               💧
             </span>
-            <span className="text-lg sm:text-xl font-bold tracking-wide">LIFEE WATER</span>
+            <span className="font-bold tracking-wide text-[clamp(1rem,2vw,1.4rem)]">LIFEE WATER</span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden flex-wrap items-center gap-[clamp(1rem,3vw,3rem)] md:flex">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeId === item.id;
@@ -78,7 +78,7 @@ export function Navbar() {
                   type="button"
                   onClick={() => handleSectionNav(item.id)}
                   aria-current={isActive ? "page" : undefined}
-                  className={`text-sm font-medium inline-flex items-center gap-2 bg-transparent border-0 cursor-pointer p-0 font-inherit transition-colors ${
+                  className={`inline-flex items-center gap-2 border-0 bg-transparent p-0 font-inherit text-[clamp(0.8rem,1.2vw,1rem)] font-medium transition-colors ${
                     isActive
                       ? "text-cyan-300 underline decoration-cyan-400/80 underline-offset-8"
                       : "text-cyan-100/90 hover:text-cyan-300"
@@ -114,7 +114,7 @@ export function Navbar() {
             transition={{ duration: 0.2 }}
             className="md:hidden border-t border-white/10 bg-[#071b2f]/95 backdrop-blur-xl"
           >
-            <div className="mobile-nav-container container mx-auto max-w-7xl px-4 sm:px-6 py-3 flex flex-col">
+            <div className="mobile-nav-container container mx-auto flex w-full max-w-[min(100%,1400px)] flex-col px-[clamp(1rem,4vw,3rem)] py-3">
               <div className="mobile-nav">
               {navItems.map((item) => {
                 const Icon = item.icon;
@@ -125,7 +125,7 @@ export function Navbar() {
                     type="button"
                     onClick={() => onNavItemClick(item.id)}
                     aria-current={isActive ? "page" : undefined}
-                    className={`min-h-11 w-full flex items-center gap-2 px-2 py-3 rounded-md transition-all bg-transparent border-0 cursor-pointer text-left font-inherit ${
+                    className={`min-h-11 w-full flex items-center gap-2 px-2 py-3 rounded-md border-0 bg-transparent text-left font-inherit text-[clamp(0.8rem,1.2vw,1rem)] transition-all ${
                       isActive
                         ? "text-cyan-300 bg-white/10"
                         : "text-cyan-100/90 hover:text-cyan-300 hover:bg-white/5"

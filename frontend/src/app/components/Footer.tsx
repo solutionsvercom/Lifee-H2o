@@ -4,7 +4,7 @@ import { Facebook, Instagram, Twitter, Linkedin, Youtube } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="relative bg-gradient-to-br from-[#0A2540] to-slate-950 text-white pt-14 md:pt-16 pb-8 px-4 sm:px-6">
+    <footer className="relative bg-gradient-to-br from-[#0A2540] to-slate-950 px-[clamp(1rem,5vw,5rem)] pb-[clamp(1.5rem,4vh,2rem)] pt-[clamp(2.5rem,6vh,4rem)] text-white">
       {/* Wave divider */}
       <div className="absolute top-0 left-0 right-0 h-px">
         <m.div
@@ -23,8 +23,8 @@ export function Footer() {
         />
       </div>
 
-      <div className="container mx-auto max-w-7xl section-container">
-        <div className="footer-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+      <div className="section-container container mx-auto w-full max-w-[min(100%,1400px)]">
+        <div className="footer-grid mb-[clamp(2rem,5vh,3rem)] grid grid-cols-1 gap-[clamp(1rem,3vw,3rem)] md:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div className="footer-brand space-y-4">
             <m.div
@@ -39,11 +39,11 @@ export function Footer() {
             >
               <div className="text-4xl">💧</div>
               <div className="text-left">
-                <h3 className="text-2xl font-bold">LIFEE Premium Water</h3>
-                <p className="text-cyan-400 text-sm">Purity Engineered.</p>
+                <h3 className="text-[clamp(1.1rem,2vw,1.5rem)] font-bold">LIFEE Premium Water</h3>
+                <p className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-cyan-400">Purity Engineered.</p>
               </div>
             </m.div>
-            <p className="text-cyan-100/70 text-sm">
+            <p className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-cyan-100/70">
               Advanced purification technology delivering unmatched freshness and safety across Madhya Pradesh.
             </p>
             
@@ -73,7 +73,7 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-white">Quick Links</h4>
+            <h4 className="mb-4 text-[clamp(1.1rem,2vw,1.5rem)] font-semibold text-white">Quick Links</h4>
             <ul className="space-y-2">
               {[
                 { label: "About Us", to: "/#about" },
@@ -86,7 +86,7 @@ export function Footer() {
                   <Link
                     to={link.to}
                     prefetch="intent"
-                    className="text-cyan-100/70 hover:text-cyan-400 transition-colors text-sm inline-block hover:translate-x-1 duration-200"
+                    className="inline-block text-[clamp(0.75rem,1.2vw,0.95rem)] text-cyan-100/70 transition-colors duration-200 hover:translate-x-1 hover:text-cyan-400"
                   >
                     {link.label}
                   </Link>
@@ -97,7 +97,7 @@ export function Footer() {
 
           {/* Services */}
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-white">Services</h4>
+            <h4 className="mb-4 text-[clamp(1.1rem,2vw,1.5rem)] font-semibold text-white">Services</h4>
             <ul className="space-y-2">
               {[
                 { label: "Home Delivery", to: "/#contact" },
@@ -111,7 +111,7 @@ export function Footer() {
                     <Link
                       to={service.to}
                       prefetch="intent"
-                      className="text-cyan-100/70 hover:text-cyan-400 transition-colors text-sm inline-block"
+                      className="inline-block text-[clamp(0.75rem,1.2vw,0.95rem)] text-cyan-100/70 transition-colors hover:text-cyan-400"
                     >
                       {service.label}
                     </Link>
@@ -123,22 +123,22 @@ export function Footer() {
 
           {/* Contact */}
           <div className="footer-contact">
-            <h4 className="text-lg font-semibold mb-4 text-white">Contact Info</h4>
-            <ul className="space-y-3 text-sm">
+            <h4 className="mb-4 text-[clamp(1.1rem,2vw,1.5rem)] font-semibold text-white">Contact Info</h4>
+            <ul className="space-y-3 text-[clamp(0.75rem,1.2vw,0.95rem)]">
               <li className="text-cyan-100/70">
                 <span className="text-white font-semibold">Address:</span>
                 <br />
-                Bhopal, Madhya Pradesh, India
+                Infront New Police Line Lahar Chungi Bhind, Madhya Pradesh 477001
               </li>
               <li className="text-cyan-100/70">
                 <span className="text-white font-semibold">Phone:</span>
                 <br />
-                +91 98765 43210
+                +91 92443 72603
               </li>
               <li className="text-cyan-100/70">
                 <span className="text-white font-semibold">Email:</span>
                 <br />
-                contact@premiumwater.com
+               bipinbatham7@gmail.com
               </li>
               <li className="text-cyan-100/70">
                 <span className="text-white font-semibold">Hours:</span>
@@ -150,24 +150,11 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div
-          style={{
-            borderTop: "1px solid rgba(255,255,255,0.1)",
-            paddingTop: "24px",
-            paddingBottom: "24px",
-            textAlign: "center",
-          }}
-        >
-          <p
-            style={{
-              color: "rgba(255,255,255,0.4)",
-              fontSize: "13px",
-              marginBottom: "12px",
-            }}
-          >
+        <div className="border-t border-white/10 py-[clamp(1rem,3vh,1.5rem)] text-center">
+          <p className="mb-[clamp(0.5rem,1.5vh,0.75rem)] text-[clamp(0.75rem,1.2vw,0.95rem)] text-white/40">
             © 2026 LIFEE Premium Water. All rights reserved. Designed with precision.
           </p>
-          <div
+          {/* <div
             className="footer-bottom-links"
             style={{
               display: "flex",
@@ -221,7 +208,7 @@ export function Footer() {
             >
               Refund Policy
             </a>
-          </div>
+          </div> */}
         </div>
       </div>
     </footer>

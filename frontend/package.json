@@ -6,6 +6,7 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite",
+    "compress-images": "node scripts/compress-public-images.mjs",
     "server": "node ../backend/server.js",
     "start": "concurrently \"npm run dev\" \"npm run server\""
   },
@@ -75,6 +76,7 @@
     "@types/three": "^0.183.1",
     "@vitejs/plugin-react": "4.7.0",
     "concurrently": "^9.2.1",
+    "sharp": "^0.34.5",
     "tailwindcss": "4.1.12",
     "vite": "6.3.5"
   },

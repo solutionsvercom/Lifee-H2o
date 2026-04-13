@@ -266,6 +266,44 @@ function HeroSectionInner() {
                     draggable={false}
                   />
                 </AnimatePresence>
+                <div
+                  style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    zIndex: 10,
+                    background: 'linear-gradient(transparent, rgba(0,8,25,0.97))',
+                    padding: '2.5rem 1rem 1rem',
+                    textAlign: 'center',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '4px',
+                  }}
+                >
+                  <p
+                    style={{
+                      color: 'white',
+                      fontWeight: 'bold',
+                      fontSize: 'clamp(1rem, 2vw, 1.3rem)',
+                      margin: 0,
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    {currentSlide.label}
+                  </p>
+                  <p
+                    style={{
+                      color: 'rgba(255,255,255,0.65)',
+                      fontSize: 'clamp(0.6rem, 0.9vw, 0.75rem)',
+                      margin: 0,
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    {currentSlide.desc}
+                  </p>
+                </div>
 
                 <button
                   type="button"
@@ -278,33 +316,12 @@ function HeroSectionInner() {
               </div>
             </div>
 
-            <AnimatePresence mode="wait" initial={false}>
-              <m.div
-                key={`content-${currentSlide.src}`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.5, ease: "easeInOut" }}
-                className="hero-slide-info mt-3 w-full text-center"
-                style={{
-                  position: "static",
-                  marginTop: "12px",
-                  zIndex: 20,
-                }}
-              >
-                <div className="hero-slide-heading flex flex-col items-center justify-center gap-2">
-                  <p className="hero-slide-label text-[1.2rem] text-cyan-300">{currentSlide.label}</p>
-                  <div className="hero-slide-size">
-                    <span className="inline-flex rounded-full border border-cyan-400/70 px-3 py-1 text-xs font-medium text-cyan-200 sm:text-sm">
-                      {currentSlide.size}
-                    </span>
-                  </div>
-                </div>
-                <p className="hero-slide-desc mx-auto mt-2 max-w-md text-[0.85rem] leading-snug text-white/80">
-                  {currentSlide.desc}
-                </p>
-              </m.div>
-            </AnimatePresence>
+            <div className="hero-slide-size mt-2 text-center">
+              <span className="inline-flex rounded-full border border-cyan-400/70 px-3 py-1 text-xs font-medium text-cyan-200 sm:text-sm">
+                {currentSlide.size}
+              </span>
+            </div>
+
           </div>
 
           <div

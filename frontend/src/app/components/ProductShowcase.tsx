@@ -196,9 +196,9 @@ export function ProductShowcase() {
           transition={{ delay: 0.3, duration: 0.6 }}
           className="mt-[clamp(2rem,5vh,3rem)] text-center"
         >
-          <div className="inline-flex flex-wrap items-center gap-2 rounded-full border border-cyan-400/30 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 px-[clamp(1rem,3vw,1.5rem)] py-[clamp(0.5rem,1.5vh,0.75rem)] backdrop-blur-lg">
-            <span className="font-semibold text-cyan-400">💧</span>
-            <span className="text-[clamp(0.85rem,1.3vw,1rem)] text-white">
+          <div className="inline-flex flex-nowrap items-center gap-2 rounded-full border border-cyan-400/30 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 px-[clamp(1rem,3vw,1.5rem)] py-[clamp(0.5rem,1.5vh,0.75rem)] backdrop-blur-lg">
+            <span className="shrink-0 text-xl leading-none font-semibold text-cyan-400">💧</span>
+            <span className="text-center text-[clamp(0.85rem,1.3vw,1rem)] text-white">
               Bulk orders available • Contact us for wholesale pricing
             </span>
           </div>

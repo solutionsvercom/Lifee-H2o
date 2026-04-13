@@ -431,7 +431,7 @@ section:not(#home) {
   }
 
   #products .product-card-media {
-    height: 220px !important;
+    height: 120px !important;
     min-height: 0 !important;
   }
 
@@ -687,6 +687,29 @@ section:not(#home) {
   #products .section-mobile-card .pt-2 span {
     font-size: clamp(0.7rem, 2.5vw, 0.85rem) !important;
     line-height: 1.35;
+  }
+
+  /* Product cards: mobile-only size + spacing */
+  #products .product-cards-grid .section-mobile-card {
+    padding: 0.5rem !important;
+  }
+
+  #products .product-cards-grid .section-mobile-card h3 {
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    margin: 2px 0 !important;
+  }
+
+  #products .product-cards-grid .section-mobile-card p {
+    font-size: 0.65rem !important;
+    margin: 2px 0 !important;
+  }
+
+  #products .product-cards-grid .section-mobile-card .pt-2 span {
+    font-size: 0.8rem !important;
+    font-weight: 700 !important;
+    margin: 4px 0 !important;
+    display: inline-block;
   }
 
   #why-us .section-mobile-card .w-16.h-16 {

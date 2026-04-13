@@ -50,11 +50,11 @@ export function Footer() {
             {/* Social links */}
             <div className="social-icons flex gap-3 pt-4">
               {[
-                { Icon: Facebook, href: "https://facebook.com" },
-                { Icon: Instagram, href: "https://instagram.com" },
-                { Icon: Twitter, href: "https://x.com" },
-                { Icon: Linkedin, href: "https://linkedin.com" },
-                { Icon: Youtube, href: "https://youtube.com" },
+                // { Icon: Facebook, href: "https://facebook.com" },
+                { Icon: Instagram, href: "https://www.instagram.com/lifee8516?igsh=MTJ6Zmljbndxd2drdQ==" },
+                // { Icon: Twitter, href: "https://x.com" },
+                // { Icon: Linkedin, href: "https://linkedin.com" },
+                // { Icon: Youtube, href: "https://youtube.com" },
               ].map(({ Icon, href }, i) => (
                 <m.a
                   key={i}
@@ -63,9 +63,11 @@ export function Footer() {
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.2, rotate: 5 }}
                   whileTap={{ scale: 0.9 }}
-                  className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center hover:bg-white/20 hover:border-cyan-400 transition-all"
+                  className="h-10 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center gap-2 px-4 hover:bg-white/20 hover:border-cyan-400 transition-all"
                 >
+                  <span className="text-sm text-cyan-100">Follow us on Instagram</span>
                   <Icon className="w-5 h-5 text-cyan-400" />
+                  
                 </m.a>
               ))}
             </div>
@@ -154,7 +156,7 @@ export function Footer() {
           <p className="mb-[clamp(0.5rem,1.5vh,0.75rem)] text-[clamp(0.75rem,1.2vw,0.95rem)] text-white/40">
             © 2026 LIFEE Premium Water. All rights reserved. Designed with precision.
           </p>
-          {/* <div
+          <div
             className="footer-bottom-links"
             style={{
               display: "flex",
@@ -165,7 +167,7 @@ export function Footer() {
             }}
           >
             <a
-              href="/privacy"
+              // href="/privacy"
               style={{
                 color: "rgba(255,255,255,0.5)",
                 fontSize: "13px",
@@ -182,7 +184,7 @@ export function Footer() {
               |
             </span>
             <a
-              href="/terms"
+              // href="/terms"
               style={{
                 color: "rgba(255,255,255,0.5)",
                 fontSize: "13px",
@@ -199,7 +201,7 @@ export function Footer() {
               |
             </span>
             <a
-              href="/refund"
+              // href="/refund"
               style={{
                 color: "rgba(255,255,255,0.5)",
                 fontSize: "13px",
@@ -208,7 +210,7 @@ export function Footer() {
             >
               Refund Policy
             </a>
-          </div> */}
+          </div>
         </div>
       </div>
     </footer>

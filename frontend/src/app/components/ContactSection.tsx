@@ -7,7 +7,7 @@ const STATUS_HIDE_MS = 10000;
 const REQUEST_TIMEOUT_MS = 12000;
 
 /** Served from `frontend/public/file/Brochure.pdf` → URL path `/file/Brochure.pdf`. */
-const BROCHURE_PDF_HREF = `${import.meta.env.BASE_URL}file/Brochure.pdf`;
+const BROCHURE_PDF_HREF = `${import.meta.env.BASE_URL}file/Lifee_Water_Card.pdf`;
 
 export function ContactSection() {
   const ref = useRef(null);
@@ -329,7 +329,7 @@ export function ContactSection() {
                 
                 <m.a
                   href={BROCHURE_PDF_HREF}
-                  download=" Brochure.pdf"
+                  download="Lifee_Water_Card.pdf"
                   whileHover={{ scale: 1.02, x: 5 }}
                   className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 p-4 text-[clamp(0.85rem,1.3vw,1rem)] font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
                 >

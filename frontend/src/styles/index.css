@@ -1214,3 +1214,71 @@ section#home.hero-section .hero-slide-info {
   margin-top: 12px !important;
   text-align: center !important;
 }
+
+/* Edge Tools / a11y: avoid inline style — patterns & accents */
+.quality-cert-bg-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230EA5E9' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.dist-section-grid-bg {
+  background-image:
+    linear-gradient(rgba(14, 165, 233, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(14, 165, 233, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+.bottle-customizer-radial-dots {
+  background-image: radial-gradient(circle at 2px 2px, rgba(14, 165, 233, 0.3) 1px, transparent 0);
+  background-size: 60px 60px;
+}
+
+.bottle-occasion-icon-wrap[data-accent="wedding"] {
+  background-color: rgba(212, 175, 55, 0.12);
+  color: #d4af37;
+}
+
+.bottle-occasion-icon-wrap[data-accent="corporate"] {
+  background-color: rgba(14, 165, 233, 0.12);
+  color: #0ea5e9;
+}
+
+.bottle-occasion-icon-wrap[data-accent="birthday"] {
+  background-color: rgba(236, 72, 153, 0.12);
+  color: #ec4899;
+}
+
+.bottle-occasion-btn[data-accent="wedding"] {
+  background: linear-gradient(135deg, #d4af37, #ffffff);
+  color: #000;
+}
+
+.bottle-occasion-btn[data-accent="corporate"] {
+  background: linear-gradient(135deg, #0ea5e9, #ffffff);
+  color: #fff;
+}
+
+.bottle-occasion-btn[data-accent="birthday"] {
+  background: linear-gradient(135deg, #ec4899, #fde047);
+  color: #000;
+}
+
+.bottle-occasion-card-glow[data-accent="wedding"] {
+  background: radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.2), transparent 70%);
+}
+
+.bottle-occasion-card-glow[data-accent="corporate"] {
+  background: radial-gradient(circle at 50% 50%, rgba(14, 165, 233, 0.2), transparent 70%);
+}
+
+.bottle-occasion-card-glow[data-accent="birthday"] {
+  background: radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.2), transparent 70%);
+}
+
+.footer-wave-animated {
+  background-size: 200% 100%;
+}
+
+.hero-wave-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 50 Q 25 30, 50 50 T 100 50' stroke='%230EA5E9' stroke-width='0.5' fill='none' opacity='0.3'/%3E%3C/svg%3E");
+  background-size: 100px 100px;
+}

@@ -127,13 +127,7 @@ export function DistributionSection() {
     >
       {/* Background grid */}
       <div className="absolute inset-0 opacity-10">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `linear-gradient(rgba(14, 165, 233, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(14, 165, 233, 0.1) 1px, transparent 1px)`,
-            backgroundSize: "50px 50px",
-          }}
-        />
+        <div className="dist-section-grid-bg absolute inset-0" />
       </div>
 
       <div className="section-container container relative z-10 mx-auto w-full max-w-[min(100%,1400px)]">
@@ -347,8 +341,7 @@ export function DistributionSection() {
                 {/* Simplified MP state outline */}
                 <svg
                   viewBox="0 0 400 400"
-                  className="w-full h-full"
-                  style={{ filter: "drop-shadow(0 0 20px rgba(14, 165, 233, 0.3))" }}
+                  className="h-full w-full [filter:drop-shadow(0_0_20px_rgba(14,165,233,0.3))]"
                 >
                   {/* MP state shape (simplified) */}
                   <m.path

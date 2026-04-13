@@ -319,13 +319,7 @@ export function BottleCustomizer() {
       className="relative overflow-hidden bg-gradient-to-br from-slate-900 to-[#0A2540] scroll-mt-24"
     >
       <div className="absolute inset-0 opacity-10">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `radial-gradient(circle at 2px 2px, rgba(14, 165, 233, 0.3) 1px, transparent 0)`,
-            backgroundSize: "60px 60px",
-          }}
-        />
+        <div className="bottle-customizer-radial-dots absolute inset-0" />
       </div>
 
       <div className="container relative z-10 mx-auto w-full max-w-[min(100%,1400px)]">
@@ -375,10 +369,10 @@ export function BottleCustomizer() {
                     <div className="bottle-occasion-body">
                       <div className="flex shrink-0 items-center gap-3">
                         <div
-                          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl"
-                          style={{ backgroundColor: `${occasion.colors.primary}20` }}
+                          data-accent={occasion.id}
+                          className="bottle-occasion-icon-wrap flex h-12 w-12 shrink-0 items-center justify-center rounded-xl"
                         >
-                          <Icon className="h-6 w-6" style={{ color: occasion.colors.primary }} />
+                          <Icon className="h-6 w-6" />
                         </div>
                         <div className="min-w-0">
                           <h3 className="text-[clamp(1.1rem,2vw,1.5rem)] font-bold text-white">{occasion.title}</h3>
@@ -392,21 +386,18 @@ export function BottleCustomizer() {
 
                       <m.button
                         type="button"
+                        data-accent={occasion.id}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         className="bottle-occasion-btn text-[clamp(0.85rem,1.3vw,1rem)] font-semibold transition-all duration-300"
-                        style={{
-                          background: `linear-gradient(135deg, ${occasion.colors.primary}, ${occasion.colors.secondary})`,
-                          color: occasion.id === "wedding" || occasion.id === "corporate" ? (occasion.id === "wedding" ? "#000" : "#fff") : "#000",
-                        }}
                       >
                         Customize Now
                       </m.button>
                     </div>
 
                     <m.div
-                      className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-                      style={{ background: `radial-gradient(circle at 50% 50%, ${occasion.colors.primary}20, transparent 70%)` }}
+                      data-accent={occasion.id}
+                      className="bottle-occasion-card-glow pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
                     />
                   </div>
                 </m.div>
@@ -526,8 +517,11 @@ export function BottleCustomizer() {
                       </div>
 
                       <div className="space-y-3">
-                        <label className="text-white font-semibold">Event Date</label>
+                        <label htmlFor="bc-wedding-event-date" className="text-white font-semibold">
+                          Event Date
+                        </label>
                         <input
+                          id="bc-wedding-event-date"
                           type="date"
                           value={formData.eventDate}
                           onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
@@ -573,8 +567,11 @@ export function BottleCustomizer() {
                       </div>
 
                       <div className="space-y-3">
-                        <label className="text-white font-semibold">Event Date</label>
+                        <label htmlFor="bc-corp-event-date" className="text-white font-semibold">
+                          Event Date
+                        </label>
                         <input
+                          id="bc-corp-event-date"
                           type="date"
                           value={formData.eventDate}
                           onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
@@ -610,8 +607,11 @@ export function BottleCustomizer() {
                       </div>
 
                       <div className="space-y-3">
-                        <label className="text-white font-semibold">Event Date</label>
+                        <label htmlFor="bc-birthday-event-date" className="text-white font-semibold">
+                          Event Date
+                        </label>
                         <input
+                          id="bc-birthday-event-date"
                           type="date"
                           value={formData.eventDate}
                           onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
@@ -658,13 +658,18 @@ export function BottleCustomizer() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <label className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-white">Quantity</label>
+                        <label htmlFor="bc-order-quantity" className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-white">
+                          Quantity
+                        </label>
                         <input
+                          id="bc-order-quantity"
                           type="number"
                           value={formData.quantity}
                           onChange={(e) => setFormData({ ...formData, quantity: parseInt(e.target.value || "0", 10) })}
                           min="25"
-                          className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-cyan-400 transition-all"
+                          placeholder="Minimum 25"
+                          aria-label="Order quantity"
+                          className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
                         />
                       </div>
                       <div className="space-y-2">

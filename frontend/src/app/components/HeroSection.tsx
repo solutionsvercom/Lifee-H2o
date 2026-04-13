@@ -75,11 +75,6 @@ const slides = [
 
 const SLIDE_COUNT = 8;
 
-const waveBgStyle = {
-  backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 50 Q 25 30, 50 50 T 100 50' stroke='%230EA5E9' stroke-width='0.5' fill='none' opacity='0.3'/%3E%3C/svg%3E")`,
-  backgroundSize: "100px 100px",
-} as const;
-
 function HeroSectionInner() {
   const containerRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -184,8 +179,7 @@ function HeroSectionInner() {
                 ? undefined
                 : { duration: 28, repeat: Infinity, repeatType: "reverse" }
             }
-            className="absolute inset-0"
-            style={waveBgStyle}
+            className="hero-wave-pattern absolute inset-0"
           />
         </div>
       </m.div>
@@ -216,10 +210,7 @@ function HeroSectionInner() {
       <m.div className="hero-main relative z-10 mx-auto flex w-full max-w-7xl min-w-0 flex-col items-center justify-center gap-8 px-4 pb-12 pt-20 md:px-6 lg:flex-row lg:items-center lg:justify-between lg:gap-8 lg:pb-16 lg:pt-10">
         {/* Premium Copy */}
         <m.div initial={{ opacity: 1, y: 0 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="hero-copy order-1 flex w-full flex-col justify-center space-y-4 px-6 pt-8 text-center md:px-0 md:pt-0 lg:w-1/2">
-          <m.h1
-            className="hero-title text-[clamp(2rem,5vw,4rem)] font-bold leading-tight tracking-tight text-white max-md:text-center"
-            style={{ textShadow: "0 0 40px rgba(14, 165, 233, 0.5)" }}
-          >
+          <m.h1 className="hero-title max-md:text-center text-[clamp(2rem,5vw,4rem)] font-bold leading-tight tracking-tight text-white [text-shadow:0_0_40px_rgba(14,165,233,0.5)]">
             <span className="hero-line-primary text-[clamp(2rem,5vw,4rem)]">Purity Engineered.</span>
             <span className="hero-title-highlight block bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-[clamp(2rem,5vw,4rem)] text-transparent">
               Hydration Perfected.
@@ -230,43 +221,12 @@ function HeroSectionInner() {
             Crafted with advanced purification technology, delivering unmatched
             freshness and safety in every drop across Madhya Pradesh.
           </p>
-          <div
-            style={{
-              marginTop: '1.5rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              justifyContent: 'center',
-            }}
-          >
-            <div
-              style={{
-                height: '1px',
-                width: '40px',
-                background: 'linear-gradient(to right, transparent, #22d3ee)',
-              }}
-            />
-            <p
-              style={{
-                margin: 0,
-                fontSize: 'clamp(0.85rem, 1.5vw, 1.1rem)',
-                fontWeight: '600',
-                color: '#22d3ee',
-                fontFamily: 'serif',
-                letterSpacing: '0.03em',
-                textAlign: 'center',
-                whiteSpace: 'nowrap',
-              }}
-            >
+          <div className="mt-6 flex items-center justify-center gap-2.5">
+            <div className="h-px w-10 bg-gradient-to-r from-transparent to-cyan-400" />
+            <p className="m-0 whitespace-nowrap text-center font-serif text-[clamp(0.85rem,1.5vw,1.1rem)] font-semibold tracking-wide text-cyan-400">
               भरोसा शुद्धता का, एहसास ताज़गी का
             </p>
-            <div
-              style={{
-                height: '1px',
-                width: '40px',
-                background: 'linear-gradient(to left, transparent, #22d3ee)',
-              }}
-            />
+            <div className="h-px w-10 bg-gradient-to-l from-transparent to-cyan-400" />
           </div>
         </m.div>
 
@@ -275,29 +235,7 @@ function HeroSectionInner() {
           <div className="hero-slideshow-visual relative flex w-full max-w-full flex-col items-center">
             <div className="relative mx-auto flex w-full max-w-full items-center justify-center">
               <div
-                className="hero-product-card relative"
-                style={{
-                  border: "1.5px solid rgba(0,200,255,0.35)",
-                  borderRadius: "20px",
-                  boxShadow: `
-                    0 0 0 1px rgba(0,200,255,0.1),
-                    0 0 30px rgba(0,180,255,0.25),
-                    0 0 60px rgba(0,180,255,0.1)
-                  `,
-                  overflow: "hidden",
-                  background: "rgba(0,15,35,0.5)",
-                  position: "relative",
-                  ...(isBelowLg
-                    ? {
-                        transform: "translateZ(0)",
-                        WebkitTransform: "translateZ(0)",
-                        isolation: "isolate",
-                        overflow: "hidden",
-                        borderRadius: "20px",
-                        position: "relative",
-                      }
-                    : {}),
-                }}
+                className={`hero-product-card relative ${isBelowLg ? "max-lg:isolate max-lg:[transform:translateZ(0)]" : ""}`}
               >
                 <button
                   type="button"
@@ -309,99 +247,29 @@ function HeroSectionInner() {
                 </button>
 
                 {isBelowLg ? (
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      overflow: "hidden",
-                      borderRadius: "20px",
-                      transform: "translateZ(0)",
-                      WebkitTransform: "translateZ(0)",
-                      isolation: "isolate",
-                    }}
-                  >
+                  <div className="absolute inset-0 isolate overflow-hidden rounded-[20px] [transform:translateZ(0)]">
                     {slides.map((slide, i) => {
                       const isActive = i === slideIndex;
                       return (
                         <div
                           key={slide.src}
-                          aria-hidden={!isActive}
-                          style={{
-                            position: "absolute",
-                            inset: 0,
-                            opacity: isActive ? 1 : 0,
-                            transition: "opacity 400ms ease-in-out",
-                            pointerEvents: isActive ? "auto" : "none",
-                            zIndex: isActive ? 1 : 0,
-                            willChange: "opacity",
-                          }}
+                          aria-hidden={isActive ? undefined : true}
+                          className={`absolute inset-0 transition-opacity duration-[400ms] ease-in-out will-change-[opacity] ${isActive ? "z-[1] opacity-100" : "z-0 opacity-0"} ${isActive ? "pointer-events-auto" : "pointer-events-none"}`}
                         >
                           <img
                             src={slide.src}
                             alt={slide.label}
                             loading={i === 0 ? "eager" : "lazy"}
                             decoding="async"
-                            className="hero-bottle-img"
-                            style={{
-                              position: "absolute",
-                              inset: 0,
-                              width: "100%",
-                              height: "100%",
-                              objectFit: "contain",
-                              objectPosition: "center",
-                              willChange: "auto",
-                              backfaceVisibility: "hidden",
-                              WebkitBackfaceVisibility: "hidden",
-                              transform: "translateZ(0)",
-                              WebkitTransform: "translateZ(0)",
-                            }}
+                            className="hero-bottle-img absolute inset-0 h-full w-full object-contain object-center [backface-visibility:hidden] [transform:translateZ(0)] [will-change:auto]"
                             draggable={false}
                           />
-                          <div
-                            style={{
-                              position: "absolute",
-                              bottom: 0,
-                              left: 0,
-                              right: 0,
-                              zIndex: 2,
-                              background:
-                                "linear-gradient(transparent, rgba(0,8,25,0.97))",
-                              padding: "2.5rem 1rem 1rem",
-                              textAlign: "center",
-                            }}
-                          >
-                            <p
-                              style={{
-                                color: "white",
-                                fontWeight: "bold",
-                                fontSize: "clamp(0.9rem, 2vw, 1.3rem)",
-                                margin: 0,
-                              }}
-                            >
-                              {slide.label}
-                            </p>
-                            <span
-                              style={{
-                                color: "#22d3ee",
-                                fontSize: "clamp(0.65rem, 1vw, 0.8rem)",
-                                border: "1px solid rgba(34,211,238,0.5)",
-                                borderRadius: "20px",
-                                padding: "2px 10px",
-                                display: "inline-block",
-                                marginTop: "4px",
-                              }}
-                            >
+                          <div className="absolute bottom-0 left-0 right-0 z-[2] bg-gradient-to-b from-transparent to-[rgba(0,8,25,0.97)] px-4 pb-4 pt-10 text-center">
+                            <p className="m-0 text-[clamp(0.9rem,2vw,1.3rem)] font-bold text-white">{slide.label}</p>
+                            <span className="mt-1 inline-block rounded-[20px] border border-cyan-400/50 px-2.5 py-0.5 text-[clamp(0.65rem,1vw,0.8rem)] text-cyan-400">
                               {slide.size}
                             </span>
-                            <p
-                              style={{
-                                color: "rgba(255,255,255,0.65)",
-                                fontSize:
-                                  "clamp(0.6rem, 0.9vw, 0.75rem)",
-                                margin: "4px 0 0",
-                              }}
-                            >
-                              {slide.desc}
-                            </p>
+                            <p className="mt-1 text-[clamp(0.6rem,0.9vw,0.75rem)] text-white/65">{slide.desc}</p>
                           </div>
                         </div>
                       );
@@ -421,58 +289,13 @@ function HeroSectionInner() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.5, ease: "easeInOut" }}
-                        className="hero-bottle-img absolute inset-0 h-full w-full object-contain object-center"
-                        style={{
-                          position: "absolute",
-                          inset: 0,
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "contain",
-                          objectPosition: "center",
-                          display: "block",
-                          background: "transparent",
-                        }}
+                        className="hero-bottle-img absolute inset-0 block h-full w-full bg-transparent object-contain object-center"
                         draggable={false}
                       />
                     </AnimatePresence>
-                    <div
-                      style={{
-                        position: "absolute",
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        zIndex: 10,
-                        background:
-                          "linear-gradient(transparent, rgba(0,8,25,0.97))",
-                        padding: "2.5rem 1rem 1rem",
-                        textAlign: "center",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        gap: "4px",
-                      }}
-                    >
-                      <p
-                        style={{
-                          color: "white",
-                          fontWeight: "bold",
-                          fontSize: "clamp(1rem, 2vw, 1.3rem)",
-                          margin: 0,
-                          lineHeight: 1.2,
-                        }}
-                      >
-                        {currentSlide.label}
-                      </p>
-                      <p
-                        style={{
-                          color: "rgba(255,255,255,0.65)",
-                          fontSize: "clamp(0.6rem, 0.9vw, 0.75rem)",
-                          margin: 0,
-                          lineHeight: 1.3,
-                        }}
-                      >
-                        {currentSlide.desc}
-                      </p>
+                    <div className="absolute bottom-0 left-0 right-0 z-10 flex flex-col items-center gap-1 bg-gradient-to-b from-transparent to-[rgba(0,8,25,0.97)] px-4 pb-4 pt-10 text-center">
+                      <p className="m-0 text-[clamp(1rem,2vw,1.3rem)] font-bold leading-snug text-white">{currentSlide.label}</p>
+                      <p className="m-0 text-[clamp(0.6rem,0.9vw,0.75rem)] leading-snug text-white/65">{currentSlide.desc}</p>
                     </div>
                   </>
                 )}
@@ -497,55 +320,22 @@ function HeroSectionInner() {
           </div>
 
           <div
-            className="hero-slide-dots mt-3 flex flex-wrap items-center justify-center gap-2"
+            className="hero-slide-dots relative z-10 mt-2 flex flex-wrap items-center justify-center gap-1.5 opacity-100"
             role="tablist"
             aria-label="Slide indicators"
-            style={{
-              display: "flex",
-              visibility: "visible",
-              opacity: 1,
-              flexWrap: "wrap",
-              justifyContent: "center",
-              gap: "6px",
-              marginTop: "8px",
-              zIndex: 10,
-              position: "relative",
-            }}
           >
             {slides.map((_, i) => (
               <button
                 key={i}
                 type="button"
                 role="tab"
-                aria-selected={i === slideIndex}
+                aria-selected={i === slideIndex ? "true" : "false"}
                 aria-label={`Go to slide ${i + 1}`}
                 onClick={() => goToSlide(i)}
                 className={
                   i === slideIndex
-                    ? "transition-all"
-                    : "transition-all hover:border-cyan-400/80"
-                }
-                style={
-                  i === slideIndex
-                    ? {
-                        width: "10px",
-                        height: "10px",
-                        borderRadius: "50%",
-                        background: "#22d3ee",
-                        opacity: 1,
-                        display: "block",
-                        boxShadow: "0 0 8px rgba(34,211,238,0.6)",
-                        transform: "scale(1.2)",
-                      }
-                    : {
-                        width: "8px",
-                        height: "8px",
-                        borderRadius: "50%",
-                        border: "2px solid rgba(34,211,238,0.5)",
-                        background: "transparent",
-                        opacity: 1,
-                        display: "block",
-                      }
+                    ? "block h-2.5 w-2.5 scale-125 rounded-full bg-cyan-400 opacity-100 shadow-[0_0_8px_rgba(34,211,238,0.6)] transition-all"
+                    : "block h-2 w-2 rounded-full border-2 border-cyan-400/50 bg-transparent opacity-100 transition-all hover:border-cyan-400/80"
                 }
               />
             ))}

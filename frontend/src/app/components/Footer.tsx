@@ -16,10 +16,7 @@ export function Footer() {
             repeat: Infinity,
             ease: "linear",
           }}
-          className="w-full h-full bg-gradient-to-r from-transparent via-cyan-400 to-transparent"
-          style={{
-            backgroundSize: '200% 100%',
-          }}
+          className="footer-wave-animated h-full w-full bg-gradient-to-r from-transparent via-cyan-400 to-transparent"
         />
       </div>
 
@@ -41,16 +38,7 @@ export function Footer() {
               <div className="text-center">
                 <h3 className="text-[clamp(1.1rem,2vw,1.5rem)] font-bold">Lifee Packaged Drinking Water</h3>
                 <p className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-cyan-400">Purity Engineered.</p>
-                <p
-                  style={{
-                    margin: '4px 0 0',
-                    fontSize: '0.78rem',
-                    color: 'rgba(34,211,238,0.7)',
-                    fontFamily: 'serif',
-                    fontStyle: 'italic',
-                    letterSpacing: '0.02em',
-                  }}
-                >
+                <p className="mt-1 font-serif text-[0.78rem] italic tracking-wide text-cyan-300/70">
                   भरोसा शुद्धता का, एहसास ताज़गी का
                 </p>
               </div>
@@ -84,56 +72,15 @@ export function Footer() {
               ))}
             </div>
 
-            <div
-              className="mx-auto md:mx-0"
-              style={{
-                marginTop: '1.2rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                background: 'linear-gradient(135deg, rgba(0,200,255,0.08), rgba(0,100,200,0.12))',
-                border: '1px solid rgba(0,200,255,0.2)',
-                borderRadius: '12px',
-                padding: '10px 14px',
-                maxWidth: 'fit-content',
-              }}
-            >
-              <div
-                style={{
-                  width: '38px',
-                  height: '38px',
-                  borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #0ea5e9, #22d3ee)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '1rem',
-                  flexShrink: 0,
-                }}
-              >
+            <div className="mx-auto mt-[1.2rem] flex max-w-fit items-center gap-2.5 rounded-xl border border-cyan-400/20 bg-gradient-to-br from-cyan-400/10 to-blue-900/20 px-3.5 py-2.5 md:mx-0">
+              <div className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-sky-500 to-cyan-400 text-base">
                 👤
               </div>
               <div>
-                <p
-                  style={{
-                    margin: 0,
-                    fontSize: '0.65rem',
-                    color: 'rgba(255,255,255,0.5)',
-                    letterSpacing: '0.05em',
-                    textTransform: 'uppercase',
-                  }}
-                >
+                <p className="m-0 text-[0.65rem] uppercase tracking-wider text-white/50">
                   Founder & Owner
                 </p>
-                <p
-                  style={{
-                    margin: 0,
-                    fontSize: '0.95rem',
-                    fontWeight: '700',
-                    color: 'white',
-                    letterSpacing: '0.02em',
-                  }}
-                >
+                <p className="m-0 text-[0.95rem] font-bold tracking-wide text-white">
                   Bipin Batham
                 </p>
               </div>
@@ -218,60 +165,12 @@ export function Footer() {
           <p className="mb-[clamp(0.5rem,1.5vh,0.75rem)] text-[clamp(0.75rem,1.2vw,0.95rem)] text-white/40">
             © 2026 LIFEE Packaged Drinking Water. All rights reserved.
           </p>
-          <div
-            className="footer-bottom-links"
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: "24px",
-              flexWrap: "wrap",
-            }}
-          >
-            <a
-              // href="/privacy"
-              style={{
-                color: "rgba(255,255,255,0.5)",
-                fontSize: "13px",
-                textDecoration: "none",
-              }}
-            >
-              Privacy Policy
-            </a>
-            <span
-              style={{
-                color: "rgba(255,255,255,0.2)",
-              }}
-            >
-              |
-            </span>
-            <a
-              // href="/terms"
-              style={{
-                color: "rgba(255,255,255,0.5)",
-                fontSize: "13px",
-                textDecoration: "none",
-              }}
-            >
-              Terms of Service
-            </a>
-            <span
-              style={{
-                color: "rgba(255,255,255,0.2)",
-              }}
-            >
-              |
-            </span>
-            <a
-              // href="/refund"
-              style={{
-                color: "rgba(255,255,255,0.5)",
-                fontSize: "13px",
-                textDecoration: "none",
-              }}
-            >
-              Refund Policy
-            </a>
+          <div className="footer-bottom-links flex flex-wrap items-center justify-center gap-6">
+            <span className="text-[13px] text-white/50">Privacy Policy</span>
+            <span className="text-white/20">|</span>
+            <span className="text-[13px] text-white/50">Terms of Service</span>
+            <span className="text-white/20">|</span>
+            <span className="text-[13px] text-white/50">Refund Policy</span>
           </div>
         </div>
       </div>

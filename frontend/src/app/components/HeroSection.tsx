@@ -210,6 +210,44 @@ function HeroSectionInner() {
             Crafted with advanced purification technology, delivering unmatched
             freshness and safety in every drop across Madhya Pradesh.
           </p>
+          <div
+            style={{
+              marginTop: '1.5rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              justifyContent: 'center',
+            }}
+          >
+            <div
+              style={{
+                height: '1px',
+                width: '40px',
+                background: 'linear-gradient(to right, transparent, #22d3ee)',
+              }}
+            />
+            <p
+              style={{
+                margin: 0,
+                fontSize: 'clamp(0.85rem, 1.5vw, 1.1rem)',
+                fontWeight: '600',
+                color: '#22d3ee',
+                fontFamily: 'serif',
+                letterSpacing: '0.03em',
+                textAlign: 'center',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              भरोसा शुद्धता का, एहसास ताज़गी का
+            </p>
+            <div
+              style={{
+                height: '1px',
+                width: '40px',
+                background: 'linear-gradient(to left, transparent, #22d3ee)',
+              }}
+            />
+          </div>
         </m.div>
 
         {/* Bottle slideshow */}

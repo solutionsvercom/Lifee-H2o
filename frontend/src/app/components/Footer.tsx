@@ -39,8 +39,20 @@ export function Footer() {
             >
               <div className="text-4xl">💧</div>
               <div className="text-left">
-                <h3 className="text-[clamp(1.1rem,2vw,1.5rem)] font-bold">LIFEE Premium Water</h3>
+                <h3 className="text-[clamp(1.1rem,2vw,1.5rem)] font-bold">Lifee Packaged Drinking Water</h3>
                 <p className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-cyan-400">Purity Engineered.</p>
+                <p
+                  style={{
+                    margin: '4px 0 0',
+                    fontSize: '0.78rem',
+                    color: 'rgba(34,211,238,0.7)',
+                    fontFamily: 'serif',
+                    fontStyle: 'italic',
+                    letterSpacing: '0.02em',
+                  }}
+                >
+                  भरोसा शुद्धता का, एहसास ताज़गी का
+                </p>
               </div>
             </m.div>
             <p className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-cyan-100/70">
@@ -209,7 +221,7 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="border-t border-white/10 py-[clamp(1rem,3vh,1.5rem)] text-center">
           <p className="mb-[clamp(0.5rem,1.5vh,0.75rem)] text-[clamp(0.75rem,1.2vw,0.95rem)] text-white/40">
-            © 2026 LIFEE Premium Water. All rights reserved.
+            © 2026 LIFEE Packaged Drinking Water. All rights reserved.
           </p>
           <div
             className="footer-bottom-links"

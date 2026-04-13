@@ -71,6 +71,61 @@ export function Footer() {
                 </m.a>
               ))}
             </div>
+
+            <div
+              className="mx-auto md:mx-0"
+              style={{
+                marginTop: '1.2rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                background: 'linear-gradient(135deg, rgba(0,200,255,0.08), rgba(0,100,200,0.12))',
+                border: '1px solid rgba(0,200,255,0.2)',
+                borderRadius: '12px',
+                padding: '10px 14px',
+                maxWidth: 'fit-content',
+              }}
+            >
+              <div
+                style={{
+                  width: '38px',
+                  height: '38px',
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #0ea5e9, #22d3ee)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1rem',
+                  flexShrink: 0,
+                }}
+              >
+                👤
+              </div>
+              <div>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: '0.65rem',
+                    color: 'rgba(255,255,255,0.5)',
+                    letterSpacing: '0.05em',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  Founder & Owner
+                </p>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: '0.95rem',
+                    fontWeight: '700',
+                    color: 'white',
+                    letterSpacing: '0.02em',
+                  }}
+                >
+                  Bipin Batham
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Quick Links */}
@@ -154,7 +209,7 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="border-t border-white/10 py-[clamp(1rem,3vh,1.5rem)] text-center">
           <p className="mb-[clamp(0.5rem,1.5vh,0.75rem)] text-[clamp(0.75rem,1.2vw,0.95rem)] text-white/40">
-            © 2026 LIFEE Premium Water. All rights reserved. Designed with precision.
+            © 2026 LIFEE Premium Water. All rights reserved.
           </p>
           <div
             className="footer-bottom-links"

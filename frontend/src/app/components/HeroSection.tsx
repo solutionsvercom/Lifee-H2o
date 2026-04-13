@@ -1,6 +1,26 @@
 import { m, AnimatePresence, useScroll, useTransform } from "motion/react";
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { useHeroParticleCount, usePrefersReducedMotion } from "../utils/devicePerformance";
+
+function useBelowLgViewport() {
+  return useSyncExternalStore(
+    (onStoreChange) => {
+      const mq = window.matchMedia("(max-width: 1023px)");
+      mq.addEventListener("change", onStoreChange);
+      return () => mq.removeEventListener("change", onStoreChange);
+    },
+    () => window.matchMedia("(max-width: 1023px)").matches,
+    () => false,
+  );
+}
 
 const slides = [
   {
@@ -62,8 +82,8 @@ const waveBgStyle = {
 
 function HeroSectionInner() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const slideTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const hasStartedRef = useRef(false);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const isBelowLg = useBelowLgViewport();
   const dropletCount = useHeroParticleCount();
   const prefersReducedMotion = usePrefersReducedMotion();
   const [slideIndex, setSlideIndex] = useState(0);
@@ -87,57 +107,57 @@ function HeroSectionInner() {
   }, [dropletCount]);
 
   useEffect(() => {
-    const preloaders = slides.map((slide) => {
+    slides.forEach((slide) => {
       const img = new Image();
       img.src = slide.src;
-      return img;
     });
+  }, []);
 
-    if (prefersReducedMotion) return;
-
-    const startAutoSlide = () => {
-      if (hasStartedRef.current) return;
-      hasStartedRef.current = true;
-      if (slideTimerRef.current !== null) {
-        clearInterval(slideTimerRef.current);
-      }
-      slideTimerRef.current = window.setInterval(() => {
-        setSlideIndex((i) => (i + 1) % SLIDE_COUNT);
-      }, 4000);
-    };
-
-    const firstImage = preloaders[0];
-    if (firstImage?.complete) {
-      startAutoSlide();
-    } else if (firstImage) {
-      firstImage.addEventListener("load", startAutoSlide, { once: true });
-      firstImage.addEventListener("error", startAutoSlide, { once: true });
+  const startTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
     }
-
-    return () => {
-      if (firstImage) {
-        firstImage.removeEventListener("load", startAutoSlide);
-        firstImage.removeEventListener("error", startAutoSlide);
-      }
-      if (slideTimerRef.current !== null) {
-        clearInterval(slideTimerRef.current);
-        slideTimerRef.current = null;
-      }
-      hasStartedRef.current = false;
-    };
+    if (prefersReducedMotion) return;
+    timerRef.current = window.setInterval(() => {
+      setSlideIndex((i) => (i + 1) % SLIDE_COUNT);
+    }, 4000);
   }, [prefersReducedMotion]);
+
+  useEffect(() => {
+    if (prefersReducedMotion) {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+      return;
+    }
+    startTimer();
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, [startTimer, prefersReducedMotion]);
 
   const goPrev = useCallback(() => {
     setSlideIndex((i) => (i - 1 + SLIDE_COUNT) % SLIDE_COUNT);
-  }, []);
+    startTimer();
+  }, [startTimer]);
 
   const goNext = useCallback(() => {
     setSlideIndex((i) => (i + 1) % SLIDE_COUNT);
-  }, []);
+    startTimer();
+  }, [startTimer]);
 
-  const goToSlide = useCallback((i: number) => {
-    setSlideIndex(i);
-  }, []);
+  const goToSlide = useCallback(
+    (i: number) => {
+      setSlideIndex(i);
+      startTimer();
+    },
+    [startTimer],
+  );
 
   const currentSlide = useMemo(() => slides[slideIndex], [slideIndex]);
 
@@ -267,6 +287,16 @@ function HeroSectionInner() {
                   overflow: "hidden",
                   background: "rgba(0,15,35,0.5)",
                   position: "relative",
+                  ...(isBelowLg
+                    ? {
+                        transform: "translateZ(0)",
+                        WebkitTransform: "translateZ(0)",
+                        isolation: "isolate",
+                        overflow: "hidden",
+                        borderRadius: "20px",
+                        position: "relative",
+                      }
+                    : {}),
                 }}
               >
                 <button
@@ -278,70 +308,174 @@ function HeroSectionInner() {
                   ‹
                 </button>
 
-                <AnimatePresence mode="wait" initial={false}>
-                  <m.img
-                    key={currentSlide.src}
-                    src={currentSlide.src}
-                    alt={currentSlide.label}
-                    loading={slideIndex === 0 ? "eager" : "lazy"}
-                    decoding="async"
-                    fetchPriority={slideIndex === 0 ? "high" : "auto"}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.5, ease: "easeInOut" }}
-                    className="hero-bottle-img absolute inset-0 h-full w-full object-contain object-center"
+                {isBelowLg ? (
+                  <div
+                    className="absolute inset-0"
                     style={{
-                      position: "absolute",
-                      inset: 0,
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "contain",
-                      objectPosition: "center",
-                      display: "block",
-                      background: "transparent",
-                    }}
-                    draggable={false}
-                  />
-                </AnimatePresence>
-                <div
-                  style={{
-                    position: 'absolute',
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    zIndex: 10,
-                    background: 'linear-gradient(transparent, rgba(0,8,25,0.97))',
-                    padding: '2.5rem 1rem 1rem',
-                    textAlign: 'center',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '4px',
-                  }}
-                >
-                  <p
-                    style={{
-                      color: 'white',
-                      fontWeight: 'bold',
-                      fontSize: 'clamp(1rem, 2vw, 1.3rem)',
-                      margin: 0,
-                      lineHeight: 1.2,
+                      overflow: "hidden",
+                      borderRadius: "20px",
+                      transform: "translateZ(0)",
+                      WebkitTransform: "translateZ(0)",
+                      isolation: "isolate",
                     }}
                   >
-                    {currentSlide.label}
-                  </p>
-                  <p
-                    style={{
-                      color: 'rgba(255,255,255,0.65)',
-                      fontSize: 'clamp(0.6rem, 0.9vw, 0.75rem)',
-                      margin: 0,
-                      lineHeight: 1.3,
-                    }}
-                  >
-                    {currentSlide.desc}
-                  </p>
-                </div>
+                    {slides.map((slide, i) => {
+                      const isActive = i === slideIndex;
+                      return (
+                        <div
+                          key={slide.src}
+                          aria-hidden={!isActive}
+                          style={{
+                            position: "absolute",
+                            inset: 0,
+                            opacity: isActive ? 1 : 0,
+                            transition: "opacity 400ms ease-in-out",
+                            pointerEvents: isActive ? "auto" : "none",
+                            zIndex: isActive ? 1 : 0,
+                            willChange: "opacity",
+                          }}
+                        >
+                          <img
+                            src={slide.src}
+                            alt={slide.label}
+                            loading={i === 0 ? "eager" : "lazy"}
+                            decoding="async"
+                            className="hero-bottle-img"
+                            style={{
+                              position: "absolute",
+                              inset: 0,
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "contain",
+                              objectPosition: "center",
+                              willChange: "auto",
+                              backfaceVisibility: "hidden",
+                              WebkitBackfaceVisibility: "hidden",
+                              transform: "translateZ(0)",
+                              WebkitTransform: "translateZ(0)",
+                            }}
+                            draggable={false}
+                          />
+                          <div
+                            style={{
+                              position: "absolute",
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              zIndex: 2,
+                              background:
+                                "linear-gradient(transparent, rgba(0,8,25,0.97))",
+                              padding: "2.5rem 1rem 1rem",
+                              textAlign: "center",
+                            }}
+                          >
+                            <p
+                              style={{
+                                color: "white",
+                                fontWeight: "bold",
+                                fontSize: "clamp(0.9rem, 2vw, 1.3rem)",
+                                margin: 0,
+                              }}
+                            >
+                              {slide.label}
+                            </p>
+                            <span
+                              style={{
+                                color: "#22d3ee",
+                                fontSize: "clamp(0.65rem, 1vw, 0.8rem)",
+                                border: "1px solid rgba(34,211,238,0.5)",
+                                borderRadius: "20px",
+                                padding: "2px 10px",
+                                display: "inline-block",
+                                marginTop: "4px",
+                              }}
+                            >
+                              {slide.size}
+                            </span>
+                            <p
+                              style={{
+                                color: "rgba(255,255,255,0.65)",
+                                fontSize:
+                                  "clamp(0.6rem, 0.9vw, 0.75rem)",
+                                margin: "4px 0 0",
+                              }}
+                            >
+                              {slide.desc}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <>
+                    <AnimatePresence mode="wait" initial={false}>
+                      <m.img
+                        key={currentSlide.src}
+                        src={currentSlide.src}
+                        alt={currentSlide.label}
+                        loading={slideIndex === 0 ? "eager" : "lazy"}
+                        decoding="async"
+                        fetchPriority={slideIndex === 0 ? "high" : "auto"}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.5, ease: "easeInOut" }}
+                        className="hero-bottle-img absolute inset-0 h-full w-full object-contain object-center"
+                        style={{
+                          position: "absolute",
+                          inset: 0,
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "contain",
+                          objectPosition: "center",
+                          display: "block",
+                          background: "transparent",
+                        }}
+                        draggable={false}
+                      />
+                    </AnimatePresence>
+                    <div
+                      style={{
+                        position: "absolute",
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        zIndex: 10,
+                        background:
+                          "linear-gradient(transparent, rgba(0,8,25,0.97))",
+                        padding: "2.5rem 1rem 1rem",
+                        textAlign: "center",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        gap: "4px",
+                      }}
+                    >
+                      <p
+                        style={{
+                          color: "white",
+                          fontWeight: "bold",
+                          fontSize: "clamp(1rem, 2vw, 1.3rem)",
+                          margin: 0,
+                          lineHeight: 1.2,
+                        }}
+                      >
+                        {currentSlide.label}
+                      </p>
+                      <p
+                        style={{
+                          color: "rgba(255,255,255,0.65)",
+                          fontSize: "clamp(0.6rem, 0.9vw, 0.75rem)",
+                          margin: 0,
+                          lineHeight: 1.3,
+                        }}
+                      >
+                        {currentSlide.desc}
+                      </p>
+                    </div>
+                  </>
+                )}
 
                 <button
                   type="button"
@@ -354,7 +488,7 @@ function HeroSectionInner() {
               </div>
             </div>
 
-            <div className="hero-slide-size mt-2 text-center">
+            <div className="hero-slide-size mt-2 hidden text-center lg:block">
               <span className="inline-flex rounded-full border border-cyan-400/70 px-3 py-1 text-xs font-medium text-cyan-200 sm:text-sm">
                 {currentSlide.size}
               </span>

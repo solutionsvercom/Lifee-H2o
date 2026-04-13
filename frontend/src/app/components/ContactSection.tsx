@@ -2,6 +2,7 @@ import { m, useInView } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Send, Phone, Mail, MapPin, Download } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
+import { apiUrl } from "../utils/apiUrl";
 
 const STATUS_HIDE_MS = 10000;
 const REQUEST_TIMEOUT_MS = 12000;
@@ -64,7 +65,7 @@ export function ContactSection() {
       }, REQUEST_TIMEOUT_MS);
 
       try {
-        const response = await fetch("http://localhost:5000/api/email/contact", {
+        const response = await fetch(apiUrl("/api/email/contact"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           signal: ac.signal,
@@ -342,22 +343,20 @@ export function ContactSection() {
         </div>
       </div>
 
-      {/* WhatsApp floating button */}
+      {/* WhatsApp floating button — always visible (not gated on section in-view) */}
       <m.a
         href={whatsappLink}
         target="_blank"
         rel="noopener noreferrer"
-        initial={{ opacity: 0, scale: 0 }}
-        animate={isInView ? { opacity: 1, scale: 1 } : {}}
-        transition={{ delay: 0.3, type: "spring" }}
+        initial={{ opacity: 0, scale: 0.85 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ type: "spring", stiffness: 260, damping: 22 }}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
-        className="fixed bottom-5 right-4 sm:bottom-8 sm:right-8 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center shadow-2xl shadow-green-500/50 hover:shadow-green-500/70 transition-all z-30 group cursor-pointer hover:brightness-110"
+        className="fixed bottom-5 right-4 z-[60] flex h-14 w-14 cursor-pointer items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-green-600 shadow-2xl shadow-green-500/50 transition-all hover:brightness-110 hover:shadow-green-500/70 group sm:bottom-8 sm:right-8 sm:h-16 sm:w-16"
       >
-        <FaWhatsapp className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
-        
-        {/* Pulsing effect */}
         <m.div
+          aria-hidden
           animate={{
             scale: [1, 1.3, 1],
             opacity: [0.7, 0, 0.7],
@@ -366,11 +365,11 @@ export function ContactSection() {
             duration: 2,
             repeat: Infinity,
           }}
-          className="absolute inset-0 rounded-full bg-green-500"
+          className="pointer-events-none absolute inset-0 z-0 rounded-full bg-green-500"
         />
+        <FaWhatsapp className="relative z-10 h-7 w-7 text-white sm:h-8 sm:w-8" />
 
-        {/* Tooltip */}
-        <div className="pointer-events-none absolute right-full mr-3 whitespace-nowrap rounded-lg bg-black/80 px-3 py-2 text-[clamp(0.75rem,1.2vw,0.95rem)] text-white opacity-0 transition-opacity group-hover:opacity-100">
+        <div className="pointer-events-none absolute right-full z-10 mr-3 whitespace-nowrap rounded-lg bg-black/80 px-3 py-2 text-[clamp(0.75rem,1.2vw,0.95rem)] text-white opacity-0 transition-opacity group-hover:opacity-100">
           Chat with us on WhatsApp
         </div>
       </m.a>

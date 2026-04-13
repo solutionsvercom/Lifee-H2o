@@ -93,7 +93,7 @@ export function AboutSection() {
               className="about-stats-grid"
             >
               {[
-                { value: "99%", label: "Pure" },
+                { value: "99.9%", label: "Pure" },
                 { value: "0", label: "Impurities" },
                 { value: "24/7", label: "Available" },
               ].map((stat, i) => (

@@ -1,6 +1,7 @@
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { Upload } from "lucide-react";
+import { apiUrl } from "../utils/apiUrl";
 
 const STATUS_HIDE_MS = 10000;
 const REQUEST_TIMEOUT_MS = 12000;
@@ -184,7 +185,7 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
       console.log("Final payload:", payload);
 
       try {
-        const response = await fetch("http://localhost:5000/api/email/custom-order", {
+        const response = await fetch(apiUrl("/api/email/custom-order"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           signal: ac.signal,

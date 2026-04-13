@@ -197,7 +197,7 @@ export function QualityCertification() {
                 }}
                 className="text-[clamp(1.5rem,4vw,2.5rem)] font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent"
               >
-                99%
+                99.9%
               </m.div>
               <p className="text-[clamp(0.9rem,1.5vw,1.1rem)] text-cyan-100/70">Purity Guaranteed</p>
             </div>

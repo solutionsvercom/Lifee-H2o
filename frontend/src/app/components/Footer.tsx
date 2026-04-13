@@ -1,6 +1,6 @@
 import { m } from "motion/react";
 import { Link } from "react-router";
-import { Facebook, Instagram, Twitter, Linkedin, Youtube } from "lucide-react";
+import { Instagram } from "lucide-react";
 
 export function Footer() {
   return (
@@ -38,7 +38,7 @@ export function Footer() {
               className="footer-brand-title flex items-center gap-3"
             >
               <div className="text-4xl">💧</div>
-              <div className="text-left">
+              <div className="text-center">
                 <h3 className="text-[clamp(1.1rem,2vw,1.5rem)] font-bold">Lifee Packaged Drinking Water</h3>
                 <p className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-cyan-400">Purity Engineered.</p>
                 <p
@@ -169,22 +169,17 @@ export function Footer() {
             <h4 className="mb-4 text-[clamp(1.1rem,2vw,1.5rem)] font-semibold text-white">Services</h4>
             <ul className="space-y-2">
               {[
-                { label: "Home Delivery", to: "/#contact" },
-                { label: "Bulk Orders", to: "/#products" },
-                { label: "Corporate Supply", to: "/#contact" },
-                { label: "Distribution Partnership", to: "/#distribution" },
-                { label: "Customer Support", to: "/#contact" },
-              ].map((service, i) => (
-                <li key={i}>
-                  <m.div whileHover={{ x: 5 }}>
-                    <Link
-                      to={service.to}
-                      prefetch="intent"
-                      className="inline-block text-[clamp(0.75rem,1.2vw,0.95rem)] text-cyan-100/70 transition-colors hover:text-cyan-400"
-                    >
-                      {service.label}
-                    </Link>
-                  </m.div>
+                "Home Delivery",
+                "Bulk Orders",
+                "Corporate Supply",
+                "Distribution Partnership",
+                "Customer Support 24/7",
+              ].map((label, i) => (
+                <li
+                  key={i}
+                  className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-cyan-100/70"
+                >
+                  {label}
                 </li>
               ))}
             </ul>

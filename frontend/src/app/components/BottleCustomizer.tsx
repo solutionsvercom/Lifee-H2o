@@ -2,6 +2,7 @@ import { m, useInView } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Upload, Building2, Cake, Heart } from "lucide-react";
 import BottleSceneCustom from "./BottleSceneCustom";
+import { apiUrl } from "../utils/apiUrl";
 
 const STATUS_HIDE_MS = 10000;
 const REQUEST_TIMEOUT_MS = 12000;
@@ -256,7 +257,7 @@ export function BottleCustomizer() {
       }, REQUEST_TIMEOUT_MS);
 
       try {
-        const response = await fetch("http://localhost:5000/api/email/custom-order", {
+        const response = await fetch(apiUrl("/api/email/custom-order"), {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

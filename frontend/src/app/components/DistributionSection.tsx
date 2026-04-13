@@ -1,6 +1,7 @@
 import { m, useInView } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MapPin, Users, TrendingUp } from "lucide-react";
+import { apiUrl } from "../utils/apiUrl";
 
 const STATUS_HIDE_MS = 10000;
 const REQUEST_TIMEOUT_MS = 12000;
@@ -83,7 +84,7 @@ export function DistributionSection() {
         ac.abort();
       }, REQUEST_TIMEOUT_MS);
       try {
-        const response = await fetch("http://localhost:5000/api/email/distributor", {
+        const response = await fetch(apiUrl("/api/email/distributor"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           signal: ac.signal,

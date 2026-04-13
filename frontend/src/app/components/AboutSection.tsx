@@ -34,8 +34,9 @@ export function AboutSection() {
           alt="Water waves"
           width={1080}
           height={720}
-          loading="lazy"
+          loading="eager"
           decoding="async"
+          fetchPriority="low"
           className="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-overlay"
         />
       </m.div>
@@ -66,7 +67,7 @@ export function AboutSection() {
             <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.4, duration: 0.8 }}
+              transition={{ delay: 0.3, duration: 0.8 }}
               className="max-w-xl space-y-[clamp(1rem,2vh,1.5rem)] text-center leading-relaxed text-cyan-100/90"
             >
               <p className="text-[clamp(0.9rem,1.5vw,1.1rem)]">
@@ -88,7 +89,7 @@ export function AboutSection() {
             <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.6, duration: 0.8 }}
+              transition={{ delay: 0.3, duration: 0.8 }}
               className="about-stats-grid"
             >
               {[
@@ -134,6 +135,7 @@ export function AboutSection() {
                 height={1000}
                 loading="lazy"
                 decoding="async"
+                fetchPriority="low"
                 className="relative w-full h-auto rounded-2xl"
               />
             </div>

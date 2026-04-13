@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 import * as THREE from "three";
 import { destroyRendererAndScene } from "../utils/disposeThreeScene";
 import {

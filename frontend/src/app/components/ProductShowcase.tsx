@@ -152,6 +152,7 @@ export function ProductShowcase() {
                     height={560}
                     loading="lazy"
                     decoding="async"
+                    fetchPriority="low"
                     className="w-full h-full object-cover"
                     style={PRODUCT_CARD_IMAGE_STYLE}
                   />
@@ -192,7 +193,7 @@ export function ProductShowcase() {
         <m.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={isInView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ delay: 0.8, duration: 0.6 }}
+          transition={{ delay: 0.3, duration: 0.6 }}
           className="mt-[clamp(2rem,5vh,3rem)] text-center"
         >
           <div className="inline-flex flex-wrap items-center gap-2 rounded-full border border-cyan-400/30 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 px-[clamp(1rem,3vw,1.5rem)] py-[clamp(0.5rem,1.5vh,0.75rem)] backdrop-blur-lg">

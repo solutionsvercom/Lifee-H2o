@@ -233,7 +233,7 @@ export function PurificationProcess() {
         <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.8, duration: 0.8 }}
+          transition={{ delay: 0.3, duration: 0.8 }}
           className="mt-[clamp(2rem,5vh,4rem)] text-center"
         >
           <div className="inline-flex flex-wrap items-center gap-[clamp(0.75rem,2vw,1rem)] rounded-full border border-white/20 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 px-[clamp(1rem,3vw,2rem)] py-[clamp(0.75rem,2vh,1rem)] backdrop-blur-lg">

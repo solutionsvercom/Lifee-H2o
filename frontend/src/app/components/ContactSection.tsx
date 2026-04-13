@@ -127,7 +127,7 @@ export function ContactSection() {
           transition={{
             duration: 10,
             repeat: Infinity,
-            delay: 2,
+            delay: 0.3,
           }}
           className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500 rounded-full blur-3xl"
         />
@@ -311,7 +311,7 @@ export function ContactSection() {
             <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.6, duration: 0.6 }}
+              transition={{ delay: 0.3, duration: 0.6 }}
               className="pt-6"
             >
               <h3 className="mb-4 text-[clamp(1.1rem,2vw,1.5rem)] font-semibold text-white">Quick Actions</h3>
@@ -349,7 +349,7 @@ export function ContactSection() {
         rel="noopener noreferrer"
         initial={{ opacity: 0, scale: 0 }}
         animate={isInView ? { opacity: 1, scale: 1 } : {}}
-        transition={{ delay: 1, type: "spring" }}
+        transition={{ delay: 0.3, type: "spring" }}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         className="fixed bottom-5 right-4 sm:bottom-8 sm:right-8 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center shadow-2xl shadow-green-500/50 hover:shadow-green-500/70 transition-all z-30 group cursor-pointer hover:brightness-110"

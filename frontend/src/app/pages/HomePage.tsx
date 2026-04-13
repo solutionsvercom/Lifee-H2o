@@ -1,15 +1,31 @@
+import { lazy, Suspense } from "react";
 import { Navbar } from "../components/Navbar";
 import { useSectionNavigation } from "../hooks/useSectionNavigation";
 import { HeroSection } from "../components/HeroSection";
 import { AboutSection } from "../components/AboutSection";
-import { PurificationProcess } from "../components/PurificationProcess";
-import { ProductShowcase } from "../components/ProductShowcase";
-import { QualityCertification } from "../components/QualityCertification";
-import { WhyChooseUs } from "../components/WhyChooseUs";
-import { DistributionSection } from "../components/DistributionSection";
-import { BottleCustomizer } from "../components/BottleCustomizer";
-import { ContactSection } from "../components/ContactSection";
-import { Footer } from "../components/Footer";
+
+const PurificationProcess = lazy(() =>
+  import("../components/PurificationProcess").then((m) => ({ default: m.PurificationProcess })),
+);
+const ProductShowcase = lazy(() =>
+  import("../components/ProductShowcase").then((m) => ({ default: m.ProductShowcase })),
+);
+const QualityCertification = lazy(() =>
+  import("../components/QualityCertification").then((m) => ({ default: m.QualityCertification })),
+);
+const WhyChooseUs = lazy(() =>
+  import("../components/WhyChooseUs").then((m) => ({ default: m.WhyChooseUs })),
+);
+const BottleCustomizer = lazy(() =>
+  import("../components/BottleCustomizer").then((m) => ({ default: m.BottleCustomizer })),
+);
+const DistributionSection = lazy(() =>
+  import("../components/DistributionSection").then((m) => ({ default: m.DistributionSection })),
+);
+const ContactSection = lazy(() =>
+  import("../components/ContactSection").then((m) => ({ default: m.ContactSection })),
+);
+const Footer = lazy(() => import("../components/Footer").then((m) => ({ default: m.Footer })));
 
 export default function HomePage() {
   useSectionNavigation();
@@ -19,14 +35,30 @@ export default function HomePage() {
       <Navbar />
       <HeroSection />
       <AboutSection />
-      <PurificationProcess />
-      <ProductShowcase />
-      <QualityCertification />
-      <WhyChooseUs />
-      <BottleCustomizer />
-      <DistributionSection />
-      <ContactSection />
-      <Footer />
+      <Suspense fallback={<div aria-hidden />}>
+        <PurificationProcess />
+      </Suspense>
+      <Suspense fallback={<div aria-hidden />}>
+        <ProductShowcase />
+      </Suspense>
+      <Suspense fallback={<div aria-hidden />}>
+        <QualityCertification />
+      </Suspense>
+      <Suspense fallback={<div aria-hidden />}>
+        <WhyChooseUs />
+      </Suspense>
+      <Suspense fallback={<div aria-hidden />}>
+        <BottleCustomizer />
+      </Suspense>
+      <Suspense fallback={<div aria-hidden />}>
+        <DistributionSection />
+      </Suspense>
+      <Suspense fallback={<div aria-hidden />}>
+        <ContactSection />
+      </Suspense>
+      <Suspense fallback={<div aria-hidden />}>
+        <Footer />
+      </Suspense>
     </div>
   );
 }

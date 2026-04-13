@@ -193,7 +193,7 @@ export function DistributionSection() {
                   key={i}
                   initial={{ opacity: 0, x: -20 }}
                   animate={isInView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ delay: 0.6 + i * 0.1, duration: 0.5 }}
+                    transition={{ delay: 0.3, duration: 0.5 }}
                   className="flex items-center gap-3 text-cyan-100/80"
                 >
                   <div className="w-2 h-2 rounded-full bg-cyan-400" />
@@ -207,7 +207,7 @@ export function DistributionSection() {
               <m.button
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 1, duration: 0.6 }}
+                transition={{ delay: 0.3, duration: 0.6 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => {
@@ -223,7 +223,7 @@ export function DistributionSection() {
               <m.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 1, duration: 0.6 }}
+                transition={{ delay: 0.3, duration: 0.6 }}
                 className="relative mx-auto w-full max-w-[min(100%,560px)] rounded-3xl border border-white/20 bg-white/10 p-[clamp(1rem,2vw,2rem)] shadow-2xl backdrop-blur-lg"
               >
                 <m.div
@@ -370,7 +370,7 @@ export function DistributionSection() {
                   <m.path
                     initial={{ opacity: 0 }}
                     animate={isInView ? { opacity: 0.1 } : {}}
-                    transition={{ delay: 1, duration: 1 }}
+                    transition={{ delay: 0.3, duration: 1 }}
                     d="M 100 50 L 300 50 L 350 100 L 350 250 L 300 300 L 200 320 L 100 300 L 50 250 L 50 100 Z"
                     fill="url(#mapGradient)"
                   />
@@ -382,7 +382,7 @@ export function DistributionSection() {
                     key={city.name}
                     initial={{ opacity: 0, scale: 0 }}
                     animate={isInView ? { opacity: 1, scale: 1 } : {}}
-                    transition={{ delay: 1 + i * 0.15, type: "spring" }}
+                    transition={{ delay: 0.3, type: "spring" }}
                     className="absolute group cursor-pointer"
                     style={{
                       left: `${city.x}%`,
@@ -424,7 +424,7 @@ export function DistributionSection() {
                       <m.div
                         initial={{ scaleX: 0 }}
                         animate={isInView ? { scaleX: 1 } : {}}
-                        transition={{ delay: 1.5 + i * 0.1, duration: 0.5 }}
+                        transition={{ delay: 0.3, duration: 0.5 }}
                         className="absolute top-1/2 right-full h-px bg-gradient-to-r from-cyan-400/50 to-transparent origin-right"
                         style={{ width: "50px" }}
                       />

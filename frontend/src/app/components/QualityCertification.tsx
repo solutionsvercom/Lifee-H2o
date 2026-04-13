@@ -165,7 +165,7 @@ export function QualityCertification() {
         <m.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.8, duration: 0.8 }}
+          transition={{ delay: 0.3, duration: 0.8 }}
           className="relative rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/5 p-[clamp(1rem,2vw,2rem)] backdrop-blur-lg"
         >
           <div className="cert-stats-row">
@@ -177,7 +177,7 @@ export function QualityCertification() {
                 transition={{
                   duration: 2,
                   repeat: Infinity,
-                   delay: 1,
+                   delay: 0.3,
                 }}
                 className="text-[clamp(1.5rem,4vw,2.5rem)] font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent"
               >
@@ -193,7 +193,7 @@ export function QualityCertification() {
                 transition={{
                   duration: 2,
                   repeat: Infinity,
-                  delay: 1,
+                  delay: 0.3,
                 }}
                 className="text-[clamp(1.5rem,4vw,2.5rem)] font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent"
               >
@@ -209,7 +209,7 @@ export function QualityCertification() {
                 transition={{
                   duration: 2,
                   repeat: Infinity,
-                  delay: 1,
+                  delay: 0.3,
                 }}
                 className="text-[clamp(1.5rem,4vw,2.5rem)] font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent"
               >

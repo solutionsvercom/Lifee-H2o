@@ -252,6 +252,7 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
                 height={96}
                 loading="lazy"
                 decoding="async"
+                fetchPriority="low"
                 className="w-24 h-24 object-cover rounded-lg"
               />
             )}

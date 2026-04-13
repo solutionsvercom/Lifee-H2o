@@ -364,6 +364,7 @@ export function BottleCustomizer() {
                         height={720}
                         loading="lazy"
                         decoding="async"
+                        fetchPriority="low"
                         className="h-full w-full object-cover"
                         whileHover={{ scale: 1.05 }}
                         transition={{ duration: 0.6 }}
@@ -466,6 +467,7 @@ export function BottleCustomizer() {
                         height={96}
                         loading="lazy"
                         decoding="async"
+                        fetchPriority="low"
                         className="w-24 h-24 object-cover rounded-lg"
                       />
                     )}

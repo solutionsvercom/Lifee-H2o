@@ -2,9 +2,10 @@ import { m, useInView } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Send, Phone, Mail, MapPin, Eye } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
+import { apiUrl } from "../utils/apiUrl";
 
 const STATUS_HIDE_MS = 10000;
-const REQUEST_TIMEOUT_MS = 12000;
+const REQUEST_TIMEOUT_MS = 30000;
 const BROCHURE_PDF_HREF = `${import.meta.env.BASE_URL}file/Lifee_Water_Card.pdf`;
 
 export function ContactSection() {

@@ -4,7 +4,7 @@ import { Upload } from "lucide-react";
 import { apiUrl } from "../utils/apiUrl";
 
 const STATUS_HIDE_MS = 10000;
-const REQUEST_TIMEOUT_MS = 12000;
+const REQUEST_TIMEOUT_MS = 30000;
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const MAX_IMAGE_DIMENSION = 1600;
 const JPEG_QUALITY = 0.82;

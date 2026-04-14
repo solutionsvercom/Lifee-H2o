@@ -1,50 +1,64 @@
 const nodemailer = require('nodemailer');
 const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
-
-// Validate env vars once at startup; prevents "to: undefined" later.
+const ENV_PATH = path.join(__dirname, '..', '.env');
 const REQUIRED_EMAIL_ENV = ['SMTP_USER', 'SMTP_PASS', 'RECEIVER_EMAIL', 'COMPANY_NAME'];
-const missingEmailEnv = REQUIRED_EMAIL_ENV.filter((key) => !process.env[key]);
-const emailConfigError =
-  missingEmailEnv.length > 0
-    ? new Error(`Missing .env variables for email: ${missingEmailEnv.join(', ')}`)
-    : null;
+let transporter = null;
+let transporterSignature = '';
 
-const ensureEmailConfig = () => {
-  if (emailConfigError) throw emailConfigError;
+const getEmailConfig = () => {
+  // Reload .env on each request path so SMTP credentials can be changed at runtime.
+  require('dotenv').config({ path: ENV_PATH, override: true });
+
+  const cfg = {
+    host: (process.env.SMTP_HOST || 'smtp.gmail.com').trim(),
+    port: Number.parseInt(process.env.SMTP_PORT || '587', 10),
+    secure: process.env.SMTP_SECURE === 'true' || Number.parseInt(process.env.SMTP_PORT || '587', 10) === 465,
+    user: (process.env.SMTP_USER || '').trim(),
+    pass: (process.env.SMTP_PASS || '').replace(/\s+/g, ''),
+    receiverEmail: (process.env.RECEIVER_EMAIL || '').trim(),
+    companyName: (process.env.COMPANY_NAME || '').trim(),
+  };
+
+  const missing = REQUIRED_EMAIL_ENV.filter((key) => !process.env[key] || String(process.env[key]).trim() === '');
+  if (missing.length > 0) {
+    throw new Error(`Missing .env variables for email: ${missing.join(', ')}`);
+  }
+  return cfg;
 };
 
-const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.SMTP_PORT || '587', 10),
-    secure: process.env.SMTP_SECURE === 'true',
-    auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-    },
-    tls: {
-        rejectUnauthorized: false,
-    },
-});
+const getTransporter = (config) => {
+  const signature = `${config.host}|${config.port}|${config.secure}|${config.user}|${config.pass}`;
+  if (transporter && transporterSignature === signature) {
+    return transporter;
+  }
 
-// Verify on startup
-transporter.verify((error, success) => {
+  transporter = nodemailer.createTransport({
+    host: config.host,
+    port: config.port,
+    secure: config.secure,
+    auth: {
+      user: config.user,
+      pass: config.pass,
+    },
+    connectionTimeout: 15000,
+    greetingTimeout: 10000,
+    socketTimeout: 45000,
+    requireTLS: !config.secure,
+  });
+  transporterSignature = signature;
+
+  transporter.verify((error) => {
     if (error) {
-        console.error('❌ SMTP Error:', error.message);
-        console.log('Check your .env file:');
-        console.log('SMTP_USER:', process.env.SMTP_USER);
-        console.log('SMTP_HOST:', process.env.SMTP_HOST);
-        console.log('SMTP_PORT:', process.env.SMTP_PORT);
-    } else {
-        console.log('✅ SMTP Ready');
-        console.log('Sending from:', process.env.SMTP_USER);
-        if (process.env.RECEIVER_EMAIL) {
-          console.log('Sending to:', process.env.RECEIVER_EMAIL);
-        } else {
-          console.error('❌ RECEIVER_EMAIL is not configured (won’t send emails).');
-        }
+      console.error('❌ SMTP verify failed:', error.message);
+      return;
     }
-});
+    console.log(`✅ SMTP ready (${config.user} @ ${config.host}:${config.port})`);
+  });
+
+  return transporter;
+};
+
+const ensureEmailConfig = () => getEmailConfig();
 
 const ICONS = {
     '👤': `<span style="font-size:16px;line-height:1;">&#128100;</span>`,
@@ -61,7 +75,40 @@ const ICONS = {
 };
 
 const iconOf = (token) => ICONS[token] || token;
-const EMAIL_TIMEOUT_MS = 10000;
+const EMAIL_TIMEOUT_MS = 25000;
+const RETRYABLE_SMTP_CODES = new Set(['ETIMEDOUT', 'ESOCKET', 'ECONNECTION', 'EAI_AGAIN']);
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const normalizeEmailError = (error) => {
+  if (!error) return new Error('Unknown email error');
+  const code = error.code || error.responseCode;
+  if (code === 'EAUTH' || error.responseCode === 535) {
+    return new Error('SMTP authentication failed. Check SMTP user/app password.');
+  }
+  if (error.message === 'Email service timeout') {
+    return new Error('SMTP timeout. Please retry in a few seconds.');
+  }
+  return error;
+};
+
+const sendWithRetry = async (mailOptions, retries = 1) => {
+  let lastError;
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    try {
+      const config = getEmailConfig();
+      const smtp = getTransporter(config);
+      return await smtp.sendMail(mailOptions);
+    } catch (error) {
+      lastError = error;
+      const code = error?.code;
+      const shouldRetry = attempt < retries && RETRYABLE_SMTP_CODES.has(code);
+      if (!shouldRetry) break;
+      await sleep(600 * (attempt + 1));
+    }
+  }
+  throw normalizeEmailError(lastError);
+};
+
 const formatEventDate = (dateValue) => {
     if (!dateValue) return 'Not specified';
     const date = new Date(dateValue);
@@ -86,7 +133,7 @@ const sendMailWithTimeout = (mailOptions, timeoutMs = EMAIL_TIMEOUT_MS) => {
   }
 
   return Promise.race([
-    transporter.sendMail(mailOptions),
+    sendWithRetry(mailOptions, 1),
     new Promise((_, reject) => {
       setTimeout(() => {
         reject(new Error('Email service timeout'));

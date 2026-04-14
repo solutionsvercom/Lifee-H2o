@@ -4,7 +4,7 @@ import { MapPin, Users, TrendingUp } from "lucide-react";
 import { apiUrl } from "../utils/apiUrl";
 
 const STATUS_HIDE_MS = 10000;
-const REQUEST_TIMEOUT_MS = 12000;
+const REQUEST_TIMEOUT_MS = 30000;
 
 const cities = [
   { name: "Bhopal", x: 50, y: 45 },

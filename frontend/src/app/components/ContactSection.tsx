@@ -335,7 +335,7 @@ export function ContactSection() {
                   className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 p-4 text-[clamp(0.85rem,1.3vw,1rem)] font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
                 >
                   <Download className="w-5 h-5 shrink-0" />
-                  Download Brochure
+                  Download Visiting Card
                 </m.a>
               </div>
             </m.div>

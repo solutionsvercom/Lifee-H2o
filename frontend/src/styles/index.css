@@ -359,6 +359,12 @@ section:not(#home) {
   width: 100%;
 }
 
+@media (max-width: 767px) {
+  .contact-grid {
+    gap: 2.5rem;
+  }
+}
+
 /* Products: 5 equal cards — desktop 5×1; tablet 3+2 centered; mobile 1 col */
 .product-cards-grid {
   display: grid;
@@ -413,6 +419,7 @@ section:not(#home) {
   #products .product-cards-grid {
     grid-template-columns: 1fr !important;
     justify-items: stretch;
+    gap: 1.2rem !important;
   }
 
   #products .product-cards-grid > * {
@@ -581,6 +588,16 @@ section:not(#home) {
 @media (max-width: 767px) {
   .bottle-occasion-grid {
     grid-template-columns: repeat(1, 1fr);
+    gap: 1.5rem;
+    row-gap: 1.5rem;
+  }
+
+  .bottle-occasion-grid .bottle-occasion-card {
+    margin-bottom: 0.8rem;
+  }
+
+  .bottle-occasion-grid > *:last-child .bottle-occasion-card {
+    margin-bottom: 0;
   }
 }
 
@@ -691,22 +708,22 @@ section:not(#home) {
 
   /* Product cards: mobile-only size + spacing */
   #products .product-cards-grid .section-mobile-card {
-    padding: 0.5rem !important;
+    padding: 0.8rem !important;
   }
 
   #products .product-cards-grid .section-mobile-card h3 {
-    font-size: 0.75rem !important;
+    font-size: 0.9rem !important;
     font-weight: 600 !important;
     margin: 2px 0 !important;
   }
 
   #products .product-cards-grid .section-mobile-card p {
-    font-size: 0.65rem !important;
+    font-size: 0.78rem !important;
     margin: 2px 0 !important;
   }
 
   #products .product-cards-grid .section-mobile-card .pt-2 span {
-    font-size: 0.8rem !important;
+    font-size: 1rem !important;
     font-weight: 700 !important;
     margin: 4px 0 !important;
     display: inline-block;
@@ -783,10 +800,57 @@ section:not(#home) {
     line-height: 1.35;
   }
 
-  #certifications .cert-stats-row .section-mobile-card,
-  #certifications .cert-stats-row .section-mobile-card * {
-    font-size: clamp(0.7rem, 2.5vw, 0.9rem) !important;
-    line-height: 1.35;
+  #certifications .cert-stats-row .section-mobile-card {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 0 !important;
+    padding: 0.6rem !important;
+  }
+
+  #certifications .cert-stats-row .section-mobile-card > div:first-of-type {
+    font-size: 1.4rem !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+  }
+
+  #certifications .cert-stats-row .section-mobile-card p {
+    font-size: 0.7rem !important;
+    line-height: 1.35 !important;
+    margin-top: 2px !important;
+  }
+
+  /* About stats: vertical stack + dividers (mobile) */
+  #about .about-stats-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 1rem !important;
+    grid-template-columns: none !important;
+    max-width: 100% !important;
+  }
+
+  #about .about-stats-grid .section-mobile-card {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    padding-bottom: 1rem !important;
+    width: 100%;
+    max-width: 22rem;
+  }
+
+  #about .about-stats-grid .section-mobile-card:last-child {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+  }
+
+  #about .about-stats-grid .section-mobile-card > div:first-of-type {
+    font-size: clamp(1.25rem, 3vw, 1.75rem) !important;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
+  }
+
+  #about .about-stats-grid .section-mobile-card > div:last-of-type {
+    font-size: clamp(0.75rem, 1.2vw, 0.95rem) !important;
+    margin-top: 0.25rem !important;
   }
 
   #certifications .feature-cards-grid .section-mobile-card svg {
@@ -879,6 +943,11 @@ section:not(#home) {
   [class*="max-w-"] {
     padding-left: clamp(1rem, 5vw, 5rem) !important;
     padding-right: clamp(1rem, 5vw, 5rem) !important;
+  }
+
+  /* Navbar: pull brand (icon + wordmark) closer to the left edge */
+  header .container {
+    padding-left: max(0.625rem, env(safe-area-inset-left, 0px)) !important;
   }
 
   /* Stack all grids on mobile */

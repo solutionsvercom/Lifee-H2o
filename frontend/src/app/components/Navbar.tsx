@@ -62,66 +62,20 @@ export function Navbar() {
       <div className="container mx-auto w-full max-w-[min(100%,1400px)] px-[clamp(1rem,4vw,3rem)]">
         <div className="navbar-content flex h-[clamp(50px,8vh,70px)] min-h-[clamp(50px,8vh,70px)] flex-wrap items-center justify-between gap-[clamp(1rem,3vw,3rem)]">
           <Link to="/" prefetch="intent" className="flex min-h-11 flex-wrap items-center gap-2 text-white">
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: '8px',
-              }}
-            >
-              <span className="text-2xl" aria-hidden="true">
+            <div className="flex items-start gap-2 max-md:items-center">
+              <span className="text-2xl max-md:text-3xl" aria-hidden="true">
                 💧
               </span>
 
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  lineHeight: 1,
-                }}
-              >
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: '2px',
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: 'clamp(1.8rem, 7vw, 2rem)',
-                      fontWeight: '800',
-                      color: 'white',
-                      letterSpacing: '0.08em',
-                      lineHeight: 1,
-                    }}
-                  >
-                    Lifee
-                  </span>
-                  <span
-                    style={{
-                      fontSize: 'clamp(0.75rem, 2.2vw, 0.9rem)',
-                      color: 'rgba(34,211,238,0.9)',
-                      lineHeight: 1,
-                      marginTop: '2px',
-                      fontWeight: '600',
-                    }}
-                  >
+              <div className="flex flex-col leading-none">
+                <span className="inline-block text-[clamp(1.8rem,7vw,2rem)] font-extrabold tracking-wide text-white leading-none max-md:text-[clamp(2.05rem,8.5vw,2.45rem)]">
+                  Lifee
+                  <span className="ml-[0.06em] inline-block align-super text-[0.36em] translate-y-[0.1em] font-semibold leading-none text-cyan-300/90 max-md:ml-[0.05em] max-md:text-[0.38em] max-md:translate-y-[0.16em]">
                     ®
                   </span>
-                </div>
+                </span>
 
-                <span
-                  style={{
-                    fontSize: 'clamp(0.55rem, 1.6vw, 0.7rem)',
-                    color: 'rgba(34,211,238,0.75)',
-                    letterSpacing: '0.12em',
-                    textTransform: 'uppercase',
-                    lineHeight: 1,
-                    marginTop: '2px',
-                    fontWeight: '500',
-                  }}
-                >
+                <span className="mt-0.5 text-[clamp(0.55rem,1.6vw,0.7rem)] font-medium uppercase leading-none tracking-wide text-cyan-300/75 max-md:mt-1 max-md:text-[clamp(0.58rem,2.2vw,0.68rem)] max-md:tracking-[0.1em]">
                   Packaged Drinking Water
                 </span>
               </div>

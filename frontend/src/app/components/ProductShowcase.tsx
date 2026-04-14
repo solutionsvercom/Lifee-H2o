@@ -196,11 +196,13 @@ export function ProductShowcase() {
           transition={{ delay: 0.3, duration: 0.6 }}
           className="mt-[clamp(2rem,5vh,3rem)] text-center"
         >
-          <div className="inline-flex flex-nowrap items-center gap-2 rounded-full border border-cyan-400/30 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 px-[clamp(1rem,3vw,1.5rem)] py-[clamp(0.5rem,1.5vh,0.75rem)] backdrop-blur-lg">
-            <span className="shrink-0 text-xl leading-none font-semibold text-cyan-400">💧</span>
-            <span className="text-center text-[clamp(0.85rem,1.3vw,1rem)] text-white">
-              Bulk orders available • Contact us for wholesale pricing
-            </span>
+          <div className="inline-flex max-md:mx-auto max-md:w-full max-md:max-w-md max-md:justify-center max-md:px-4 max-md:py-2.5 flex-nowrap items-center gap-2 rounded-full border border-cyan-400/30 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 px-[clamp(1rem,3vw,1.5rem)] py-[clamp(0.5rem,1.5vh,0.75rem)] backdrop-blur-lg">
+            <div className="flex max-md:w-full max-md:items-center max-md:justify-center flex-nowrap items-center gap-2">
+              <span className="shrink-0 text-xl leading-none font-semibold text-cyan-400 max-md:mr-2">💧</span>
+              <span className="text-center text-[clamp(0.85rem,1.3vw,1rem)] text-white max-md:block max-md:w-full max-md:text-center max-md:leading-snug max-md:mt-1">
+                Bulk orders available • Contact us for wholesale pricing
+              </span>
+            </div>
           </div>
         </m.div>
       </div>

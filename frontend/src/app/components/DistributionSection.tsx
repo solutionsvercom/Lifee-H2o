@@ -210,7 +210,7 @@ export function DistributionSection() {
                   setStatus("");
                 }}
                 disabled={loading}
-                className="rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 px-[clamp(1rem,3vw,2rem)] py-[clamp(0.75rem,2vh,1rem)] text-[clamp(0.85rem,1.3vw,1rem)] font-semibold text-white shadow-lg shadow-cyan-500/50 transition-all duration-300 hover:shadow-cyan-500/70"
+                className="max-md:mb-8 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 px-[clamp(1rem,3vw,2rem)] py-[clamp(0.75rem,2vh,1rem)] text-[clamp(0.85rem,1.3vw,1rem)] font-semibold text-white shadow-lg shadow-cyan-500/50 transition-all duration-300 hover:shadow-cyan-500/70"
               >
                 {loading ? "Sending..." : "Become a Distributor"}
               </m.button>

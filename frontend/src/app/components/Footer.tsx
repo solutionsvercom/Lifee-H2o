@@ -120,7 +120,7 @@ export function Footer() {
                 "Bulk Orders",
                 "Corporate Supply",
                 "Distribution Partnership",
-                "Customer Support 24/7",
+                "24/7 Customer Support",
               ].map((label, i) => (
                 <li
                   key={i}

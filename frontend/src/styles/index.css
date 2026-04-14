@@ -463,6 +463,57 @@ section:not(#home) {
   gap: clamp(1rem, 2vw, 1.5rem);
 }
 
+/* Footer desktop layout tuning only */
+@media (min-width: 1024px) {
+  footer .footer-grid {
+    grid-template-columns: 1.5fr 1fr 1fr 1fr !important;
+    gap: 2rem !important;
+    align-items: start !important;
+  }
+
+  footer .footer-brand .footer-brand-title {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    text-align: center;
+  }
+
+  footer .footer-brand .footer-brand-title > div:last-child {
+    text-align: center;
+  }
+
+  footer .footer-brand .footer-brand-title > div:first-child {
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  /* Center description and actions below brand row */
+  footer .footer-brand > p {
+    text-align: center;
+    margin: 0 auto;
+    max-width: 100%;
+  }
+
+  footer .footer-brand .social-icons {
+    display: flex;
+    justify-content: center;
+    padding-top: 0;
+  }
+
+  footer .footer-brand .social-icons a {
+    display: inline-flex;
+    margin: 0.8rem auto 0;
+    width: fit-content;
+  }
+
+  footer .footer-brand .footer-owner-card {
+    margin: 0.5rem auto 0;
+    display: flex;
+    width: fit-content;
+  }
+}
+
 @media (max-width: 767px) {
   .about-main-grid {
     grid-template-columns: repeat(1, 1fr);

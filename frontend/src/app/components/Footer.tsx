@@ -37,15 +37,14 @@ export function Footer() {
               <div className="text-4xl max-md:text-[28px] max-md:leading-none">💧</div>
               <div className="text-center max-md:w-full">
                 <h3 className="text-[clamp(1.1rem,2vw,1.5rem)] font-bold">
-                  <span className="hidden max-md:flex max-md:flex-col max-md:items-center max-md:gap-1">
-                    <span className="max-md:text-[1.4rem] max-md:font-extrabold max-md:leading-tight">
+                  <span className="flex flex-col items-center gap-1">
+                    <span className="text-[clamp(1.5rem,2.2vw,1.95rem)] font-extrabold leading-tight max-md:text-[1.4rem]">
                       Lifee<sup className="ml-[0.06em] align-super text-[0.45em] font-semibold leading-none">®</sup>
                     </span>
-                    <span className="font-medium uppercase leading-snug tracking-[0.15em] text-[rgba(34,211,238,0.75)] max-md:text-[0.6rem] max-md:tracking-[0.15em]">
+                    <span className="font-medium uppercase leading-snug tracking-[0.15em] text-[rgba(34,211,238,0.75)] text-[0.62rem] max-md:text-[0.6rem] max-md:tracking-[0.15em]">
                       Packaged Drinking Water
                     </span>
                   </span>
-                  <span className="max-md:hidden">Lifee Packaged Drinking Water</span>
                 </h3>
                 <p className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-cyan-400 max-md:text-[0.95rem] max-md:font-semibold">Purity Engineered.</p>
                 <p className="mt-1 font-serif text-[0.78rem] italic tracking-wide text-cyan-300/70 max-md:text-[0.88rem]">

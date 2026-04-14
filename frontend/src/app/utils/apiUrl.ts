@@ -6,7 +6,15 @@ export function apiUrl(path: string): string {
     return `${envBase.replace(/\/$/, "")}${normalized}`;
   }
   if (import.meta.env.DEV) {
-    return `http://localhost:5000${normalized}`;
+    const host =
+      typeof window !== "undefined" && window.location?.hostname
+        ? window.location.hostname
+        : "localhost";
+    const protocol =
+      typeof window !== "undefined" && window.location?.protocol === "https:"
+        ? "https:"
+        : "http:";
+    return `${protocol}//${host}:5000${normalized}`;
   }
   return normalized;
 }

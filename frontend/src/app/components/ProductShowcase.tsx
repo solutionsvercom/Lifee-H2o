@@ -139,7 +139,7 @@ export function ProductShowcase() {
                 transformStyle: 'preserve-3d',
               }}
             >
-              <div className="section-mobile-card flex h-full min-h-0 w-full min-w-0 flex-col rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-[clamp(1rem,2vw,2rem)] backdrop-blur-lg transition-all duration-500 hover:border-cyan-400/50">
+                <div className="section-mobile-card product-mobile-card flex h-full min-h-0 w-full min-w-0 flex-col rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-[clamp(1rem,2vw,2rem)] backdrop-blur-lg transition-all duration-500 hover:border-cyan-400/50">
                 {/* Realistic bottle image */}
                 <div
                   className="product-card-media relative mb-6 min-h-0 w-full flex-1 overflow-hidden rounded-2xl bg-transparent"
@@ -171,7 +171,7 @@ export function ProductShowcase() {
                 </div>
 
                 {/* Product info */}
-                <div className="space-y-3 text-center">
+                <div className="product-card-content space-y-3 text-center">
                   <h3 className="text-[clamp(1.1rem,2vw,1.5rem)] font-bold text-white">
                     {product.size}
                   </h3>

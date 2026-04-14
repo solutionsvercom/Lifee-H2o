@@ -1,13 +1,10 @@
 import { m, useInView } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Send, Phone, Mail, MapPin, Download } from "lucide-react";
+import { Send, Phone, Mail, MapPin, Eye } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
-import { apiUrl } from "../utils/apiUrl";
 
 const STATUS_HIDE_MS = 10000;
 const REQUEST_TIMEOUT_MS = 12000;
-
-/** Served from `frontend/public/file/Brochure.pdf` → URL path `/file/Brochure.pdf`. */
 const BROCHURE_PDF_HREF = `${import.meta.env.BASE_URL}file/Lifee_Water_Card.pdf`;
 
 export function ContactSection() {
@@ -25,6 +22,14 @@ export function ContactSection() {
   });
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState("");
+  const handleMobileContactAction = useCallback((href?: string) => {
+    if (!href) return;
+    if (!window.matchMedia("(max-width: 767px)").matches) return;
+    window.location.href = href;
+  }, []);
+  const handleDownloadPdf = useCallback((url: string) => {
+    window.location.assign(url);
+  }, []);
   const fetchAbortRef = useRef<AbortController | null>(null);
   const statusTimeoutRef = useRef<number | null>(null);
   const resetContactForm = useCallback(() => {
@@ -271,18 +276,21 @@ export function ContactSection() {
                 title: "Call Us",
                 info: "+91 92443 72603",
                 subinfo: "Mon-Sat, 9AM - 6PM",
+                href: "tel:+919244372603",
               },
               {
                 icon: Mail,
                 title: "Email Us",
                 info: "bipinbatham7@gmail.com",
                 subinfo: "We'll respond within 24 hours",
+                href: "mailto:bipinbatham7@gmail.com",
               },
               {
                 icon: MapPin,
                 title: "Visit Us",
                 info: "Infront New Police Line Lahar Chungi Bhind, Madhya Pradesh 477001",
                 subinfo: "Corporate Office",
+                href: "https://www.google.com/maps/search/?api=1&query=Infront+New+Police+Line+Lahar+Chungi+Bhind+Madhya+Pradesh+477001",
               },
             ].map((contact, i) => {
               const Icon = contact.icon;
@@ -294,6 +302,7 @@ export function ContactSection() {
                   transition={{ delay: 0.3 + i * 0.1, duration: 0.6 }}
                   whileHover={{ scale: 1.02, x: 5 }}
                   className="p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 cursor-pointer"
+                  onClick={() => handleMobileContactAction(contact.href)}
                 >
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-400/20 to-blue-500/20 flex items-center justify-center flex-shrink-0">
@@ -329,15 +338,17 @@ export function ContactSection() {
                   WhatsApp Us
                 </m.a>
                 
-                <m.a
-                  href={BROCHURE_PDF_HREF}
-                  download="Lifee_Water_Card.pdf"
+                <m.button
+                  type="button"
+                  onClick={() =>
+                    handleDownloadPdf(BROCHURE_PDF_HREF)
+                  }
                   whileHover={{ scale: 1.02, x: 5 }}
-                  className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 p-4 text-[clamp(0.85rem,1.3vw,1rem)] font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 p-4 text-[clamp(0.85rem,1.3vw,1rem)] font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
                 >
-                  <Download className="w-5 h-5 shrink-0" />
-                  Download Visiting Card
-                </m.a>
+                  <Eye className="w-5 h-5 shrink-0" />
+                  View Visiting Card
+                </m.button>
               </div>
             </m.div>
           </m.div>

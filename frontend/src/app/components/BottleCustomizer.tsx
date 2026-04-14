@@ -438,7 +438,7 @@ export function BottleCustomizer() {
                   ← Back to occasions
                 </m.button>
 
-                <form onSubmit={handleSubmit} className="space-y-6 rounded-3xl border border-white/20 bg-white/10 p-[clamp(1rem,2vw,2rem)] backdrop-blur-lg">
+                <form onSubmit={handleSubmit} className="bc-custom-form space-y-6 rounded-3xl border border-white/20 bg-white/10 p-[clamp(1rem,2vw,2rem)] backdrop-blur-lg">
                   <div className="space-y-3">
                     <label className="text-white font-semibold">Upload Image</label>
                     <div className="relative">
@@ -525,7 +525,7 @@ export function BottleCustomizer() {
                           type="date"
                           value={formData.eventDate}
                           onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
-                          className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-cyan-400 transition-all"
+                          className="bc-event-date-input w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-cyan-400 transition-all"
                         />
                       </div>
 
@@ -575,7 +575,7 @@ export function BottleCustomizer() {
                           type="date"
                           value={formData.eventDate}
                           onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
-                          className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-cyan-400 transition-all"
+                          className="bc-event-date-input w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-cyan-400 transition-all"
                         />
                       </div>
                     </>
@@ -615,7 +615,7 @@ export function BottleCustomizer() {
                           type="date"
                           value={formData.eventDate}
                           onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
-                          className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-cyan-400 transition-all"
+                          className="bc-event-date-input w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-cyan-400 transition-all"
                         />
                       </div>
 

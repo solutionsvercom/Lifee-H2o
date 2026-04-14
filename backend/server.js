@@ -94,6 +94,10 @@ app.use(
             if (!origin || allowedOrigins.has(origin)) {
                 return callback(null, true);
             }
+            // During local/mobile testing, allow LAN origins.
+            if (process.env.NODE_ENV !== 'production') {
+                return callback(null, true);
+            }
             return callback(new Error(`CORS blocked for origin: ${origin}`));
         },
         methods: ['GET', 'POST', 'OPTIONS'],
@@ -120,6 +124,21 @@ app.get('/api/test', (req, res) => {
 // Health check
 app.get('/health', (req, res) => {
     res.json({ status: 'OK', message: 'LIFEE Backend Running' });
+});
+
+// Force-download visiting card PDF for mobile browsers.
+app.get('/api/download/visiting-card', (req, res) => {
+    const pdfPath = path.join(__dirname, '..', 'frontend', 'public', 'file', 'Lifee_Water_Card.pdf');
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="Lifee_Water_Card.pdf"');
+    res.sendFile(pdfPath, (err) => {
+        if (err) {
+            console.error('Download error:', err);
+            if (!res.headersSent) {
+                res.status(404).json({ success: false, error: 'PDF not found' });
+            }
+        }
+    });
 });
 
 // 404 handler

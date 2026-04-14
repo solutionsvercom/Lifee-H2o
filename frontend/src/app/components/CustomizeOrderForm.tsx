@@ -231,8 +231,8 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
           <p className="mt-3 text-[clamp(0.9rem,1.5vw,1.1rem)] text-cyan-100/80">{subtitle}</p>
         </div>
 
-        <div className="mx-auto w-full max-w-[min(100%,560px)]">
-          <form onSubmit={handleSubmit} className="space-y-6 rounded-3xl border border-white/20 bg-white/10 p-[clamp(1rem,2vw,2rem)] backdrop-blur-lg">
+        <div className="custom-order-form-shell mx-auto w-full max-w-[min(100%,560px)]">
+          <form onSubmit={handleSubmit} className="custom-order-form space-y-6 rounded-3xl border border-white/20 bg-white/10 p-[clamp(1rem,2vw,2rem)] backdrop-blur-lg">
           <div className="space-y-3">
             <label className="text-[clamp(0.75rem,1.2vw,0.95rem)] font-semibold text-white">Upload Image</label>
             <div className="relative">
@@ -314,7 +314,7 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
               type="date"
               value={customData.eventDate}
               onChange={(e) => setCustomData((prev) => ({ ...prev, eventDate: e.target.value }))}
-              className="w-full px-3 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-cyan-400 transition-all"
+              className="event-date-input w-full px-3 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-cyan-400 transition-all"
             />
           </div>
 

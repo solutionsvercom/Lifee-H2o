@@ -910,6 +910,122 @@ section:not(#home) {
   }
 }
 
+@media (max-width: 767px) {
+  /* Ensure page scroll stays on html/body only (no inner section scrolling). */
+  #process,
+  #products,
+  #certifications,
+  #about,
+  #why-us {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  #process .process-cards-grid,
+  #products .product-cards-grid,
+  #certifications .feature-cards-grid,
+  #about .about-stats-grid,
+  #why-us .feature-cards-grid {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  #process .section-mobile-card,
+  #products .section-mobile-card,
+  #certifications .section-mobile-card,
+  #why-us .section-mobile-card {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  /* Product cards: tall mobile cards like About cards. */
+  #products .product-cards-grid {
+    grid-template-columns: 1fr !important;
+    justify-items: center !important;
+    gap: 1.5rem !important;
+  }
+
+  #products .product-cards-grid > * {
+    width: 85vw !important;
+    max-width: 85vw !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    min-width: 0 !important;
+  }
+
+  #products .product-mobile-card {
+    width: 100% !important;
+    overflow: visible !important;
+  }
+
+  #products .product-card-media {
+    width: 100% !important;
+    height: 105vw !important;
+    min-height: 105vw !important;
+    max-height: 140vw !important;
+    overflow: hidden !important;
+    border-radius: 12px 12px 0 0 !important;
+    margin-bottom: 0 !important;
+    flex: 0 0 auto !important;
+  }
+
+  #products .product-card-media img {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    object-position: center center !important;
+  }
+
+  #products .product-card-content {
+    padding: 0.8rem !important;
+    text-align: center !important;
+  }
+
+  /* Customization form overflow fix (Event Date + all controls). */
+  .custom-order-form-shell {
+    overflow: hidden !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 0 1rem !important;
+  }
+
+  .custom-order-form {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  .custom-order-form input,
+  .custom-order-form textarea,
+  .custom-order-form select,
+  .custom-order-form button {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+  }
+
+  .custom-order-form .event-date-input {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    min-width: 0 !important;
+    display: block !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    font-size: 0.92rem !important;
+    padding-right: 0.6rem !important;
+  }
+}
+
 /* Mobile nav, footer and layout fixes */
 @media (max-width: 768px) {
   /* Center all footer content on mobile */
@@ -1391,6 +1507,104 @@ section#home.hero-section .hero-slide-info {
   width: 100% !important;
   margin-top: 12px !important;
   text-align: center !important;
+}
+
+/* Final mobile hard-lock for custom order form overflow */
+@media (max-width: 767px) {
+  .custom-order-form-shell[class*="max-w-"] {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  .custom-order-form .space-y-3,
+  .custom-order-form .space-y-2,
+  .custom-order-form .grid,
+  .custom-order-form .grid > div {
+    min-width: 0 !important;
+  }
+
+  .custom-order-form input[type="date"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    font-size: 0.9rem !important;
+    line-height: 1.2 !important;
+    padding-left: 0.6rem !important;
+    padding-right: 0.45rem !important;
+  }
+
+  .custom-order-form input[type="date"]::-webkit-datetime-edit {
+    padding: 0 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: clip !important;
+  }
+
+  .custom-order-form input[type="date"]::-webkit-calendar-picker-indicator {
+    margin-left: 0.15rem !important;
+    padding: 0 !important;
+    transform: scale(0.92);
+  }
+
+  /* Bottle customizer mobile date overflow fix */
+  #customizer .bc-custom-form {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    padding: 1rem !important;
+  }
+
+  #customizer .bc-custom-form .space-y-3,
+  #customizer .bc-custom-form .space-y-2,
+  #customizer .bc-custom-form .grid,
+  #customizer .bc-custom-form .grid > div {
+    min-width: 0 !important;
+  }
+
+  #customizer .bc-custom-form input,
+  #customizer .bc-custom-form textarea,
+  #customizer .bc-custom-form select {
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  #customizer .bc-event-date-input,
+  #customizer .bc-custom-form input[type="date"] {
+    width: calc(100% - 1px) !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    display: block !important;
+    box-sizing: border-box !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    font-size: 0.88rem !important;
+    line-height: 1.2 !important;
+    padding-left: 0.55rem !important;
+    padding-right: 0.45rem !important;
+    overflow: hidden !important;
+  }
+
+  #customizer .bc-custom-form input[type="date"]::-webkit-date-and-time-value {
+    text-align: left !important;
+  }
+
+  #customizer .bc-custom-form input[type="date"]::-webkit-datetime-edit {
+    padding: 0 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+  }
+
+  #customizer .bc-custom-form input[type="date"]::-webkit-calendar-picker-indicator {
+    margin-left: 0.15rem !important;
+    padding: 0 !important;
+    transform: scale(0.9) !important;
+  }
 }
 
 /* Edge Tools / a11y: avoid inline style — patterns & accents */

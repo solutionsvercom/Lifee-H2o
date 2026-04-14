@@ -333,7 +333,7 @@ export function DistributionSection() {
             initial={{ opacity: 0, x: 50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8 }}
-            className="relative"
+            className="relative max-md:mt-8"
           >
             <div className="relative aspect-square max-w-lg mx-auto">
               {/* Map container */}

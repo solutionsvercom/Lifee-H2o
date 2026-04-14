@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import { m, useInView } from "motion/react";
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useSyncExternalStore } from "react";
 
 const PRODUCT_CARD_IMAGE_STYLE: CSSProperties = {
   position: "absolute",
@@ -60,6 +60,15 @@ const products = [
 export function ProductShowcase() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isMobile = useSyncExternalStore(
+    (onStoreChange) => {
+      const mq = window.matchMedia("(max-width: 767px)");
+      mq.addEventListener("change", onStoreChange);
+      return () => mq.removeEventListener("change", onStoreChange);
+    },
+    () => window.matchMedia("(max-width: 767px)").matches,
+    () => false,
+  );
 
   const blobLayout = useMemo(
     () =>
@@ -124,10 +133,7 @@ export function ProductShowcase() {
               initial={{ opacity: 0, y: 50, rotateY: -15 }}
               animate={isInView ? { opacity: 1, y: 0, rotateY: 0 } : {}}
               transition={{ delay: index * 0.1, duration: 0.6 }}
-              whileHover={{ 
-                scale: 1.05,
-                y: -10,
-              }}
+              whileHover={isMobile ? undefined : { scale: 1.05, y: -10 }}
               className="group relative flex h-full min-h-0 w-full min-w-0"
               style={{ 
                 transformStyle: 'preserve-3d',
@@ -196,8 +202,8 @@ export function ProductShowcase() {
           transition={{ delay: 0.3, duration: 0.6 }}
           className="mt-[clamp(2rem,5vh,3rem)] text-center"
         >
-          <div className="inline-flex max-md:mx-auto max-md:w-full max-md:max-w-md max-md:justify-center max-md:px-4 max-md:py-2.5 flex-nowrap items-center gap-2 rounded-full border border-cyan-400/30 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 px-[clamp(1rem,3vw,1.5rem)] py-[clamp(0.5rem,1.5vh,0.75rem)] backdrop-blur-lg">
-            <div className="flex max-md:w-full max-md:items-center max-md:justify-center flex-nowrap items-center gap-2">
+          <div className="inline-flex max-md:mx-auto max-md:w-full max-md:max-w-md max-md:flex-col max-md:items-center max-md:px-4 max-md:py-2.5 flex-nowrap items-center gap-2 rounded-full border border-cyan-400/30 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 px-[clamp(1rem,3vw,1.5rem)] py-[clamp(0.5rem,1.5vh,0.75rem)] backdrop-blur-lg md:flex-row md:justify-center">
+            <div className="flex max-md:w-full max-md:flex-row max-md:items-center max-md:justify-center flex-nowrap items-center gap-2">
               <span className="shrink-0 text-xl leading-none font-semibold text-cyan-400 max-md:mr-2">💧</span>
               <span className="text-center text-[clamp(0.85rem,1.3vw,1rem)] text-white max-md:block max-md:w-full max-md:text-center max-md:leading-snug max-md:mt-1">
                 Bulk orders available • Contact us for wholesale pricing

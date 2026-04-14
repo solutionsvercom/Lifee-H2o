@@ -153,12 +153,13 @@ export function ContactSection() {
           </p>
         </m.div>
 
-        <div className="contact-grid">
+        <div className="contact-grid max-md:gap-[2.5rem]">
           {/* Contact Form - Glassmorphism */}
           <m.div
             initial={{ opacity: 0, x: -50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8 }}
+            className="max-md:mb-10 md:mb-0"
           >
             <div className="mx-auto w-full max-w-[min(100%,560px)]">
               <div className="relative rounded-3xl border border-white/20 bg-white/10 p-[clamp(1rem,2vw,2rem)] shadow-2xl backdrop-blur-lg">

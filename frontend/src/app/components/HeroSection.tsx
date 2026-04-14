@@ -266,9 +266,6 @@ function HeroSectionInner() {
                           />
                           <div className="absolute bottom-0 left-0 right-0 z-[2] bg-gradient-to-b from-transparent to-[rgba(0,8,25,0.97)] px-4 pb-4 pt-10 text-center">
                             <p className="m-0 text-[clamp(0.9rem,2vw,1.3rem)] font-bold text-white">{slide.label}</p>
-                            <span className="mt-1 inline-block rounded-[20px] border border-cyan-400/50 px-2.5 py-0.5 text-[clamp(0.65rem,1vw,0.8rem)] text-cyan-400">
-                              {slide.size}
-                            </span>
                             <p className="mt-1 text-[clamp(0.6rem,0.9vw,0.75rem)] text-white/65">{slide.desc}</p>
                           </div>
                         </div>

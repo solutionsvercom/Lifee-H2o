@@ -419,7 +419,7 @@ section:not(#home) {
   #products .product-cards-grid {
     grid-template-columns: 1fr !important;
     justify-items: stretch;
-    gap: 1.2rem !important;
+    gap: 1.5rem !important;
   }
 
   #products .product-cards-grid > * {
@@ -966,6 +966,64 @@ section:not(#home) {
   .btn,
   button[type="submit"] {
     width: 100% !important;
+  }
+}
+
+/* Footer mobile layout: brand full width, 3 columns row */
+@media (max-width: 767px) {
+  footer .footer-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.8rem !important;
+    align-items: start !important;
+  }
+
+  footer .footer-brand {
+    grid-column: 1 / -1 !important;
+    text-align: center !important;
+    margin-bottom: 1rem !important;
+  }
+
+  footer .footer-column {
+    text-align: start !important;
+    vertical-align: top !important;
+    padding-top: 0 !important;
+  }
+
+  footer .footer-column h4 {
+    margin: 0 0 0.5rem 0 !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    color: #fff !important;
+    text-align: start !important;
+    white-space: nowrap !important;
+  }
+
+  footer .footer-column ul {
+    text-align: start !important;
+    padding-left: 0 !important;
+  }
+
+  footer .footer-column:not(.footer-contact) ul li,
+  footer .footer-column:not(.footer-contact) a {
+    font-size: 0.6rem !important;
+    line-height: 1.7 !important;
+    color: rgba(255, 255, 255, 0.65) !important;
+    text-align: start !important;
+  }
+
+  footer .footer-contact.footer-column ul li {
+    font-size: 0.58rem !important;
+    line-height: 1.6 !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    color: rgba(255, 255, 255, 0.65) !important;
+    text-align: start !important;
+  }
+
+  /* Keep Contact heading aligned with other two columns */
+  footer .footer-grid .footer-contact.footer-column {
+    margin-top: 0 !important;
   }
 }
 

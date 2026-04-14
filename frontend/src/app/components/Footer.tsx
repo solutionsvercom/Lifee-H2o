@@ -23,7 +23,7 @@ export function Footer() {
       <div className="section-container container mx-auto w-full max-w-[min(100%,1400px)]">
         <div className="footer-grid mb-[clamp(2rem,5vh,3rem)] grid grid-cols-1 gap-[clamp(1rem,3vw,3rem)] md:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
-          <div className="footer-brand space-y-4">
+          <div className="footer-brand space-y-4 max-md:mb-[1.2rem] max-md:flex max-md:w-full max-md:flex-col max-md:items-center max-md:gap-2 max-md:border-b max-md:border-white/[0.08] max-md:pb-[1.2rem] max-md:text-center">
             <m.div
               animate={{
                 filter: ['drop-shadow(0 0 10px rgba(14, 165, 233, 0.5))', 'drop-shadow(0 0 20px rgba(14, 165, 233, 0.8))', 'drop-shadow(0 0 10px rgba(14, 165, 233, 0.5))'],
@@ -32,23 +32,33 @@ export function Footer() {
                 duration: 3,
                 repeat: Infinity,
               }}
-              className="footer-brand-title flex items-center gap-3"
+              className="footer-brand-title flex items-center gap-3 max-md:w-full max-md:flex-col max-md:items-center max-md:justify-center max-md:gap-1 max-md:text-center"
             >
-              <div className="text-4xl">💧</div>
-              <div className="text-center">
-                <h3 className="text-[clamp(1.1rem,2vw,1.5rem)] font-bold">Lifee Packaged Drinking Water</h3>
-                <p className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-cyan-400">Purity Engineered.</p>
-                <p className="mt-1 font-serif text-[0.78rem] italic tracking-wide text-cyan-300/70">
+              <div className="text-4xl max-md:text-[28px] max-md:leading-none">💧</div>
+              <div className="text-center max-md:w-full">
+                <h3 className="text-[clamp(1.1rem,2vw,1.5rem)] font-bold">
+                  <span className="hidden max-md:flex max-md:flex-col max-md:items-center max-md:gap-1">
+                    <span className="max-md:text-[1.4rem] max-md:font-extrabold max-md:leading-tight">
+                      Lifee<sup className="ml-[0.06em] align-super text-[0.45em] font-semibold leading-none">®</sup>
+                    </span>
+                    <span className="font-medium uppercase leading-snug tracking-[0.15em] text-[rgba(34,211,238,0.75)] max-md:text-[0.6rem] max-md:tracking-[0.15em]">
+                      Packaged Drinking Water
+                    </span>
+                  </span>
+                  <span className="max-md:hidden">Lifee Packaged Drinking Water</span>
+                </h3>
+                <p className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-cyan-400 max-md:text-[0.95rem] max-md:font-semibold">Purity Engineered.</p>
+                <p className="mt-1 font-serif text-[0.78rem] italic tracking-wide text-cyan-300/70 max-md:text-[0.88rem]">
                   भरोसा शुद्धता का, एहसास ताज़गी का
                 </p>
               </div>
             </m.div>
-            <p className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-cyan-100/70">
+            <p className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-cyan-100/70 max-md:mx-auto max-md:w-full max-md:max-w-[240px] max-md:text-[0.72rem] max-md:leading-relaxed max-md:opacity-70 max-md:text-center">
               Advanced purification technology delivering unmatched freshness and safety across Madhya Pradesh.
             </p>
             
             {/* Social links */}
-            <div className="social-icons flex gap-3 pt-4">
+            <div className="social-icons flex gap-3 pt-4 max-md:mx-auto max-md:w-full max-md:justify-center max-md:pt-0">
               {[
                 // { Icon: Facebook, href: "https://facebook.com" },
                 { Icon: Instagram, href: "https://www.instagram.com/lifee8516?igsh=MTJ6Zmljbndxd2drdQ==" },
@@ -63,24 +73,24 @@ export function Footer() {
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.2, rotate: 5 }}
                   whileTap={{ scale: 0.9 }}
-                  className="h-10 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center gap-2 px-4 hover:bg-white/20 hover:border-cyan-400 transition-all"
+                  className="h-10 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center gap-2 px-4 hover:bg-white/20 hover:border-cyan-400 transition-all max-md:mx-auto max-md:h-auto max-md:px-4 max-md:py-1.5 max-md:text-[0.75rem]"
                 >
-                  <span className="text-sm text-cyan-100">Follow us on Instagram</span>
+                  <span className="text-sm text-cyan-100 max-md:text-[0.75rem] max-md:whitespace-nowrap">Follow us on Instagram</span>
                   <Icon className="w-5 h-5 text-cyan-400" />
                   
                 </m.a>
               ))}
             </div>
 
-            <div className="mx-auto mt-[1.2rem] flex max-w-fit items-center gap-2.5 rounded-xl border border-cyan-400/20 bg-gradient-to-br from-cyan-400/10 to-blue-900/20 px-3.5 py-2.5 md:mx-0">
+            <div className="footer-owner-card mx-auto mt-[1.2rem] flex max-w-fit items-center gap-2.5 rounded-xl border border-cyan-400/20 bg-gradient-to-br from-cyan-400/10 to-blue-900/20 px-3.5 py-2.5 md:mx-0 max-md:mx-auto max-md:mt-2 max-md:w-full max-md:max-w-[220px] max-md:flex-row max-md:items-center max-md:justify-start max-md:gap-[10px] max-md:text-left">
               <div className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-sky-500 to-cyan-400 text-base">
                 👤
               </div>
-              <div>
-                <p className="m-0 text-[0.65rem] uppercase tracking-wider text-white/50">
+              <div className="max-md:text-left">
+                <p className="m-0 text-[0.65rem] uppercase tracking-wider text-white/50 max-md:block max-md:text-[0.6rem] max-md:text-left max-md:normal-case max-md:tracking-normal max-md:opacity-60 max-md:whitespace-nowrap">
                   Founder & Owner
                 </p>
-                <p className="m-0 text-[0.95rem] font-bold tracking-wide text-white">
+                <p className="m-0 text-[0.95rem] font-bold tracking-wide text-white max-md:block max-md:text-[0.95rem] max-md:text-left max-md:whitespace-nowrap">
                   Bipin Batham
                 </p>
               </div>
@@ -88,7 +98,7 @@ export function Footer() {
           </div>
 
           {/* Quick Links */}
-          <div>
+          <div className="footer-column">
             <h4 className="mb-4 text-[clamp(1.1rem,2vw,1.5rem)] font-semibold text-white">Quick Links</h4>
             <ul className="space-y-2">
               {[
@@ -112,7 +122,7 @@ export function Footer() {
           </div>
 
           {/* Services */}
-          <div>
+          <div className="footer-column">
             <h4 className="mb-4 text-[clamp(1.1rem,2vw,1.5rem)] font-semibold text-white">Services</h4>
             <ul className="space-y-2">
               {[
@@ -133,7 +143,7 @@ export function Footer() {
           </div>
 
           {/* Contact */}
-          <div className="footer-contact">
+          <div className="footer-contact footer-column">
             <h4 className="mb-4 text-[clamp(1.1rem,2vw,1.5rem)] font-semibold text-white">Contact Info</h4>
             <ul className="space-y-3 text-[clamp(0.75rem,1.2vw,0.95rem)]">
               <li className="text-cyan-100/70">

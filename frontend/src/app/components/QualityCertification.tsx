@@ -79,7 +79,6 @@ export function QualityCertification() {
                 initial={{ opacity: 0, y: 50, scale: 0.8 }}
                 animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
                 transition={{ delay: index * 0.15, duration: 0.6 }}
-                whileHover={{ scale: 1.05, y: -10 }}
                 className="group relative flex h-full min-h-0 w-full min-w-0 flex-col"
               >
                 <div className="section-mobile-card relative flex h-full min-h-0 w-full min-w-0 flex-col rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-[clamp(1rem,2vw,2rem)] shadow-2xl backdrop-blur-lg">
@@ -164,7 +163,7 @@ export function QualityCertification() {
           className="relative rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/5 p-[clamp(1rem,2vw,2rem)] backdrop-blur-lg"
         >
           <div className="cert-stats-row">
-            <div className="section-mobile-card space-y-2">
+            <div className="section-mobile-card max-md:space-y-0 md:space-y-2">
               <m.div
                 animate={{
                   scale: [1, 1.1, 1],
@@ -180,7 +179,7 @@ export function QualityCertification() {
               </m.div>
               <p className="text-[clamp(0.9rem,1.5vw,1.1rem)] text-cyan-100/70">Quality Tests Daily</p>
             </div>
-            <div className="section-mobile-card space-y-2">
+            <div className="section-mobile-card max-md:space-y-0 md:space-y-2">
               <m.div
                 animate={{
                   scale: [1, 1.1, 1],
@@ -196,7 +195,7 @@ export function QualityCertification() {
               </m.div>
               <p className="text-[clamp(0.9rem,1.5vw,1.1rem)] text-cyan-100/70">Purity Guaranteed</p>
             </div>
-            <div className="section-mobile-card space-y-2">
+            <div className="section-mobile-card max-md:space-y-0 md:space-y-2">
               <m.div
                 animate={{
                   scale: [1, 1.1, 1],

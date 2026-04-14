@@ -1,6 +1,22 @@
 import { m } from "motion/react";
 import { Link } from "react-router";
-import { Instagram } from "lucide-react";
+import {
+  Building2,
+  Clock3,
+  Droplets,
+  Handshake,
+  House,
+  Info,
+  Instagram,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Package,
+  Phone,
+  Settings,
+  Trophy,
+  Truck,
+} from "lucide-react";
 
 export function Footer() {
   return (
@@ -81,39 +97,45 @@ export function Footer() {
               ))}
             </div>
 
-            <div className="footer-owner-card mx-auto mt-[1.2rem] flex max-w-fit items-center gap-2.5 rounded-xl border border-cyan-400/20 bg-gradient-to-br from-cyan-400/10 to-blue-900/20 px-3.5 py-2.5 md:mx-0 max-md:mx-auto max-md:mt-2 max-md:w-full max-md:max-w-[220px] max-md:flex-row max-md:items-center max-md:justify-start max-md:gap-[10px] max-md:text-left">
+            <div className="footer-owner-card mx-auto mt-[1.2rem] flex max-w-fit items-center gap-2.5 rounded-xl border border-cyan-400/20 bg-gradient-to-br from-cyan-400/10 to-blue-900/20 px-3.5 py-2.5 md:mx-0 max-md:mx-auto max-md:mt-2 max-md:w-full max-md:max-w-[220px] max-md:flex-row max-md:items-center max-md:justify-center max-md:gap-[10px]">
               <div className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-sky-500 to-cyan-400 text-base">
                 👤
               </div>
-              <div className="max-md:text-left">
-                <p className="m-0 text-[0.65rem] uppercase tracking-wider text-white/50 max-md:block max-md:text-[0.6rem] max-md:text-left max-md:normal-case max-md:tracking-normal max-md:opacity-60 max-md:whitespace-nowrap">
+              <div className="max-md:text-center">
+                <p className="m-0 text-[0.65rem] uppercase tracking-wider text-white/50 max-md:block max-md:text-[0.6rem] max-md:text-center max-md:normal-case max-md:tracking-normal max-md:opacity-60 max-md:whitespace-nowrap">
                   Founder & Owner
                 </p>
-                <p className="m-0 text-[0.95rem] font-bold tracking-wide text-white max-md:block max-md:text-[0.95rem] max-md:text-left max-md:whitespace-nowrap">
-                  Bipin Batham
+                <p className="m-0 text-[0.95rem] font-bold tracking-wide text-white max-md:block max-md:text-[0.95rem] max-md:text-center max-md:whitespace-nowrap">
+                  B.KUMAR
                 </p>
               </div>
             </div>
           </div>
 
           {/* Quick Links */}
-          <div className="footer-column">
-            <h4 className="mb-4 text-[clamp(1.1rem,2vw,1.5rem)] font-semibold text-white">Quick Links</h4>
-            <ul className="space-y-2">
+          <div className="footer-column footer-quick-links m-0 max-md:p-0">
+            <h4 className="mb-4 w-full pl-0 text-left text-[clamp(1.1rem,2vw,1.5rem)] font-semibold text-white max-md:mb-3">
+              Quick Links
+            </h4>
+            <ul className="m-0 list-none space-y-3 p-0 pl-0">
               {[
-                { label: "About Us", to: "/#about" },
-                { label: "Products", to: "/#products" },
-                { label: "Quality Process", to: "/#process" },
-                { label: "Certifications", to: "/#certifications" },
-                { label: "Distribution", to: "/#distribution" },
+                { label: "About Us", to: "/#about", Icon: Info },
+                { label: "Products", to: "/#products", Icon: Droplets },
+                { label: "Quality Process", to: "/#process", Icon: Settings },
+                { label: "Certifications", to: "/#certifications", Icon: Trophy },
+                { label: "Distribution", to: "/#distribution", Icon: Truck },
               ].map((link, i) => (
-                <li key={i}>
+                <li key={i} className="list-none pl-0 text-left">
                   <Link
                     to={link.to}
                     prefetch="intent"
-                    className="inline-block text-[clamp(0.75rem,1.2vw,0.95rem)] text-cyan-100/70 transition-colors duration-200 hover:translate-x-1 hover:text-cyan-400"
+                    className="flex w-full max-w-full items-start gap-2 pl-0 text-left leading-snug text-[clamp(0.75rem,1.2vw,0.95rem)] text-cyan-100/70 transition-colors duration-200 hover:translate-x-1 hover:text-cyan-400 md:items-center"
                   >
-                    {link.label}
+                    <link.Icon
+                      className="mt-[0.2em] size-[0.875rem] shrink-0 text-cyan-100/70 opacity-[0.85] md:mt-0 md:size-3 md:translate-y-[0.08em]"
+                      aria-hidden
+                    />
+                    <span className="min-w-0">{link.label}</span>
                   </Link>
                 </li>
               ))}
@@ -123,19 +145,25 @@ export function Footer() {
           {/* Services */}
           <div className="footer-column">
             <h4 className="mb-4 text-[clamp(1.1rem,2vw,1.5rem)] font-semibold text-white">Services</h4>
-            <ul className="space-y-2">
+            <ul className="space-y-3">
               {[
-                "Home Delivery",
-                "Bulk Orders",
-                "Corporate Supply",
-                "Distribution Partnership",
-                "24/7 Customer Support",
-              ].map((label, i) => (
+                { label: "Home Delivery", Icon: House },
+                { label: "Bulk Orders", Icon: Package },
+                { label: "Corporate Supply", Icon: Building2 },
+                { label: "Distribution Partnership", Icon: Handshake },
+                { label: "24/7 Customer Support", Icon: MessageCircle },
+              ].map(({ label, Icon }, i) => (
                 <li
                   key={i}
                   className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-cyan-100/70"
                 >
-                  {label}
+                  <span className="flex items-start gap-1.5 leading-snug md:items-center">
+                    <Icon
+                      className="mt-[0.2em] size-3 shrink-0 opacity-[0.85] text-cyan-100/70 md:mt-0 md:translate-y-[0.08em]"
+                      aria-hidden
+                    />
+                    <span className="min-w-0">{label}</span>
+                  </span>
                 </li>
               ))}
             </ul>
@@ -146,24 +174,46 @@ export function Footer() {
             <h4 className="mb-4 text-[clamp(1.1rem,2vw,1.5rem)] font-semibold text-white">Contact Info</h4>
             <ul className="space-y-3 text-[clamp(0.75rem,1.2vw,0.95rem)]">
               <li className="text-cyan-100/70">
-                <span className="text-white font-semibold">Address:</span>
-                <br />
-                Infront New Police Line Lahar Chungi Bhind, Madhya Pradesh 477001
+                <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-1.5 gap-y-0.5 leading-snug">
+                  <MapPin
+                    className="row-start-1 size-3 shrink-0 self-center text-cyan-100/70 opacity-[0.85]"
+                    aria-hidden
+                  />
+                  <span className="row-start-1 self-center font-semibold text-white">Address:</span>
+                  <span className="col-start-2 row-start-2 block leading-snug">
+                    Infront New Police Line Lahar Chungi Bhind, Madhya Pradesh, 477001
+                  </span>
+                </div>
               </li>
               <li className="text-cyan-100/70">
-                <span className="text-white font-semibold">Phone:</span>
-                <br />
-                +91 92443 72603
+                <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-1.5 gap-y-0.5 leading-snug">
+                  <Phone
+                    className="row-start-1 size-3 shrink-0 self-center text-cyan-100/70 opacity-[0.85]"
+                    aria-hidden
+                  />
+                  <span className="row-start-1 self-center font-semibold text-white">Phone:</span>
+                  <span className="col-start-2 row-start-2 block leading-snug">+91 92443 72603</span>
+                </div>
               </li>
               <li className="text-cyan-100/70">
-                <span className="text-white font-semibold">Email:</span>
-                <br />
-               bipinbatham7@gmail.com
+                <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-1.5 gap-y-0.5 leading-snug">
+                  <Mail
+                    className="row-start-1 size-3 shrink-0 self-center text-cyan-100/70 opacity-[0.85]"
+                    aria-hidden
+                  />
+                  <span className="row-start-1 self-center font-semibold text-white">Email:</span>
+                  <span className="col-start-2 row-start-2 block break-all leading-snug">lifeeh2o@gmail.com</span>
+                </div>
               </li>
               <li className="text-cyan-100/70">
-                <span className="text-white font-semibold">Hours:</span>
-                <br />
-                Mon-Sat: 9AM - 6PM
+                <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-1.5 gap-y-0.5 leading-snug">
+                  <Clock3
+                    className="row-start-1 size-3 shrink-0 self-center text-cyan-100/70 opacity-[0.85]"
+                    aria-hidden
+                  />
+                  <span className="row-start-1 self-center font-semibold text-white">Hours:</span>
+                  <span className="col-start-2 row-start-2 block leading-snug">Mon-Sat: 9AM - 6PM</span>
+                </div>
               </li>
             </ul>
           </div>
@@ -171,15 +221,27 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="border-t border-white/10 py-[clamp(1rem,3vh,1.5rem)] text-center">
-          <p className="mb-[clamp(0.5rem,1.5vh,0.75rem)] text-[clamp(0.75rem,1.2vw,0.95rem)] text-white/40">
-            © 2026 LIFEE Packaged Drinking Water. All rights reserved.
-          </p>
-          <div className="footer-bottom-links flex flex-wrap items-center justify-center gap-6">
-            <span className="text-[13px] text-white/50">Privacy Policy</span>
-            <span className="text-white/20">|</span>
-            <span className="text-[13px] text-white/50">Terms of Service</span>
-            <span className="text-white/20">|</span>
-            <span className="text-[13px] text-white/50">Refund Policy</span>
+          <div className="mb-[clamp(0.5rem,1.5vh,0.75rem)] w-full max-md:overflow-x-auto max-md:[scrollbar-width:none] max-md:[-ms-overflow-style:none] max-md:[&::-webkit-scrollbar]:hidden">
+            <p className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-white/40 max-md:inline-block max-md:whitespace-nowrap max-md:text-[clamp(0.56rem,2.65vw,0.82rem)] max-md:leading-snug md:block md:whitespace-normal">
+              © 2026 LIFEE Packaged Drinking Water. All rights reserved.
+            </p>
+          </div>
+          <div className="footer-bottom-links flex flex-nowrap items-center justify-center gap-x-1.5 md:gap-x-6">
+            <span className="whitespace-nowrap text-[clamp(0.62rem,2.5vw,0.8125rem)] text-white/50 md:text-[13px]">
+              Privacy Policy
+            </span>
+            <span className="shrink-0 text-white/20 max-md:text-[clamp(0.62rem,2.5vw,0.8125rem)] md:text-[13px]">
+              |
+            </span>
+            <span className="whitespace-nowrap text-[clamp(0.62rem,2.5vw,0.8125rem)] text-white/50 md:text-[13px]">
+              Terms of Service
+            </span>
+            <span className="shrink-0 text-white/20 max-md:text-[clamp(0.62rem,2.5vw,0.8125rem)] md:text-[13px]">
+              |
+            </span>
+            <span className="whitespace-nowrap text-[clamp(0.62rem,2.5vw,0.8125rem)] text-white/50 md:text-[13px]">
+              Refund Policy
+            </span>
           </div>
         </div>
       </div>

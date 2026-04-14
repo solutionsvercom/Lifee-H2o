@@ -282,14 +282,14 @@ export function ContactSection() {
               {
                 icon: Mail,
                 title: "Email Us",
-                info: "bipinbatham7@gmail.com",
+                info: "lifeeh2o@gmail.com",
                 subinfo: "We'll respond within 24 hours",
-                href: "mailto:bipinbatham7@gmail.com",
+                href: "mailto:lifeeh2o@gmail.com",
               },
               {
                 icon: MapPin,
                 title: "Visit Us",
-                info: "Infront New Police Line Lahar Chungi Bhind, Madhya Pradesh 477001",
+                info: "Infront New Police Line Lahar Chungi Bhind, Madhya Pradesh, 477001",
                 subinfo: "Corporate Office",
                 href: "https://www.google.com/maps/search/?api=1&query=Infront+New+Police+Line+Lahar+Chungi+Bhind+Madhya+Pradesh+477001",
               },

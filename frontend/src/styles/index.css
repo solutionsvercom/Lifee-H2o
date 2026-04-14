@@ -1052,11 +1052,15 @@ section:not(#home) {
   footer .social-icons {
     justify-content: center !important;
   }
+  /* Brand full width; Quick Links | Services | Contact in one row */
   footer .footer-grid {
-    grid-template-columns: 1fr !important;
-    gap: clamp(1rem, 3vw, 3rem) !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: clamp(0.45rem, 2vw, 0.75rem) !important;
+    align-items: start !important;
   }
   footer .footer-brand {
+    grid-column: 1 / -1 !important;
     text-align: center !important;
   }
   footer .footer-brand-title {
@@ -1066,7 +1070,8 @@ section:not(#home) {
     margin-top: 4px !important;
   }
   footer .footer-bottom-links {
-    gap: 12px !important;
+    flex-wrap: nowrap !important;
+    gap: 0.375rem !important;
   }
 
   /* Mobile nav links centered */
@@ -1117,16 +1122,42 @@ section:not(#home) {
     padding-left: max(0.625rem, env(safe-area-inset-left, 0px)) !important;
   }
 
-  /* Stack all grids on mobile */
-  [class*="grid-cols-2"],
-  [class*="grid-cols-3"],
-  [class*="grid-cols-4"] {
+  /* Stack grids on mobile (do not override footer link row) */
+  [class*="grid-cols-2"]:not(.footer-grid),
+  [class*="grid-cols-3"]:not(.footer-grid),
+  [class*="grid-cols-4"]:not(.footer-grid) {
     grid-template-columns: 1fr !important;
   }
 
   /* Center text on mobile */
   footer * {
     text-align: center;
+  }
+
+  /* Keep footer link columns left-aligned on mobile */
+  footer .footer-column h4,
+  footer .footer-column ul,
+  footer .footer-column ul li,
+  footer .footer-column ul li a,
+  footer .footer-column ul li span {
+    text-align: start !important;
+    justify-content: flex-start !important;
+  }
+
+  /* Quick Links: flush with heading (no extra inset vs “Q”) */
+  footer .footer-quick-links.footer-column h4,
+  footer .footer-quick-links.footer-column ul,
+  footer .footer-quick-links.footer-column li {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  footer .footer-quick-links.footer-column a {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    box-sizing: border-box !important;
   }
 
   /* Full width buttons on mobile */
@@ -1136,34 +1167,36 @@ section:not(#home) {
   }
 }
 
-/* Footer mobile layout: brand full width, 3 columns row */
+/* Footer mobile (≤767px): tighter column gaps; typography for narrow 3-col row */
 @media (max-width: 767px) {
   footer .footer-grid {
     display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 0.8rem !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: clamp(0.35rem, 1.8vw, 0.55rem) !important;
     align-items: start !important;
   }
 
   footer .footer-brand {
     grid-column: 1 / -1 !important;
-    text-align: center !important;
-    margin-bottom: 1rem !important;
+    margin-bottom: 0.75rem !important;
   }
 
   footer .footer-column {
+    width: 100% !important;
+    min-width: 0 !important;
     text-align: start !important;
     vertical-align: top !important;
     padding-top: 0 !important;
   }
 
   footer .footer-column h4 {
-    margin: 0 0 0.5rem 0 !important;
-    font-size: 0.72rem !important;
+    margin: 0 0 0.45rem 0 !important;
+    font-size: clamp(0.62rem, 2.65vw, 0.76rem) !important;
     font-weight: 700 !important;
     color: #fff !important;
     text-align: start !important;
-    white-space: nowrap !important;
+    white-space: normal !important;
+    line-height: 1.2 !important;
   }
 
   footer .footer-column ul {
@@ -1172,23 +1205,24 @@ section:not(#home) {
   }
 
   footer .footer-column:not(.footer-contact) ul li,
-  footer .footer-column:not(.footer-contact) a {
-    font-size: 0.6rem !important;
-    line-height: 1.7 !important;
-    color: rgba(255, 255, 255, 0.65) !important;
+  footer .footer-column:not(.footer-contact) ul li a {
+    font-size: clamp(0.54rem, 2.25vw, 0.68rem) !important;
+    line-height: 1.45 !important;
+    color: rgba(207, 250, 254, 0.78) !important;
     text-align: start !important;
+    justify-content: flex-start !important;
   }
 
   footer .footer-contact.footer-column ul li {
-    font-size: 0.58rem !important;
-    line-height: 1.6 !important;
+    font-size: clamp(0.52rem, 2.15vw, 0.65rem) !important;
+    line-height: 1.45 !important;
     word-break: break-word !important;
     overflow-wrap: break-word !important;
-    color: rgba(255, 255, 255, 0.65) !important;
+    /* Match Quick Links / Services link color; labels stay white via .text-white on span */
+    color: rgba(207, 250, 254, 0.78) !important;
     text-align: start !important;
   }
 
-  /* Keep Contact heading aligned with other two columns */
   footer .footer-grid .footer-contact.footer-column {
     margin-top: 0 !important;
   }

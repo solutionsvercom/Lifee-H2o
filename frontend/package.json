@@ -8,7 +8,8 @@
     "dev": "vite",
     "compress-images": "node scripts/compress-public-images.mjs",
     "server": "node ../backend/server.js",
-    "start": "concurrently \"npm run dev\" \"npm run server\""
+    "server:auto": "node scripts/start-backend-if-needed.mjs",
+    "start": "concurrently \"npm run dev\" \"npm run server:auto\""
   },
   "dependencies": {
     "@emotion/react": "11.14.0",

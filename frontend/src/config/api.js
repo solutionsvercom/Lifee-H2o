@@ -1,13 +1,13 @@
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL ||
-  'http://localhost:5000';
+import { apiUrl } from '../app/utils/apiUrl';
+
+const API_BASE_URL = apiUrl('/').replace(/\/$/, '');
 
 export const API_ENDPOINTS = {
-  contact: `${API_BASE_URL}/api/email/contact`,
-  order: `${API_BASE_URL}/api/email/order`,
-  distributor: `${API_BASE_URL}/api/email/distributor`,
-  customOrder: `${API_BASE_URL}/api/email/custom-order`,
-  downloadCard: `${API_BASE_URL}/api/download/visiting-card`,
+  contact: apiUrl('/api/email/contact'),
+  order: apiUrl('/api/email/order'),
+  distributor: apiUrl('/api/email/distributor'),
+  customOrder: apiUrl('/api/email/custom-order'),
+  downloadCard: apiUrl('/api/download/visiting-card'),
 };
 
 export default API_BASE_URL;

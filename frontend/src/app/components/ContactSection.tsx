@@ -1,18 +1,17 @@
 import { m, useInView } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Send, Phone, Mail, MapPin, Download } from "lucide-react";
+import { Send, Phone, Mail, MapPin, Eye } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
+import { API_ENDPOINTS } from "../../config/api";
 
 const STATUS_HIDE_MS = 10000;
-const REQUEST_TIMEOUT_MS = 12000;
-
-/** Served from `frontend/public/file/Brochure.pdf` → URL path `/file/Brochure.pdf`. */
-const BROCHURE_PDF_HREF = `${import.meta.env.BASE_URL}file/Brochure.pdf`;
+const REQUEST_TIMEOUT_MS = 30000;
+const BROCHURE_PDF_HREF = `${import.meta.env.BASE_URL}file/Lifee_Water_Card.pdf`;
 
 export function ContactSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const whatsappPhoneNumber = "919876543210";
+  const whatsappPhoneNumber = "919244372603";
   const whatsappMessage = "Hello, I am interested in your service";
   const whatsappLink = `https://wa.me/${whatsappPhoneNumber}?text=${encodeURIComponent(whatsappMessage)}`;
   const [formData, setFormData] = useState({
@@ -23,8 +22,16 @@ export function ContactSection() {
     requirement: "",
   });
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState("");
-  const fetchAbortRef = useRef<AbortController | null>(null);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+  const handleMobileContactAction = useCallback((href?: string) => {
+    if (!href) return;
+    if (!window.matchMedia("(max-width: 767px)").matches) return;
+    window.location.href = href;
+  }, []);
+  const handleDownloadPdf = useCallback((url: string) => {
+    window.location.assign(url);
+  }, []);
   const statusTimeoutRef = useRef<number | null>(null);
   const resetContactForm = useCallback(() => {
     setFormData({ name: "", email: "", phone: "", location: "", requirement: "" });
@@ -32,7 +39,6 @@ export function ContactSection() {
 
   useEffect(() => {
     return () => {
-      fetchAbortRef.current?.abort();
       if (statusTimeoutRef.current) {
         window.clearTimeout(statusTimeoutRef.current);
       }
@@ -40,34 +46,28 @@ export function ContactSection() {
   }, []);
 
   useEffect(() => {
-    if (!status) return;
+    if (!error && !success) return;
     if (statusTimeoutRef.current) {
       window.clearTimeout(statusTimeoutRef.current);
     }
     statusTimeoutRef.current = window.setTimeout(() => {
-      setStatus("");
+      setError("");
+      setSuccess(false);
     }, STATUS_HIDE_MS);
-  }, [status]);
+  }, [error, success]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
-      fetchAbortRef.current?.abort();
-      const ac = new AbortController();
-      fetchAbortRef.current = ac;
       setLoading(true);
-      setStatus("");
-      let didTimeout = false;
-      const requestTimeout = window.setTimeout(() => {
-        didTimeout = true;
-        ac.abort();
-      }, REQUEST_TIMEOUT_MS);
+      setError("");
+      setSuccess(false);
 
       try {
-        const response = await fetch("http://localhost:5000/api/email/contact", {
+        const response = await fetch(API_ENDPOINTS.contact, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          signal: ac.signal,
+          signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
           body: JSON.stringify({
             name: formData.name,
             email: formData.email,
@@ -79,21 +79,20 @@ export function ContactSection() {
 
         const data = await response.json();
 
-        if (data.success) {
-          setStatus("success: Message sent successfully!");
+        if (!response.ok || !data.success) {
+          throw new Error(data.error || "Failed to send");
+        }
+        setSuccess(true);
           resetContactForm();
-        } else {
-          setStatus("error: " + (data.error || "Failed to send message"));
-        }
       } catch (error) {
-        if (error instanceof Error && error.name === "AbortError" && !didTimeout) return;
-        if (didTimeout) {
-          setStatus("error: Request timed out. Please try again.");
-          return;
+        if (error instanceof Error && error.name === "TimeoutError") {
+          setError("Request timed out. Please try again.");
+        } else if (error instanceof Error) {
+          setError(error.message || "Something went wrong");
+        } else {
+          setError("Something went wrong");
         }
-        setStatus("error: Cannot connect to server");
       } finally {
-        window.clearTimeout(requestTimeout);
         setLoading(false);
       }
     },
@@ -104,7 +103,7 @@ export function ContactSection() {
     <section 
       id="contact"
       ref={ref}
-      className="relative py-16 px-4 sm:px-6 bg-gradient-to-br from-slate-900 to-[#0A2540] overflow-hidden scroll-mt-20"
+      className="relative overflow-hidden bg-gradient-to-br from-slate-900 to-[#0A2540] scroll-mt-20"
     >
       {/* Background effects */}
       <div className="absolute inset-0">
@@ -127,56 +126,41 @@ export function ContactSection() {
           transition={{
             duration: 10,
             repeat: Infinity,
-            delay: 2,
+            delay: 0.3,
           }}
           className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500 rounded-full blur-3xl"
         />
       </div>
 
-      <div className="container mx-auto max-w-6xl relative z-10 section-container">
+      <div className="section-container container relative z-10 mx-auto w-full max-w-[min(100%,1400px)]">
         {/* Header */}
         <m.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
-          className="text-center mb-16"
+          className="mb-[clamp(2rem,5vh,4rem)] text-center"
         >
-          <h2 className="text-[clamp(1.8rem,6vw,3rem)] font-bold text-white mb-6 leading-tight">
+          <h2 className="mb-[clamp(1rem,3vh,1.5rem)] text-[clamp(1.5rem,3vw,2.5rem)] font-bold leading-tight text-white">
             Get In{" "}
             <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
               Touch
             </span>
           </h2>
-          <p className="text-cyan-100/80 text-lg max-w-2xl mx-auto">
+          <p className="mx-auto max-w-2xl text-[clamp(0.9rem,1.5vw,1.1rem)] text-cyan-100/80">
             Ready to experience premium hydration? Contact us for orders or distribution inquiries
           </p>
         </m.div>
 
-        <div
-          className="contact-grid"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "48px",
-            maxWidth: "1100px",
-            margin: "0 auto",
-            padding: "0 24px",
-          }}
-        >
+        <div className="contact-grid max-md:gap-[2.5rem]">
           {/* Contact Form - Glassmorphism */}
           <m.div
             initial={{ opacity: 0, x: -50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8 }}
+            className="max-md:mb-10 md:mb-0"
           >
-            <div
-              style={{
-                maxWidth: "560px",
-                width: "100%",
-                margin: "0 auto",
-              }}
-            >
-              <div className="relative p-5 sm:p-8 rounded-3xl bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl">
+            <div className="mx-auto w-full max-w-[min(100%,560px)]">
+              <div className="relative rounded-3xl border border-white/20 bg-white/10 p-[clamp(1rem,2vw,2rem)] shadow-2xl backdrop-blur-lg">
               {/* Glow effect */}
               <m.div
                 animate={{
@@ -191,7 +175,7 @@ export function ContactSection() {
 
               <form onSubmit={handleSubmit} className="relative z-10 space-y-6">
                 <div className="space-y-2">
-                  <label className="text-white/90 text-sm">Full Name</label>
+                  <label className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-white/90">Full Name</label>
                   <input
                     type="text"
                     value={formData.name}
@@ -203,7 +187,7 @@ export function ContactSection() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-white/90 text-sm">Phone Number</label>
+                  <label className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-white/90">Phone Number</label>
                   <input
                     type="tel"
                     value={formData.phone}
@@ -215,7 +199,7 @@ export function ContactSection() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-white/90 text-sm">Email</label>
+                  <label className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-white/90">Email</label>
                   <input
                     type="email"
                     value={formData.email}
@@ -227,7 +211,7 @@ export function ContactSection() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-white/90 text-sm">Location</label>
+                  <label className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-white/90">Location</label>
                   <input
                     type="text"
                     value={formData.location}
@@ -239,7 +223,7 @@ export function ContactSection() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-white/90 text-sm">Requirement</label>
+                  <label className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-white/90">Requirement</label>
                   <textarea
                     value={formData.requirement}
                     onChange={(e) => setFormData({ ...formData, requirement: e.target.value })}
@@ -255,16 +239,16 @@ export function ContactSection() {
                   disabled={loading}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl font-semibold shadow-lg shadow-cyan-500/50 hover:shadow-cyan-500/70 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 py-4 text-[clamp(0.85rem,1.3vw,1rem)] font-semibold text-white shadow-lg shadow-cyan-500/50 transition-all duration-300 hover:shadow-cyan-500/70 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   <Send className="w-5 h-5" />
                   {loading ? "Sending..." : "Send Message"}
                 </m.button>
-                {status.startsWith("success") && (
-                  <p className="text-sm text-green-400">✅ Message sent successfully!</p>
+                {success && (
+                  <p className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-green-400">✅ Message sent successfully!</p>
                 )}
-                {status.startsWith("error") && (
-                  <p className="text-sm text-red-400">❌ {status.replace(/^error:\s*/i, "")}</p>
+                {!!error && (
+                  <p className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-red-400">❌ {error}</p>
                 )}
               </form>
               </div>
@@ -283,20 +267,23 @@ export function ContactSection() {
               {
                 icon: Phone,
                 title: "Call Us",
-                info: "+91 98765 43210",
+                info: "+91 92443 72603",
                 subinfo: "Mon-Sat, 9AM - 6PM",
+                href: "tel:+919244372603",
               },
               {
                 icon: Mail,
                 title: "Email Us",
-                info: "contact@premiumwater.com",
+                info: "lifeeh2o@gmail.com",
                 subinfo: "We'll respond within 24 hours",
+                href: "mailto:lifeeh2o@gmail.com",
               },
               {
                 icon: MapPin,
                 title: "Visit Us",
-                info: "Bhopal, Madhya Pradesh",
+                info: "Infront New Police Line Lahar Chungi Bhind, Madhya Pradesh, 477001",
                 subinfo: "Corporate Office",
+                href: "https://www.google.com/maps/search/?api=1&query=Infront+New+Police+Line+Lahar+Chungi+Bhind+Madhya+Pradesh+477001",
               },
             ].map((contact, i) => {
               const Icon = contact.icon;
@@ -308,15 +295,16 @@ export function ContactSection() {
                   transition={{ delay: 0.3 + i * 0.1, duration: 0.6 }}
                   whileHover={{ scale: 1.02, x: 5 }}
                   className="p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 cursor-pointer"
+                  onClick={() => handleMobileContactAction(contact.href)}
                 >
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-400/20 to-blue-500/20 flex items-center justify-center flex-shrink-0">
                       <Icon className="w-6 h-6 text-cyan-400" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-white font-semibold mb-1">{contact.title}</h3>
-                      <p className="text-cyan-300">{contact.info}</p>
-                      <p className="text-cyan-100/50 text-sm mt-1">{contact.subinfo}</p>
+                      <h3 className="mb-1 text-[clamp(1.1rem,2vw,1.5rem)] font-semibold text-white">{contact.title}</h3>
+                      <p className="text-[clamp(0.9rem,1.5vw,1.1rem)] text-cyan-300">{contact.info}</p>
+                      <p className="mt-1 text-[clamp(0.75rem,1.2vw,0.95rem)] text-cyan-100/50">{contact.subinfo}</p>
                     </div>
                   </div>
                 </m.div>
@@ -327,53 +315,53 @@ export function ContactSection() {
             <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.6, duration: 0.6 }}
+              transition={{ delay: 0.3, duration: 0.6 }}
               className="pt-6"
             >
-              <h3 className="text-white font-semibold mb-4">Quick Actions</h3>
+              <h3 className="mb-4 text-[clamp(1.1rem,2vw,1.5rem)] font-semibold text-white">Quick Actions</h3>
               <div className="space-y-3">
                 <m.a
                   href={whatsappLink}
                   target="_blank"
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.02, x: 5 }}
-                  className="w-full p-4 rounded-xl bg-gradient-to-r from-green-600 to-green-500 text-white font-semibold flex items-center justify-center gap-2 shadow-lg shadow-green-500/30 hover:shadow-green-500/50 transition-all cursor-pointer hover:brightness-110"
+                  className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-green-600 to-green-500 p-4 text-[clamp(0.85rem,1.3vw,1rem)] font-semibold text-white shadow-lg shadow-green-500/30 transition-all hover:brightness-110 hover:shadow-green-500/50"
                 >
                   <FaWhatsapp size={20} color="#FFFFFF" />
                   WhatsApp Us
                 </m.a>
                 
-                <m.a
-                  href={BROCHURE_PDF_HREF}
-                  download=" Brochure.pdf"
+                <m.button
+                  type="button"
+                  onClick={() =>
+                    handleDownloadPdf(BROCHURE_PDF_HREF)
+                  }
                   whileHover={{ scale: 1.02, x: 5 }}
-                  className="w-full p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white font-semibold hover:bg-white/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 p-4 text-[clamp(0.85rem,1.3vw,1rem)] font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
                 >
-                  <Download className="w-5 h-5 shrink-0" />
-                  Download Brochure
-                </m.a>
+                  <Eye className="w-5 h-5 shrink-0" />
+                  View Visiting Card
+                </m.button>
               </div>
             </m.div>
           </m.div>
         </div>
       </div>
 
-      {/* WhatsApp floating button */}
+      {/* WhatsApp floating button — always visible (not gated on section in-view) */}
       <m.a
         href={whatsappLink}
         target="_blank"
         rel="noopener noreferrer"
-        initial={{ opacity: 0, scale: 0 }}
-        animate={isInView ? { opacity: 1, scale: 1 } : {}}
-        transition={{ delay: 1, type: "spring" }}
+        initial={{ opacity: 0, scale: 0.85 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ type: "spring", stiffness: 260, damping: 22 }}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
-        className="fixed bottom-5 right-4 sm:bottom-8 sm:right-8 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center shadow-2xl shadow-green-500/50 hover:shadow-green-500/70 transition-all z-30 group cursor-pointer hover:brightness-110"
+        className="fixed bottom-5 right-4 z-[60] flex h-14 w-14 cursor-pointer items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-green-600 shadow-2xl shadow-green-500/50 transition-all hover:brightness-110 hover:shadow-green-500/70 group sm:bottom-8 sm:right-8 sm:h-16 sm:w-16"
       >
-        <FaWhatsapp className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
-        
-        {/* Pulsing effect */}
         <m.div
+          aria-hidden
           animate={{
             scale: [1, 1.3, 1],
             opacity: [0.7, 0, 0.7],
@@ -382,11 +370,11 @@ export function ContactSection() {
             duration: 2,
             repeat: Infinity,
           }}
-          className="absolute inset-0 rounded-full bg-green-500"
+          className="pointer-events-none absolute inset-0 z-0 rounded-full bg-green-500"
         />
+        <FaWhatsapp className="relative z-10 h-7 w-7 text-white sm:h-8 sm:w-8" />
 
-        {/* Tooltip */}
-        <div className="absolute right-full mr-3 px-3 py-2 bg-black/80 text-white text-sm rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+        <div className="pointer-events-none absolute right-full z-10 mr-3 whitespace-nowrap rounded-lg bg-black/80 px-3 py-2 text-[clamp(0.75rem,1.2vw,0.95rem)] text-white opacity-0 transition-opacity group-hover:opacity-100">
           Chat with us on WhatsApp
         </div>
       </m.a>

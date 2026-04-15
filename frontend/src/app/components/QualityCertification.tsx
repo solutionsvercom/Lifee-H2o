@@ -33,25 +33,20 @@ export function QualityCertification() {
     <section 
       id="certifications"
       ref={ref}
-      className="relative py-16 px-4 sm:px-6 bg-gradient-to-br from-slate-900 via-[#0A2540] to-slate-900 scroll-mt-24"
+      className="relative bg-gradient-to-br from-slate-900 via-[#0A2540] to-slate-900 scroll-mt-24"
     >
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-5">
-        <div 
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230EA5E9' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          }}
-        />
+        <div className="quality-cert-bg-pattern absolute inset-0" />
       </div>
 
-      <div className="container mx-auto max-w-6xl relative z-10">
+      <div className="container relative z-10 mx-auto w-full max-w-[min(100%,1400px)]">
         {/* Header */}
         <m.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
-          className="text-center mb-16"
+          className="mb-[clamp(2rem,5vh,4rem)] text-center"
         >
           <m.div
             animate={{
@@ -62,20 +57,20 @@ export function QualityCertification() {
               repeat: Infinity,
             }}
           >
-            <h2 className="text-[clamp(2rem,7vw,3.75rem)] font-bold text-white mb-6 leading-tight">
+            <h2 className="mb-[clamp(1rem,3vh,1.5rem)] text-[clamp(1.5rem,3vw,2.5rem)] font-bold leading-tight text-white">
               Tested. Certified.{" "}
               <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent">
                 Trusted.
               </span>
             </h2>
           </m.div>
-          <p className="text-cyan-100/80 text-lg max-w-2xl mx-auto">
+          <p className="mx-auto max-w-2xl text-[clamp(0.9rem,1.5vw,1.1rem)] text-cyan-100/80">
             Our commitment to quality is backed by multiple certifications and rigorous testing protocols
           </p>
         </m.div>
 
-        {/* Certifications grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+        {/* Certifications grid — 2×2 symmetric cards */}
+        <div className="feature-cards-grid mb-[clamp(2rem,5vh,4rem)]">
           {certifications.map((cert, index) => {
             const Icon = cert.icon;
             return (
@@ -84,10 +79,9 @@ export function QualityCertification() {
                 initial={{ opacity: 0, y: 50, scale: 0.8 }}
                 animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
                 transition={{ delay: index * 0.15, duration: 0.6 }}
-                whileHover={{ scale: 1.05, y: -10 }}
-                className="group relative"
+                className="group relative flex h-full min-h-0 w-full min-w-0 flex-col"
               >
-                <div className="relative p-8 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg border border-white/10 shadow-2xl h-full">
+                <div className="section-mobile-card relative flex h-full min-h-0 w-full min-w-0 flex-col rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-[clamp(1rem,2vw,2rem)] shadow-2xl backdrop-blur-lg">
                   {/* Glow effect */}
                   <m.div
                     animate={{
@@ -147,10 +141,10 @@ export function QualityCertification() {
 
                     {/* Text */}
                     <div className="space-y-2">
-                      <h3 className="text-xl font-bold text-white">
+                      <h3 className="text-[clamp(1.1rem,2vw,1.5rem)] font-bold text-white">
                         {cert.title}
                       </h3>
-                      <p className="text-sm text-cyan-100/70">
+                      <p className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-cyan-100/70">
                         {cert.description}
                       </p>
                     </div>
@@ -165,11 +159,11 @@ export function QualityCertification() {
         <m.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.8, duration: 0.8 }}
-          className="relative p-8 rounded-3xl bg-gradient-to-br from-white/5 to-white/5 backdrop-blur-lg border border-white/10"
+          transition={{ delay: 0.3, duration: 0.8 }}
+          className="relative rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 to-white/5 p-[clamp(1rem,2vw,2rem)] backdrop-blur-lg"
         >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <div className="space-y-2">
+          <div className="cert-stats-row">
+            <div className="section-mobile-card max-md:space-y-0 md:space-y-2">
               <m.div
                 animate={{
                   scale: [1, 1.1, 1],
@@ -177,15 +171,15 @@ export function QualityCertification() {
                 transition={{
                   duration: 2,
                   repeat: Infinity,
-                   delay: 1,
+                   delay: 0.3,
                 }}
-                className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent"
+                className="text-[clamp(1.5rem,4vw,2.5rem)] font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent"
               >
-                100+
+                10+
               </m.div>
-              <p className="text-cyan-100/70">Quality Tests Daily</p>
+              <p className="text-[clamp(0.9rem,1.5vw,1.1rem)] text-cyan-100/70">Quality Tests Daily</p>
             </div>
-            <div className="space-y-2">
+            <div className="section-mobile-card max-md:space-y-0 md:space-y-2">
               <m.div
                 animate={{
                   scale: [1, 1.1, 1],
@@ -193,15 +187,15 @@ export function QualityCertification() {
                 transition={{
                   duration: 2,
                   repeat: Infinity,
-                  delay: 1,
+                  delay: 0.3,
                 }}
-                className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent"
+                className="text-[clamp(1.5rem,4vw,2.5rem)] font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent"
               >
                 99.9%
               </m.div>
-              <p className="text-cyan-100/70">Purity Guaranteed</p>
+              <p className="text-[clamp(0.9rem,1.5vw,1.1rem)] text-cyan-100/70">Purity Guaranteed</p>
             </div>
-            <div className="space-y-2">
+            <div className="section-mobile-card max-md:space-y-0 md:space-y-2">
               <m.div
                 animate={{
                   scale: [1, 1.1, 1],
@@ -209,13 +203,13 @@ export function QualityCertification() {
                 transition={{
                   duration: 2,
                   repeat: Infinity,
-                  delay: 1,
+                  delay: 0.3,
                 }}
-                className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent"
+                className="text-[clamp(1.5rem,4vw,2.5rem)] font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent"
               >
                 24/7
               </m.div>
-              <p className="text-cyan-100/70">Quality Monitoring</p>
+              <p className="text-[clamp(0.9rem,1.5vw,1.1rem)] text-cyan-100/70">Quality Monitoring</p>
             </div>
           </div>
         </m.div>

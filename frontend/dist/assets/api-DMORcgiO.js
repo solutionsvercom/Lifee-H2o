@@ -1,0 +1,1 @@
+const o="https://your-backend-domain.com",a={contact:`${o}/api/email/contact`,order:`${o}/api/email/order`,distributor:`${o}/api/email/distributor`,customOrder:`${o}/api/email/custom-order`,downloadCard:`${o}/api/download/visiting-card`};export{a as A};

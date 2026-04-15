@@ -114,8 +114,8 @@ export function useHeroParticleCount(): number {
       mq.addEventListener("change", onChange);
       return () => mq.removeEventListener("change", onChange);
     },
-    () => (window.matchMedia("(max-width: 768px)").matches ? 4 : 12),
-    () => 12
+    () => (window.matchMedia("(max-width: 768px)").matches ? 5 : 20),
+    () => 20
   );
 }
 

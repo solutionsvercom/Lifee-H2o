@@ -9,7 +9,7 @@ export function AboutSection() {
     <section 
       id="about"
       ref={ref}
-      className="relative min-h-screen flex items-center py-16 px-4 sm:px-6 overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800 scroll-mt-20"
+      className="relative flex min-h-0 items-center overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800 scroll-mt-20"
     >
       {/* Flowing water visual */}
       <m.div
@@ -34,20 +34,21 @@ export function AboutSection() {
           alt="Water waves"
           width={1080}
           height={720}
-          loading="lazy"
+          loading="eager"
           decoding="async"
+          fetchPriority="low"
           className="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-overlay"
         />
       </m.div>
 
       {/* Content */}
-      <div className="container mx-auto max-w-6xl relative z-10">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
+      <div className="container relative z-10 mx-auto w-full max-w-[min(100%,1400px)]">
+        <div className="about-main-grid">
           <m.div
             initial={{ opacity: 0, x: -50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8 }}
-            className="space-y-8 md:pr-8 flex flex-col items-center"
+            className="flex flex-col items-center space-y-[clamp(1rem,3vw,3rem)] md:pr-[clamp(1rem,3vw,3rem)]"
           >
             <m.div
               initial={{ opacity: 0, y: 20 }}
@@ -55,7 +56,7 @@ export function AboutSection() {
               transition={{ delay: 0.2, duration: 0.8 }}
               className="text-center"
             >
-              <h2 className="text-[clamp(1.8rem,6vw,3rem)] font-bold text-white mb-6 leading-tight">
+              <h2 className="mb-[clamp(1rem,3vh,1.5rem)] text-[clamp(1.5rem,3vw,2.5rem)] font-bold leading-tight text-white">
                 Elegant{" "}
                 <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
                   Storytelling
@@ -66,17 +67,17 @@ export function AboutSection() {
             <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.4, duration: 0.8 }}
-              className="space-y-6 text-cyan-100/90 leading-relaxed text-center max-w-xl"
+              transition={{ delay: 0.3, duration: 0.8 }}
+              className="max-w-xl space-y-[clamp(1rem,2vh,1.5rem)] text-center leading-relaxed text-cyan-100/90"
             >
-              <p className="text-lg">
+              <p className="text-[clamp(0.9rem,1.5vw,1.1rem)]">
                 Our water is refined through{" "}
                 <span className="text-cyan-300 font-semibold">
                   precision-driven purification systems
                 </span>{" "}
                 designed to deliver uncompromised quality.
               </p>
-              <p className="text-lg">
+              <p className="text-[clamp(0.9rem,1.5vw,1.1rem)]">
                 We don't just provide drinking water — we{" "}
                 <span className="text-cyan-300 font-semibold">
                   engineer purity
@@ -88,19 +89,19 @@ export function AboutSection() {
             <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.6, duration: 0.8 }}
-              className="grid grid-cols-3 gap-6 pt-4 max-w-md w-full"
+              transition={{ delay: 0.3, duration: 0.8 }}
+              className="about-stats-grid"
             >
               {[
                 { value: "99.9%", label: "Pure" },
                 { value: "0", label: "Impurities" },
                 { value: "24/7", label: "Available" },
               ].map((stat, i) => (
-                <div key={i} className="text-center">
-                  <div className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                <div key={i} className="section-mobile-card text-center">
+                  <div className="text-[clamp(1.25rem,3vw,2rem)] font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
                     {stat.value}
                   </div>
-                  <div className="text-sm text-cyan-300/70 mt-1">{stat.label}</div>
+                  <div className="mt-1 text-[clamp(0.75rem,1.2vw,0.95rem)] text-cyan-300/70">{stat.label}</div>
                 </div>
               ))}
             </m.div>
@@ -112,7 +113,7 @@ export function AboutSection() {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="relative flex justify-center"
           >
-            <div className="relative w-full max-w-[440px] mx-auto p-8 rounded-3xl bg-white/5 backdrop-blur-lg border border-white/10 shadow-2xl">
+            <div className="relative mx-auto w-full max-w-[min(100%,440px)] rounded-3xl border border-white/10 bg-white/5 p-[clamp(1rem,2vw,2rem)] shadow-2xl backdrop-blur-lg">
               <m.div
                 animate={{
                   boxShadow: [
@@ -134,6 +135,7 @@ export function AboutSection() {
                 height={1000}
                 loading="lazy"
                 decoding="async"
+                fetchPriority="low"
                 className="relative w-full h-auto rounded-2xl"
               />
             </div>

@@ -40,6 +40,7 @@ process.on("unhandledRejection", (err) => {
 });
 
 const app = express();
+app.set('trust proxy', process.env.TRUST_PROXY === 'true' ? 1 : 0);
 
 // ✅ Try loading routes safely
 let emailRoutes;
@@ -69,25 +70,49 @@ app.use(helmet());
 
 // Rate limiting
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 10,
+    windowMs: 60 * 1000,
+    max: 5,
     message: {
         success: false,
-        error: 'Too many requests, please try again later.',
+        error: 'Too many requests. Try again in 1 minute.',
     },
+    standardHeaders: true,
+    legacyHeaders: false,
 });
 
 // CORS
+const allowedOrigins = new Set(
+    [
+        process.env.FRONTEND_URL,
+        process.env.FRONTEND_URL_PROD,
+        'http://localhost:5173',
+        'http://localhost:5174',
+        'http://127.0.0.1:5173',
+        'http://127.0.0.1:5174',
+    ].filter(Boolean)
+);
+
 app.use(
     cors({
-        origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+        origin(origin, callback) {
+            if (!origin) return callback(null, true);
+            if (allowedOrigins.has(origin)) {
+                return callback(null, true);
+            }
+            if (process.env.NODE_ENV !== 'production') {
+                return callback(null, true);
+            }
+            console.warn(`CORS blocked: ${origin}`);
+            return callback(new Error(`CORS blocked for origin: ${origin}`));
+        },
         methods: ['GET', 'POST', 'OPTIONS'],
         allowedHeaders: ['Content-Type'],
+        credentials: false,
     })
 );
 
 app.use(express.json({ limit: '25mb' }));
-app.use('/api', limiter);
+app.use('/api/email', limiter);
 
 // ✅ Use routes only if loaded
 if (emailRoutes) {
@@ -105,6 +130,21 @@ app.get('/api/test', (req, res) => {
 // Health check
 app.get('/health', (req, res) => {
     res.json({ status: 'OK', message: 'LIFEE Backend Running' });
+});
+
+// Force-download visiting card PDF for mobile browsers.
+app.get('/api/download/visiting-card', (req, res) => {
+    const pdfPath = path.join(__dirname, '..', 'frontend', 'public', 'file', 'Lifee_Water_Card.pdf');
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="Lifee_Water_Card.pdf"');
+    res.sendFile(pdfPath, (err) => {
+        if (err) {
+            console.error('Download error:', err);
+            if (!res.headersSent) {
+                res.status(404).json({ success: false, error: 'PDF not found' });
+            }
+        }
+    });
 });
 
 // 404 handler
@@ -125,7 +165,29 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5000;
+const HOST = process.env.HOST || '0.0.0.0';
 
-app.listen(PORT, () => {
-    console.log(`🚀 LIFEE Backend running on http://localhost:${PORT}`);
+const server = app.listen(PORT, HOST, () => {
+    console.log(`🚀 LIFEE Backend running on http://${HOST}:${PORT}`);
+    console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+});
+
+process.on('SIGTERM', () => {
+    console.log('SIGTERM received, shutting down...');
+    server.close(() => {
+        console.log('Server closed');
+        process.exit(0);
+    });
+});
+
+process.on('SIGINT', () => {
+    console.log('SIGINT received, shutting down...');
+    server.close(() => {
+        console.log('Server closed');
+        process.exit(0);
+    });
+});
+
+server.on('error', (error) => {
+    console.error('❌ Server startup/runtime error:', error);
 });

@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import { m, useInView } from "motion/react";
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useSyncExternalStore } from "react";
 
 const PRODUCT_CARD_IMAGE_STYLE: CSSProperties = {
   position: "absolute",
@@ -60,6 +60,15 @@ const products = [
 export function ProductShowcase() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isMobile = useSyncExternalStore(
+    (onStoreChange) => {
+      const mq = window.matchMedia("(max-width: 767px)");
+      mq.addEventListener("change", onStoreChange);
+      return () => mq.removeEventListener("change", onStoreChange);
+    },
+    () => window.matchMedia("(max-width: 767px)").matches,
+    () => false,
+  );
 
   const blobLayout = useMemo(
     () =>
@@ -74,7 +83,7 @@ export function ProductShowcase() {
     <section 
       id="products"
       ref={ref}
-      className="relative py-16 px-4 sm:px-6 bg-gradient-to-br from-[#0A2540] to-slate-900 overflow-hidden scroll-mt-20"
+      className="relative overflow-hidden bg-gradient-to-br from-[#0A2540] to-slate-900 scroll-mt-20"
     >
       {/* Animated background elements */}
       <div className="absolute inset-0">
@@ -97,48 +106,45 @@ export function ProductShowcase() {
         ))}
       </div>
 
-      <div className="container mx-auto max-w-7xl relative z-10 section-container">
+      <div className="section-container container relative z-10 mx-auto w-full max-w-[min(100%,1400px)]">
         {/* Header */}
         <m.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
-          className="text-center mb-16"
+          className="mb-[clamp(2rem,5vh,4rem)] text-center"
         >
-          <h2 className="text-[clamp(1.8rem,6vw,3rem)] font-bold text-white mb-6 leading-tight">
+          <h2 className="mb-[clamp(1rem,3vh,1.5rem)] text-[clamp(1.5rem,3vw,2.5rem)] font-bold leading-tight text-white">
             Product{" "}
             <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
               Showcase
             </span>
           </h2>
-          <p className="text-cyan-100/80 text-lg max-w-2xl mx-auto">
+          <p className="mx-auto max-w-2xl text-[clamp(0.9rem,1.5vw,1.1rem)] text-cyan-100/80">
             Designed for every moment — from everyday hydration to bulk home and office needs.
           </p>
         </m.div>
 
         {/* Product cards with realistic bottles */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+        <div className="product-cards-grid">
           {products.map((product, index) => (
             <m.div
               key={product.size}
               initial={{ opacity: 0, y: 50, rotateY: -15 }}
               animate={isInView ? { opacity: 1, y: 0, rotateY: 0 } : {}}
               transition={{ delay: index * 0.1, duration: 0.6 }}
-              whileHover={{ 
-                scale: 1.05,
-                y: -10,
-              }}
-              className="group relative"
+              whileHover={isMobile ? undefined : { scale: 1.05, y: -10 }}
+              className="group relative flex h-full min-h-0 w-full min-w-0"
               style={{ 
                 transformStyle: 'preserve-3d',
               }}
             >
-              <div className="h-full p-6 rounded-3xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg border border-white/10 hover:border-cyan-400/50 transition-all duration-500">
+                <div className="section-mobile-card product-mobile-card flex h-full min-h-0 w-full min-w-0 flex-col rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-[clamp(1rem,2vw,2rem)] backdrop-blur-lg transition-all duration-500 hover:border-cyan-400/50">
                 {/* Realistic bottle image */}
                 <div
-                  className="relative mb-6 w-full overflow-hidden rounded-2xl bg-transparent"
+                  className="product-card-media relative mb-6 min-h-0 w-full flex-1 overflow-hidden rounded-2xl bg-transparent"
                   style={{
-                    height: "280px",
+                    minHeight: "clamp(12rem, 28vh, 17.5rem)",
                     background: "transparent",
                   }}
                 >
@@ -152,6 +158,7 @@ export function ProductShowcase() {
                     height={560}
                     loading="lazy"
                     decoding="async"
+                    fetchPriority="low"
                     className="w-full h-full object-cover"
                     style={PRODUCT_CARD_IMAGE_STYLE}
                   />
@@ -164,15 +171,15 @@ export function ProductShowcase() {
                 </div>
 
                 {/* Product info */}
-                <div className="space-y-3 text-center">
-                  <h3 className="text-2xl font-bold text-white">
+                <div className="product-card-content space-y-3 text-center">
+                  <h3 className="text-[clamp(1.1rem,2vw,1.5rem)] font-bold text-white">
                     {product.size}
                   </h3>
-                  <p className="text-cyan-100/60 text-sm">
+                  <p className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-cyan-100/60">
                     {product.use}
                   </p>
                   <div className="pt-2">
-                    <span className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                    <span className="text-[clamp(1.25rem,3vw,2rem)] font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
                       {product.price}
                     </span>
                   </div>
@@ -192,14 +199,16 @@ export function ProductShowcase() {
         <m.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={isInView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ delay: 0.8, duration: 0.6 }}
-          className="mt-12 text-center"
+          transition={{ delay: 0.3, duration: 0.6 }}
+          className="mt-[clamp(2rem,5vh,3rem)] text-center"
         >
-          <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-cyan-500/20 to-blue-500/20 backdrop-blur-lg border border-cyan-400/30">
-            <span className="text-cyan-400 font-semibold">💧</span>
-            <span className="text-white">
-              Bulk orders available • Contact us for wholesale pricing
-            </span>
+          <div className="inline-flex max-md:mx-auto max-md:w-full max-md:max-w-md max-md:flex-col max-md:items-center max-md:px-4 max-md:py-2.5 flex-nowrap items-center gap-2 rounded-full border border-cyan-400/30 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 px-[clamp(1rem,3vw,1.5rem)] py-[clamp(0.5rem,1.5vh,0.75rem)] backdrop-blur-lg md:flex-row md:justify-center">
+            <div className="flex max-md:w-full max-md:flex-row max-md:items-center max-md:justify-center flex-nowrap items-center gap-2">
+              <span className="shrink-0 text-xl leading-none font-semibold text-cyan-400 max-md:mr-2">💧</span>
+              <span className="text-center text-[clamp(0.85rem,1.3vw,1rem)] text-white max-md:block max-md:w-full max-md:text-center max-md:leading-snug max-md:mt-1">
+                Bulk orders available • Contact us for wholesale pricing
+              </span>
+            </div>
           </div>
         </m.div>
       </div>

@@ -1,50 +1,102 @@
 const nodemailer = require('nodemailer');
 const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
-
-// Validate env vars once at startup; prevents "to: undefined" later.
+const ENV_PATH = path.join(__dirname, '..', '.env');
 const REQUIRED_EMAIL_ENV = ['SMTP_USER', 'SMTP_PASS', 'RECEIVER_EMAIL', 'COMPANY_NAME'];
-const missingEmailEnv = REQUIRED_EMAIL_ENV.filter((key) => !process.env[key]);
-const emailConfigError =
-  missingEmailEnv.length > 0
-    ? new Error(`Missing .env variables for email: ${missingEmailEnv.join(', ')}`)
-    : null;
+let transporter = null;
+let transporterSignature = '';
+const EMAIL_QUEUE_MAX = Number.parseInt(process.env.EMAIL_QUEUE_MAX || '200', 10);
+const EMAIL_DEDUPE_TTL_MS = 2 * 60 * 1000;
+const EMAIL_MAX_RETRIES = Number.parseInt(process.env.EMAIL_MAX_RETRIES || '2', 10);
+const EMAIL_RETRY_DELAY_MS = Number.parseInt(process.env.EMAIL_RETRY_DELAY_MS || '1200', 10);
+const EMAIL_ACK_RETRIES = Number.parseInt(process.env.EMAIL_ACK_RETRIES || '1', 10);
+const queuedEmails = [];
+let isQueueProcessing = false;
+const dedupeCache = new Map();
 
-const ensureEmailConfig = () => {
-  if (emailConfigError) throw emailConfigError;
+const getEmailConfig = () => {
+  // Reload .env on each request path so SMTP credentials can be changed at runtime.
+  require('dotenv').config({ path: ENV_PATH, override: true });
+
+  const cfg = {
+    host: (process.env.SMTP_HOST || 'smtp.gmail.com').trim(),
+    port: Number.parseInt(process.env.SMTP_PORT || '587', 10),
+    secure: process.env.SMTP_SECURE === 'true' || Number.parseInt(process.env.SMTP_PORT || '587', 10) === 465,
+    user: (process.env.SMTP_USER || '').trim(),
+    pass: (process.env.SMTP_PASS || '').replace(/\s+/g, ''),
+    receiverEmail: (process.env.RECEIVER_EMAIL || '').trim(),
+    companyName: (process.env.COMPANY_NAME || '').trim(),
+  };
+
+  const missing = REQUIRED_EMAIL_ENV.filter((key) => !process.env[key] || String(process.env[key]).trim() === '');
+  if (missing.length > 0) {
+    throw new Error(`Missing .env variables for email: ${missing.join(', ')}`);
+  }
+  return cfg;
 };
 
-const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.SMTP_PORT || '587', 10),
-    secure: process.env.SMTP_SECURE === 'true',
-    auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-    },
-    tls: {
-        rejectUnauthorized: false,
-    },
-});
+const logEmail = (level, message, context = {}) => {
+  const payload = { ts: new Date().toISOString(), ...context };
+  if (level === 'error') {
+    console.error(`[email] ${message}`, payload);
+    return;
+  }
+  if (level === 'warn') {
+    console.warn(`[email] ${message}`, payload);
+    return;
+  }
+  console.log(`[email] ${message}`, payload);
+};
 
-// Verify on startup
-transporter.verify((error, success) => {
+const getTransporter = (config) => {
+  const signature = `${config.host}|${config.port}|${config.secure}|${config.user}|${config.pass}`;
+  if (transporter && transporterSignature === signature) {
+    return transporter;
+  }
+
+  transporter = nodemailer.createTransport({
+    host: config.host,
+    port: config.port,
+    secure: config.secure,
+    auth: {
+      user: config.user,
+      pass: config.pass,
+    },
+    connectionTimeout: 15000,
+    greetingTimeout: 10000,
+    socketTimeout: 45000,
+    requireTLS: !config.secure,
+  });
+  transporterSignature = signature;
+
+  transporter.verify((error) => {
     if (error) {
-        console.error('❌ SMTP Error:', error.message);
-        console.log('Check your .env file:');
-        console.log('SMTP_USER:', process.env.SMTP_USER);
-        console.log('SMTP_HOST:', process.env.SMTP_HOST);
-        console.log('SMTP_PORT:', process.env.SMTP_PORT);
-    } else {
-        console.log('✅ SMTP Ready');
-        console.log('Sending from:', process.env.SMTP_USER);
-        if (process.env.RECEIVER_EMAIL) {
-          console.log('Sending to:', process.env.RECEIVER_EMAIL);
-        } else {
-          console.error('❌ RECEIVER_EMAIL is not configured (won’t send emails).');
-        }
+      console.error('❌ SMTP verify failed:', error.message);
+      return;
     }
-});
+    console.log(`✅ SMTP ready (${config.user} @ ${config.host}:${config.port})`);
+  });
+
+  return transporter;
+};
+
+const sanitize = (str) => {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .trim();
+};
+
+const isValidEmail = (email) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+    String(email).toLowerCase()
+  );
+};
+
+const ensureEmailConfig = () => getEmailConfig();
 
 const ICONS = {
     '👤': `<span style="font-size:16px;line-height:1;">&#128100;</span>`,
@@ -61,7 +113,103 @@ const ICONS = {
 };
 
 const iconOf = (token) => ICONS[token] || token;
-const EMAIL_TIMEOUT_MS = 10000;
+const EMAIL_TIMEOUT_MS = 25000;
+const RETRYABLE_SMTP_CODES = new Set(['ETIMEDOUT', 'ESOCKET', 'ECONNECTION', 'EAI_AGAIN']);
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const normalizeEmailError = (error) => {
+  if (!error) return new Error('Unknown email error');
+  const code = error.code || error.responseCode;
+  if (code === 'EAUTH' || error.responseCode === 535) {
+    return new Error('SMTP authentication failed. Check SMTP user/app password.');
+  }
+  if (error.message === 'Email service timeout') {
+    return new Error('SMTP timeout. Please retry in a few seconds.');
+  }
+  return error;
+};
+
+const safeErrorCode = (error) => error?.code || error?.responseCode || 'UNKNOWN';
+
+const enqueueEmail = (job) =>
+  new Promise((resolve, reject) => {
+    if (queuedEmails.length >= EMAIL_QUEUE_MAX) {
+      reject(new Error('Email queue busy. Please retry shortly.'));
+      return;
+    }
+    queuedEmails.push({ ...job, resolve, reject });
+    processEmailQueue();
+  });
+
+const processEmailQueue = async () => {
+  if (isQueueProcessing) return;
+  isQueueProcessing = true;
+  try {
+    while (queuedEmails.length > 0) {
+      const job = queuedEmails.shift();
+      if (!job) continue;
+      const { mailOptions, dedupeKey, label, retries } = job;
+      const dedupeRecord = dedupeCache.get(dedupeKey);
+      if (dedupeRecord && Date.now() - dedupeRecord < EMAIL_DEDUPE_TTL_MS) {
+        logEmail('warn', 'Duplicate email send suppressed', { label, dedupeKey });
+        job.resolve({ skipped: true, duplicate: true });
+        continue;
+      }
+      try {
+        const result = await sendWithRetry(mailOptions, retries, label);
+        dedupeCache.set(dedupeKey, Date.now());
+        job.resolve(result);
+      } catch (error) {
+        job.reject(error);
+      }
+    }
+  } finally {
+    isQueueProcessing = false;
+    // Prevent unbounded growth.
+    if (dedupeCache.size > 2000) {
+      const now = Date.now();
+      for (const [key, timestamp] of dedupeCache.entries()) {
+        if (now - timestamp > EMAIL_DEDUPE_TTL_MS) dedupeCache.delete(key);
+      }
+    }
+  }
+};
+
+const sendWithRetry = async (mailOptions, retries = EMAIL_MAX_RETRIES, label = 'email') => {
+  let lastError;
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    try {
+      const config = getEmailConfig();
+      const smtp = getTransporter(config);
+      const result = await smtp.sendMail(mailOptions);
+      logEmail('info', 'Email sent successfully', {
+        label,
+        attempt: attempt + 1,
+        to: mailOptions?.to,
+      });
+      return result;
+    } catch (error) {
+      lastError = error;
+      const code = error?.code;
+      const isAuthError = code === 'EAUTH' || error?.responseCode === 535;
+      const shouldRetry = attempt < retries && !isAuthError && (RETRYABLE_SMTP_CODES.has(code) || code === 'UNKNOWN');
+      logEmail('warn', `Retry attempt ${attempt + 1} failed`, {
+        label,
+        code: safeErrorCode(error),
+        message: error?.message,
+      });
+      if (!shouldRetry) break;
+      await sleep(EMAIL_RETRY_DELAY_MS * (attempt + 1));
+    }
+  }
+  logEmail('error', 'Email delivery failed after retries', {
+    label,
+    code: safeErrorCode(lastError),
+    message: lastError?.message,
+  });
+  throw normalizeEmailError(lastError);
+};
+
 const formatEventDate = (dateValue) => {
     if (!dateValue) return 'Not specified';
     const date = new Date(dateValue);
@@ -72,7 +220,8 @@ const formatEventDate = (dateValue) => {
     return `${day}-${month}-${year}`;
 };
 
-const sendMailWithTimeout = (mailOptions, timeoutMs = EMAIL_TIMEOUT_MS) => {
+const sendMailWithTimeout = (mailOptions, timeoutMs = EMAIL_TIMEOUT_MS, options = {}) => {
+  const { label = 'email', dedupeKey = `${mailOptions?.subject}|${mailOptions?.to}`, retries = EMAIL_MAX_RETRIES } = options;
   const to = mailOptions?.to;
   const toLooksValid =
     typeof to === 'string'
@@ -86,7 +235,7 @@ const sendMailWithTimeout = (mailOptions, timeoutMs = EMAIL_TIMEOUT_MS) => {
   }
 
   return Promise.race([
-    transporter.sendMail(mailOptions),
+    enqueueEmail({ mailOptions, dedupeKey, label, retries }),
     new Promise((_, reject) => {
       setTimeout(() => {
         reject(new Error('Email service timeout'));
@@ -248,6 +397,11 @@ const infoCard = (items) => `
 // --- 1. CONTACT FORM EMAIL ---
 exports.sendContactEmail = async (req, res) => {
   const { name, email, phone, location, message } = req.body;
+  const safeName = sanitize(name);
+  const safeEmail = sanitize(email);
+  const safePhone = sanitize(phone);
+  const safeLocation = sanitize(location);
+  const safeMessage = sanitize(message);
 
   if (!name || !email || !message) {
     return res.status(400).json({
@@ -256,12 +410,19 @@ exports.sendContactEmail = async (req, res) => {
     });
   }
 
+  if (!isValidEmail(email)) {
+    return res.status(400).json({
+      success: false,
+      error: 'Invalid email address'
+    });
+  }
+
   try {
     ensureEmailConfig();
     await sendMailWithTimeout({
       from: `"${process.env.COMPANY_NAME}" <${process.env.SMTP_USER}>`,
       to: process.env.RECEIVER_EMAIL,
-      subject: `New Message from ${name} — LIFEE`,
+      subject: `New Message from ${safeName} — LIFEE`,
       html: emailWrapper(`
         <!-- Alert Banner -->
         <div style="
@@ -300,10 +461,10 @@ exports.sendContactEmail = async (req, res) => {
         ">Contact Details</p>
 
         ${infoCard([
-          { icon: '👤', label: 'Full Name', value: name },
-          { icon: '📧', label: 'Email Address', value: email },
-          { icon: '📱', label: 'Phone Number', value: phone || 'Not provided' },
-          { icon: '📍', label: 'Location', value: location || 'Not provided' },
+          { icon: '👤', label: 'Full Name', value: safeName },
+          { icon: '📧', label: 'Email Address', value: safeEmail },
+          { icon: '📱', label: 'Phone Number', value: safePhone || 'Not provided' },
+          { icon: '📍', label: 'Location', value: safeLocation || 'Not provided' },
         ])}
 
         <!-- Message -->
@@ -326,12 +487,12 @@ exports.sendContactEmail = async (req, res) => {
             font-size:15px;
             line-height:1.8;
             margin: 0;
-          ">${message}</p>
+          ">${safeMessage}</p>
         </div>
 
         <!-- Reply Button -->
         <div style="text-align:center;margin-top:28px;">
-          <a href="mailto:${email}" style="
+          <a href="mailto:${safeEmail}" style="
             display: inline-block;
             background: linear-gradient(135deg,#0EA5E9,#06B6D4);
             color: white;
@@ -341,16 +502,20 @@ exports.sendContactEmail = async (req, res) => {
             font-weight: 700;
             font-size:14px;
             letter-spacing:0.5px;
-          ">Reply to ${name}</a>
+          ">Reply to ${safeName}</a>
         </div>
       `),
       attachments: [],
+    }, EMAIL_TIMEOUT_MS, {
+      label: 'contact-owner',
+      dedupeKey: `contact-owner|${safeEmail}|${safeMessage}`,
+      retries: EMAIL_MAX_RETRIES,
     });
 
     // Send customer acknowledgement in background to keep API response fast.
     sendMailWithTimeout({
       from: `"${process.env.COMPANY_NAME}" <${process.env.SMTP_USER}>`,
-      to: email,
+      to: safeEmail,
       subject: `We received your message — LIFEE Water`,
       html: emailWrapper(`
         <!-- Success Icon -->
@@ -379,7 +544,7 @@ exports.sendContactEmail = async (req, res) => {
             margin: 0 auto;
             max-width: 380px;
           ">
-            Hi <strong style="color:#0EA5E9;">${name}</strong>,
+            Hi <strong style="color:#0EA5E9;">${safeName}</strong>,
             we have received your message and will
             get back to you within 24 hours.
           </p>
@@ -390,11 +555,15 @@ exports.sendContactEmail = async (req, res) => {
       text-align: center;margin: 20px 0 0;
     ">
       We will reply to 
-      <strong style="color:#0EA5E9;">${email}</strong>
+      <strong style="color:#0EA5E9;">${safeEmail}</strong>
       within 24 hours.
         </p>
       `),
       attachments: [],
+    }, EMAIL_TIMEOUT_MS, {
+      label: 'contact-ack',
+      dedupeKey: `contact-ack|${safeEmail}|${safeName}`,
+      retries: EMAIL_ACK_RETRIES,
     }).catch((ackError) => {
       console.error('Contact ack email failed:', ackError.message);
     });
@@ -404,9 +573,10 @@ exports.sendContactEmail = async (req, res) => {
       message: 'Message sent successfully!' 
     });
   } catch (error) {
+    logEmail('error', 'Contact email flow failed', { code: safeErrorCode(error), message: error.message });
     res.status(500).json({
       success: false, 
-      error: error.message 
+      error: 'Unable to send email right now. Please try again shortly.' 
     });
   }
 };
@@ -414,6 +584,12 @@ exports.sendContactEmail = async (req, res) => {
 // --- 2. ORDER EMAIL ---
 exports.sendOrderEmail = async (req, res) => {
   const { name, email, phone, address, product, quantity } = req.body;
+  const safeName = sanitize(name);
+  const safeEmail = sanitize(email);
+  const safePhone = sanitize(phone);
+  const safeAddress = sanitize(address);
+  const safeProduct = sanitize(product);
+  const safeQuantity = sanitize(quantity);
 
   if (!name || !email || !phone) {
     return res.status(400).json({
@@ -422,31 +598,42 @@ exports.sendOrderEmail = async (req, res) => {
     });
   }
 
+  if (!isValidEmail(email)) {
+    return res.status(400).json({
+      success: false,
+      error: 'Invalid email address'
+    });
+  }
+
   try {
     ensureEmailConfig();
     await sendMailWithTimeout({
       from: `"${process.env.COMPANY_NAME}" <${process.env.SMTP_USER}>`,
       to: process.env.RECEIVER_EMAIL,
-      subject: `New Order Request - ${name}`,
+      subject: `New Order Request - ${safeName}`,
       html: `
         <h2>New Order Request</h2>
-        <p><b>Name:</b> ${name}</p>
-        <p><b>Email:</b> ${email}</p>
-        <p><b>Phone:</b> ${phone}</p>
-        <p><b>Address:</b> ${address || 'Not provided'}</p>
-        <p><b>Product:</b> ${product || 'Not specified'}</p>
-        <p><b>Quantity:</b> ${quantity || 'Not specified'}</p>
+        <p><b>Name:</b> ${safeName}</p>
+        <p><b>Email:</b> ${safeEmail}</p>
+        <p><b>Phone:</b> ${safePhone}</p>
+        <p><b>Address:</b> ${safeAddress || 'Not provided'}</p>
+        <p><b>Product:</b> ${safeProduct || 'Not specified'}</p>
+        <p><b>Quantity:</b> ${safeQuantity || 'Not specified'}</p>
       `,
       attachments: [],
+    }, EMAIL_TIMEOUT_MS, {
+      label: 'order-owner',
+      dedupeKey: `order-owner|${safeEmail}|${safeProduct}|${safeQuantity}`,
+      retries: EMAIL_MAX_RETRIES,
     });
 
     // Send customer acknowledgement in background to keep API response fast.
     sendMailWithTimeout({
       from: `"${process.env.COMPANY_NAME}" <${process.env.SMTP_USER}>`,
-      to: email,
+      to: safeEmail,
       subject: 'Your Order Request - LIFEE Water',
       html: `
-        <h2>Hi ${name},</h2>
+        <h2>Hi ${safeName},</h2>
         <p>We received your order request for
            LIFEE Premium Water.</p>
         <p>Our team will contact you shortly to
@@ -455,22 +642,20 @@ exports.sendOrderEmail = async (req, res) => {
         <p><b>LIFEE Premium Water Team</b></p>
       `,
       attachments: [],
+    }, EMAIL_TIMEOUT_MS, {
+      label: 'order-ack',
+      dedupeKey: `order-ack|${safeEmail}|${safeName}`,
+      retries: EMAIL_ACK_RETRIES,
     }).catch((ackError) => {
       console.error('Order ack email failed:', ackError.message);
     });
 
     res.json({ success: true, message: 'Order request sent!' });
   } catch (error) {
-    console.error('FULL ERROR DETAILS:');
-    console.error('Message:', error.message);
-    console.error('Code:', error.code);
-    console.error('Response:', error.response);
-    console.error('Stack:', error.stack);
+    logEmail('error', 'Order email flow failed', { code: safeErrorCode(error), message: error.message });
     res.status(500).json({
       success: false,
-      error: error.message,
-      code: error.code,
-      details: error.response,
+      error: 'Unable to send order email right now. Please try again shortly.',
     });
   }
 };
@@ -478,6 +663,11 @@ exports.sendOrderEmail = async (req, res) => {
 // --- 3. DISTRIBUTOR EMAIL ---
 exports.sendDistributorEmail = async (req, res) => {
   const { name, email, phone, city, businessName } = req.body;
+  const safeName = sanitize(name);
+  const safeEmail = sanitize(email);
+  const safePhone = sanitize(phone);
+  const safeCity = sanitize(city);
+  const safeBusinessName = sanitize(businessName);
   const cleanPhone = String(phone || '').replace(/\s+/g, '').replace(/-/g, '');
 
   if (!name || !email || !phone) {
@@ -487,12 +677,19 @@ exports.sendDistributorEmail = async (req, res) => {
     });
   }
 
+  if (!isValidEmail(email)) {
+    return res.status(400).json({
+      success: false,
+      error: 'Invalid email address'
+    });
+  }
+
   try {
     ensureEmailConfig();
     await sendMailWithTimeout({
       from: `"${process.env.COMPANY_NAME}" <${process.env.SMTP_USER}>`,
       to: process.env.RECEIVER_EMAIL,
-      subject: `New Distributor Application — ${name}`,
+      subject: `New Distributor Application — ${safeName}`,
       html: emailWrapper(`
         <div style="
           background: #EFF6FF;
@@ -517,11 +714,11 @@ exports.sendDistributorEmail = async (req, res) => {
         ">Applicant Details</p>
 
         ${infoCard([
-          { icon:'👤', label:'Full Name', value: name },
-          { icon:'📧', label:'Email', value: email },
-          { icon:'📱', label:'Phone', value: phone },
-          { icon:'🏙️', label:'City', value: city || 'Not specified' },
-          { icon:'🏢', label:'Business Name', value: businessName || 'Not specified' },
+          { icon:'👤', label:'Full Name', value: safeName },
+          { icon:'📧', label:'Email', value: safeEmail },
+          { icon:'📱', label:'Phone', value: safePhone },
+          { icon:'🏙️', label:'City', value: safeCity || 'Not specified' },
+          { icon:'🏢', label:'Business Name', value: safeBusinessName || 'Not specified' },
         ])}
 
         <div style="
@@ -532,7 +729,7 @@ exports.sendDistributorEmail = async (req, res) => {
           border-spacing: 8px;
         ">
           <div style="display:table-cell;">
-            <a href="mailto:${email}" style="
+            <a href="mailto:${safeEmail}" style="
               display: block;
               background: linear-gradient(135deg,#0EA5E9,#06B6D4);
               color: white;
@@ -579,18 +776,22 @@ exports.sendDistributorEmail = async (req, res) => {
                  12.84 12.84 0 0 0 2.81.7
                  A2 2 0 0 1 22 16.92z"/>
       </svg>
-      Call ${name}: +91${cleanPhone}
+      Call ${safeName}: +91${cleanPhone}
             </a>
           </div>
         </div>
       `),
       attachments: [],
+    }, EMAIL_TIMEOUT_MS, {
+      label: 'distributor-owner',
+      dedupeKey: `distributor-owner|${safeEmail}|${safePhone}|${safeBusinessName}`,
+      retries: EMAIL_MAX_RETRIES,
     });
 
     // Send customer acknowledgement in background to keep API response fast.
     sendMailWithTimeout({
       from: `"${process.env.COMPANY_NAME}" <${process.env.SMTP_USER}>`,
-      to: email,
+      to: safeEmail,
       subject: `Application Received — LIFEE Distributor`,
       html: emailWrapper(`
         <div style="text-align:center;margin-bottom:28px;">
@@ -612,7 +813,7 @@ exports.sendDistributorEmail = async (req, res) => {
           <p style="color:#64748B;font-size:14px;
                     line-height:1.7;margin:0 auto;
                     max-width:380px;">
-            Hi <strong style="color:#0EA5E9;">${name}</strong>,
+            Hi <strong style="color:#0EA5E9;">${safeName}</strong>,
             thank you for your interest in becoming
             a LIFEE Water distributor.
           </p>
@@ -639,6 +840,10 @@ exports.sendDistributorEmail = async (req, res) => {
     </div>
       `),
       attachments: [],
+    }, EMAIL_TIMEOUT_MS, {
+      label: 'distributor-ack',
+      dedupeKey: `distributor-ack|${safeEmail}|${safeName}`,
+      retries: EMAIL_ACK_RETRIES,
     }).catch((ackError) => {
       console.error('Distributor ack email failed:', ackError.message);
     });
@@ -648,9 +853,10 @@ exports.sendDistributorEmail = async (req, res) => {
       message: 'Application submitted!' 
     });
   } catch (error) {
+    logEmail('error', 'Distributor email flow failed', { code: safeErrorCode(error), message: error.message });
     res.status(500).json({
       success: false, 
-      error: error.message 
+      error: 'Unable to send distributor email right now. Please try again shortly.' 
     });
   }
 };
@@ -664,6 +870,14 @@ exports.sendCustomOrderEmail = async (req, res) => {
     labelFinish, quantity, deliveryLocation,
     uploadedImage,
   } = req.body;
+  const safeContactName = sanitize(contactName);
+  const safePhone = sanitize(phone);
+  const safeEmail = sanitize(email);
+  const safeBusinessName = sanitize(companyName);
+  const safeCustomMessage = sanitize(customMessage);
+  const safeTagline = sanitize(tagline);
+  const safeDeliveryLocation = sanitize(deliveryLocation);
+  const safeNames = sanitize(names);
 
   if (!email || !phone || !contactName) {
     return res.status(400).json({
@@ -672,20 +886,45 @@ exports.sendCustomOrderEmail = async (req, res) => {
     });
   }
 
-  const displayName = names || companyName || birthdayName || 'Not specified';
+  if (!isValidEmail(email)) {
+    return res.status(400).json({
+      success: false,
+      error: 'Invalid email address'
+    });
+  }
+
+  if (uploadedImage) {
+    const sizeInBytes = Buffer.byteLength(
+      uploadedImage.replace(/^data:image\/\w+;base64,/, ''),
+      'base64'
+    );
+    const sizeInMB = sizeInBytes / (1024 * 1024);
+    if (sizeInMB > 5) {
+      return res.status(400).json({
+        success: false,
+        error: 'Image too large. Maximum size is 5MB.'
+      });
+    }
+  }
+
+  const safeBirthdayName = sanitize(birthdayName);
+  const safeOrderType = sanitize(orderType);
+  const safeAge = sanitize(age);
+  const safeLabelFinish = sanitize(labelFinish);
+  const safeQuantity = sanitize(quantity);
+  const displayName = safeNames || safeBusinessName || safeBirthdayName || 'Not specified';
   const formattedEventDate = eventDate ? formatEventDate(eventDate) : 'Not specified';
-  console.log('uploadedImage received:', 
-    uploadedImage ? 
-      `YES - length: ${uploadedImage.length}` : 
-      'NO - not provided'
-  );
+  logEmail('info', 'Custom order image payload received', {
+    hasImage: Boolean(uploadedImage),
+    length: uploadedImage ? uploadedImage.length : 0,
+  });
 
   try {
     ensureEmailConfig();
     await sendMailWithTimeout({
       from: `"${process.env.COMPANY_NAME}" <${process.env.SMTP_USER}>`,
       to: process.env.RECEIVER_EMAIL,
-      subject: `New ${orderType} Order — ${contactName}`,
+      subject: `New ${safeOrderType} Order — ${safeContactName}`,
       html: emailWrapper(`
         <div style="
           background: #EFF6FF;
@@ -696,10 +935,10 @@ exports.sendCustomOrderEmail = async (req, res) => {
         ">
           <p style="color:#0EA5E9;font-weight:700;
                     font-size:13px;margin:0 0 2px;">
-            New ${orderType} Custom Order
+            New ${safeOrderType} Custom Order
           </p>
           <p style="color:#64748B;font-size:12px;margin:0;">
-            Received from ${contactName}
+            Received from ${safeContactName}
           </p>
         </div>
 
@@ -709,9 +948,9 @@ exports.sendCustomOrderEmail = async (req, res) => {
           Contact Details
         </p>
         ${infoCard([
-          { icon:'👤', label:'Contact Person', value: contactName },
-          { icon:'📧', label:'Email', value: email },
-          { icon:'📱', label:'Phone', value: phone },
+          { icon:'👤', label:'Contact Person', value: safeContactName },
+          { icon:'📧', label:'Email', value: safeEmail },
+          { icon:'📱', label:'Phone', value: safePhone },
         ])}
 
         <p style="color:#0EA5E9;font-size:11px;font-weight:700;
@@ -720,14 +959,14 @@ exports.sendCustomOrderEmail = async (req, res) => {
           Order Details
         </p>
         ${infoCard([
-          { icon:'🎯', label:'Order Type', value: orderType },
+          { icon:'🎯', label:'Order Type', value: safeOrderType },
           { icon:'👤', label:'Name on Bottle', value: displayName },
-          { icon:'💬', label:'Message / Tagline', value: customMessage || tagline || 'None' },
+          { icon:'💬', label:'Message / Tagline', value: safeCustomMessage || safeTagline || 'None' },
           { icon:'📅', label:'Event Date', value: formattedEventDate },
-          ...(age ? [{ icon:'🎂', label:'Age', value: age }] : []),
-          { icon:'✨', label:'Label Finish', value: labelFinish || 'Not specified' },
-          { icon:'📦', label:'Quantity', value: quantity || 'Not specified' },
-          { icon:'📍', label:'Delivery Location', value: deliveryLocation || 'Not specified' },
+          ...(safeAge ? [{ icon:'🎂', label:'Age', value: safeAge }] : []),
+          { icon:'✨', label:'Label Finish', value: safeLabelFinish || 'Not specified' },
+          { icon:'📦', label:'Quantity', value: safeQuantity || 'Not specified' },
+          { icon:'📍', label:'Delivery Location', value: safeDeliveryLocation || 'Not specified' },
         ])}
 
         ${uploadedImage ? `
@@ -759,24 +998,24 @@ exports.sendCustomOrderEmail = async (req, res) => {
               color: #94A3B8;font-size: 11px;
               margin: 10px 0 0;
             ">
-              Uploaded by ${contactName}
+              Uploaded by ${safeContactName}
             </p>
           </div>
         ` : ''}
 
         <div style="text-align:center;margin-top:24px;">
-          <a href="mailto:${email}" style="
+          <a href="mailto:${safeEmail}" style="
             display:inline-block;
             background:linear-gradient(135deg,#0EA5E9,#06B6D4);
             color:white;text-decoration:none;
             padding:14px 36px;border-radius:50px;
             font-weight:700;font-size:14px;
-          ">Reply to ${contactName}</a>
+          ">Reply to ${safeContactName}</a>
         </div>
       `),
       attachments: uploadedImage ? [
         {
-          filename: `photo-${contactName}.png`,
+          filename: `photo-${safeContactName || 'customer'}.png`,
           content: Buffer.from(
             uploadedImage.replace(
               /^data:image\/\w+;base64,/,
@@ -789,13 +1028,17 @@ exports.sendCustomOrderEmail = async (req, res) => {
           contentDisposition: 'inline',
         }
       ] : [],
+    }, EMAIL_TIMEOUT_MS, {
+      label: 'custom-owner',
+      dedupeKey: `custom-owner|${safeEmail}|${safeOrderType}|${displayName}|${safeQuantity}`,
+      retries: EMAIL_MAX_RETRIES,
     });
 
     // Send customer acknowledgement in background to keep API response fast.
     sendMailWithTimeout({
       from: `"${process.env.COMPANY_NAME}" <${process.env.SMTP_USER}>`,
-      to: email,
-      subject: `Your ${orderType} Order Received — LIFEE`,
+      to: safeEmail,
+      subject: `Your ${safeOrderType} Order Received — LIFEE`,
       html: emailWrapper(`
         <div style="text-align:center;margin-bottom:28px;">
           <div style="
@@ -813,8 +1056,8 @@ exports.sendCustomOrderEmail = async (req, res) => {
           <p style="color:#64748B;font-size:14px;
                     line-height:1.7;margin:0 auto;
                     max-width:380px;">
-            Hi <strong style="color:#0EA5E9;">${contactName}</strong>,
-            your ${orderType} custom bottle order 
+            Hi <strong style="color:#0EA5E9;">${safeContactName}</strong>,
+            your ${safeOrderType} custom bottle order 
             for <strong style="color:#0EA5E9;">${displayName}</strong> has been received.
           </p>
         </div>
@@ -825,10 +1068,10 @@ exports.sendCustomOrderEmail = async (req, res) => {
           Your Order Summary
         </p>
         ${infoCard([
-          { icon:'🎯', label:'Order Type', value: orderType },
+          { icon:'🎯', label:'Order Type', value: safeOrderType },
           { icon:'👤', label:'Name on Bottle', value: displayName },
-          { icon:'📦', label:'Quantity', value: quantity || 'To be confirmed' },
-          { icon:'📍', label:'Delivery Location', value: deliveryLocation || 'To be confirmed' },
+          { icon:'📦', label:'Quantity', value: safeQuantity || 'To be confirmed' },
+          { icon:'📍', label:'Delivery Location', value: safeDeliveryLocation || 'To be confirmed' },
           { icon:'📅', label:'Event Date', value: eventDate ? formatEventDate(eventDate) : 'To be confirmed' },
         ])}
 
@@ -844,7 +1087,7 @@ exports.sendCustomOrderEmail = async (req, res) => {
           </p>
           <p style="color:#0EA5E9;font-size:20px;
                     font-weight:800;margin:0;">
-            ${phone}
+            ${safePhone}
           </p>
           <p style="color:#94A3B8;font-size:11px;
                     margin:6px 0 0;">
@@ -853,6 +1096,10 @@ exports.sendCustomOrderEmail = async (req, res) => {
         </div>
       `),
       attachments: [],
+    }, EMAIL_TIMEOUT_MS, {
+      label: 'custom-ack',
+      dedupeKey: `custom-ack|${safeEmail}|${safeOrderType}|${displayName}`,
+      retries: EMAIL_ACK_RETRIES,
     }).catch((ackError) => {
       console.error('Custom order ack email failed:', ackError.message);
     });
@@ -863,10 +1110,10 @@ exports.sendCustomOrderEmail = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Custom Order Error:', error);
+    logEmail('error', 'Custom order email flow failed', { code: safeErrorCode(error), message: error.message });
     res.status(500).json({
       success: false,
-      error: error.message,
+      error: 'Unable to send custom order email right now. Please try again shortly.',
     });
   }
 };

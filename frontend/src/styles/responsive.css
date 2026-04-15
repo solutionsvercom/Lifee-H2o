@@ -14,14 +14,14 @@
   }
 
   #home > div.relative.z-10.h-full {
-    padding-top: 7rem;
-    padding-bottom: 2.5rem;
+    padding-top: clamp(4rem, 12vh, 7rem);
+    padding-bottom: clamp(1.5rem, 4vh, 2.5rem);
   }
 
   #home .relative.mb-8 {
     width: min(100%, 350px) !important;
     height: min(500px, 72vh) !important;
-    margin-bottom: 1.5rem;
+    margin-bottom: clamp(1rem, 3vw, 1.5rem);
   }
 
   #about .grid.grid-cols-3,
@@ -37,7 +37,7 @@
   #contact .grid.lg\:grid-cols-2,
   #customizer .grid.lg\:grid-cols-2 {
     grid-template-columns: repeat(1, minmax(0, 1fr));
-    gap: 2rem;
+    gap: clamp(1rem, 3vw, 3rem);
   }
 
   #customizer .sticky {
@@ -51,7 +51,7 @@
 
 @media (max-width: 767px) {
   #home h1 {
-    font-size: clamp(1.8rem, 10vw, 2.5rem);
+    font-size: clamp(2rem, 5vw, 4rem);
   }
 
   #home p,
@@ -63,7 +63,7 @@
   #customizer p,
   #distribution p,
   #contact p {
-    font-size: 0.95rem;
+    font-size: clamp(0.9rem, 1.5vw, 1.1rem);
   }
 
   #about,
@@ -74,17 +74,15 @@
   #customizer,
   #distribution,
   #contact {
-    padding-left: 1rem;
-    padding-right: 1rem;
-    padding-top: 4rem;
-    padding-bottom: 4rem;
+    padding-left: clamp(1rem, 5vw, 5rem);
+    padding-right: clamp(1rem, 5vw, 5rem);
+    padding-top: clamp(3rem, 8vh, 7rem);
+    padding-bottom: clamp(3rem, 8vh, 7rem);
   }
 
-  #products .grid,
-  #why-us .grid,
   #certifications .grid,
   #process .grid {
-    gap: 1rem;
+    gap: clamp(1rem, 3vw, 3rem);
   }
 
   #distribution button,
@@ -92,4 +90,9 @@
   #contact button {
     width: 100%;
   }
+}
+
+/* Fluid grids: reflow when zoomed or narrow */
+.section-fluid-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
 }

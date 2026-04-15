@@ -6,7 +6,7 @@ const CustomizeOrderPage = lazy(() => import("./pages/CustomizeOrderPage"));
 
 export default function App() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-900" aria-hidden />}>
+    <Suspense fallback={<div className="min-h-[100svh] w-full bg-slate-900" aria-hidden />}>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<HomePage />} />

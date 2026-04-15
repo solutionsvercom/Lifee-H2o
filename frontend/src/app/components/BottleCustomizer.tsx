@@ -2,9 +2,10 @@ import { m, useInView } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Upload, Building2, Cake, Heart } from "lucide-react";
 import BottleSceneCustom from "./BottleSceneCustom";
+import { API_ENDPOINTS } from "../../config/api";
 
 const STATUS_HIDE_MS = 10000;
-const REQUEST_TIMEOUT_MS = 12000;
+const REQUEST_TIMEOUT_MS = 30000;
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const MAX_IMAGE_DIMENSION = 1600;
 const JPEG_QUALITY = 0.82;
@@ -256,7 +257,7 @@ export function BottleCustomizer() {
       }, REQUEST_TIMEOUT_MS);
 
       try {
-        const response = await fetch("http://localhost:5000/api/email/custom-order", {
+        const response = await fetch(API_ENDPOINTS.customOrder, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -315,35 +316,29 @@ export function BottleCustomizer() {
     <section
       id="customizer"
       ref={ref}
-      className="relative py-16 px-4 sm:px-6 bg-gradient-to-br from-slate-900 to-[#0A2540] overflow-hidden scroll-mt-24"
+      className="relative overflow-hidden bg-gradient-to-br from-slate-900 to-[#0A2540] scroll-mt-24"
     >
       <div className="absolute inset-0 opacity-10">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `radial-gradient(circle at 2px 2px, rgba(14, 165, 233, 0.3) 1px, transparent 0)`,
-            backgroundSize: "60px 60px",
-          }}
-        />
+        <div className="bottle-customizer-radial-dots absolute inset-0" />
       </div>
 
-      <div className="container mx-auto max-w-7xl relative z-10">
+      <div className="container relative z-10 mx-auto w-full max-w-[min(100%,1400px)]">
         <m.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
-          className="text-center mb-16"
+          className="mb-[clamp(2rem,5vh,4rem)] text-center"
         >
-          <h2 className="text-[clamp(1.8rem,6vw,3rem)] font-bold text-white mb-6 leading-tight">
+          <h2 className="mb-[clamp(1rem,3vh,1.5rem)] text-[clamp(1.5rem,3vw,2.5rem)] font-bold leading-tight text-white">
             Craft Your <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">Signature Bottle</span>
           </h2>
-          <p className="text-cyan-100/80 text-lg max-w-2xl mx-auto">
+          <p className="mx-auto max-w-2xl text-[clamp(0.9rem,1.5vw,1.1rem)] text-cyan-100/80">
             Personalize premium water bottles with precision-designed labels for your special moments.
           </p>
         </m.div>
 
         {!selectedOccasion ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          <div className="bottle-occasion-grid">
             {occasions.map((occasion, index) => {
               const Icon = occasion.icon;
               return (
@@ -353,10 +348,10 @@ export function BottleCustomizer() {
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ delay: index * 0.15, duration: 0.6 }}
                   onClick={() => handleSelectOccasion(occasion.id)}
-                  className="group cursor-pointer"
+                  className="group flex h-full min-h-0 w-full min-w-0 cursor-pointer flex-col"
                 >
-                  <div className="relative h-full rounded-3xl overflow-hidden bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg border border-white/10 hover:border-white/30 transition-all duration-500">
-                    <div className="w-full h-[280px] rounded-t-2xl overflow-hidden relative">
+                  <div className="bottle-occasion-card relative flex h-full min-h-0 flex-1 flex-col overflow-hidden border border-white/10 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg transition-all duration-500 hover:border-white/30">
+                    <div className="bottle-occasion-media relative">
                       <m.img
                         src={occasion.backgroundImage}
                         alt={`${occasion.title} scene`}
@@ -364,41 +359,45 @@ export function BottleCustomizer() {
                         height={720}
                         loading="lazy"
                         decoding="async"
-                        className="w-full h-full object-cover"
+                        fetchPriority="low"
+                        className="h-full w-full object-cover"
                         whileHover={{ scale: 1.05 }}
                         transition={{ duration: 0.6 }}
                       />
                     </div>
 
-                    <div className="p-6 space-y-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${occasion.colors.primary}20` }}>
-                          <Icon className="w-6 h-6" style={{ color: occasion.colors.primary }} />
+                    <div className="bottle-occasion-body">
+                      <div className="flex shrink-0 items-center gap-3">
+                        <div
+                          data-accent={occasion.id}
+                          className="bottle-occasion-icon-wrap flex h-12 w-12 shrink-0 items-center justify-center rounded-xl"
+                        >
+                          <Icon className="h-6 w-6" />
                         </div>
-                        <div>
-                          <h3 className="text-xl font-bold text-white">{occasion.title}</h3>
-                          <p className="text-xs text-cyan-100/50">{occasion.theme}</p>
+                        <div className="min-w-0">
+                          <h3 className="text-[clamp(1.1rem,2vw,1.5rem)] font-bold text-white">{occasion.title}</h3>
+                          <p className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-cyan-100/50">{occasion.theme}</p>
                         </div>
                       </div>
 
-                      <p className="text-cyan-100/70 text-sm">{occasion.description}</p>
+                      <p className="mt-2 min-h-0 flex-1 text-[clamp(0.75rem,1.2vw,0.95rem)] leading-relaxed text-cyan-100/70">
+                        {occasion.description}
+                      </p>
 
                       <m.button
+                        type="button"
+                        data-accent={occasion.id}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        className="w-full py-3 px-4 rounded-xl font-semibold transition-all duration-300 mt-4"
-                        style={{
-                          background: `linear-gradient(135deg, ${occasion.colors.primary}, ${occasion.colors.secondary})`,
-                          color: occasion.id === "wedding" || occasion.id === "corporate" ? (occasion.id === "wedding" ? "#000" : "#fff") : "#000",
-                        }}
+                        className="bottle-occasion-btn text-[clamp(0.85rem,1.3vw,1rem)] font-semibold transition-all duration-300"
                       >
                         Customize Now
                       </m.button>
                     </div>
 
                     <m.div
-                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                      style={{ background: `radial-gradient(circle at 50% 50%, ${occasion.colors.primary}20, transparent 70%)` }}
+                      data-accent={occasion.id}
+                      className="bottle-occasion-card-glow pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
                     />
                   </div>
                 </m.div>
@@ -407,14 +406,14 @@ export function BottleCustomizer() {
           </div>
         ) : (
           <m.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
-            <div className="grid lg:grid-cols-2 gap-8 md:gap-12">
+            <div className="grid gap-[clamp(1rem,3vw,3rem)] [grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr))]">
               <div className="relative">
                 <div className="sticky top-8">
                   <div className="relative aspect-square rounded-3xl bg-gradient-to-br from-white/5 to-white/5 backdrop-blur-lg border border-white/10 p-5 sm:p-8 lg:p-12 flex items-center justify-center overflow-hidden">
                     <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyan-400/20 rounded-full blur-3xl" />
                     <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl" />
 
-                    <div className="relative w-full h-[320px] cursor-grab active:cursor-grabbing">
+                    <div className="relative min-h-[clamp(15rem,40vh,22.5rem)] w-full cursor-grab active:cursor-grabbing">
                       <BottleSceneCustom
                         labelBg={currentOccasion?.labelBg || ["#ffffff", "#f0f4f8"]}
                         nameText={previewLabel.nameText}
@@ -426,7 +425,7 @@ export function BottleCustomizer() {
                     </div>
 
                     <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center">
-                      <p className="text-cyan-100/60 text-sm">
+                      <p className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-cyan-100/60">
                         {previewRotationEnabled ? "Preview rotation is active • Drag to rotate" : "Bottle is still • Click Bottle Preview to start slow rotation"}
                       </p>
                     </div>
@@ -439,7 +438,7 @@ export function BottleCustomizer() {
                   ← Back to occasions
                 </m.button>
 
-                <form onSubmit={handleSubmit} className="p-5 sm:p-8 rounded-3xl bg-white/10 backdrop-blur-lg border border-white/20 space-y-6">
+                <form onSubmit={handleSubmit} className="bc-custom-form space-y-6 rounded-3xl border border-white/20 bg-white/10 p-[clamp(1rem,2vw,2rem)] backdrop-blur-lg">
                   <div className="space-y-3">
                     <label className="text-white font-semibold">Upload Image</label>
                     <div className="relative">
@@ -460,6 +459,7 @@ export function BottleCustomizer() {
                         height={96}
                         loading="lazy"
                         decoding="async"
+                        fetchPriority="low"
                         className="w-24 h-24 object-cover rounded-lg"
                       />
                     )}
@@ -517,12 +517,15 @@ export function BottleCustomizer() {
                       </div>
 
                       <div className="space-y-3">
-                        <label className="text-white font-semibold">Event Date</label>
+                        <label htmlFor="bc-wedding-event-date" className="text-white font-semibold">
+                          Event Date
+                        </label>
                         <input
+                          id="bc-wedding-event-date"
                           type="date"
                           value={formData.eventDate}
                           onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
-                          className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-cyan-400 transition-all"
+                          className="bc-event-date-input w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-cyan-400 transition-all"
                         />
                       </div>
 
@@ -564,12 +567,15 @@ export function BottleCustomizer() {
                       </div>
 
                       <div className="space-y-3">
-                        <label className="text-white font-semibold">Event Date</label>
+                        <label htmlFor="bc-corp-event-date" className="text-white font-semibold">
+                          Event Date
+                        </label>
                         <input
+                          id="bc-corp-event-date"
                           type="date"
                           value={formData.eventDate}
                           onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
-                          className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-cyan-400 transition-all"
+                          className="bc-event-date-input w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-cyan-400 transition-all"
                         />
                       </div>
                     </>
@@ -601,12 +607,15 @@ export function BottleCustomizer() {
                       </div>
 
                       <div className="space-y-3">
-                        <label className="text-white font-semibold">Event Date</label>
+                        <label htmlFor="bc-birthday-event-date" className="text-white font-semibold">
+                          Event Date
+                        </label>
                         <input
+                          id="bc-birthday-event-date"
                           type="date"
                           value={formData.eventDate}
                           onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
-                          className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-cyan-400 transition-all"
+                          className="bc-event-date-input w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-cyan-400 transition-all"
                         />
                       </div>
 
@@ -638,28 +647,33 @@ export function BottleCustomizer() {
                           }`}
                         >
                           <div className="text-white font-semibold capitalize">{finish}</div>
-                          <div className="text-xs text-cyan-100/60 mt-1">{finish === "matte" ? "Soft, elegant look" : "Shiny, premium feel"}</div>
+                          <div className="mt-1 text-[clamp(0.75rem,1.2vw,0.95rem)] text-cyan-100/60">{finish === "matte" ? "Soft, elegant look" : "Shiny, premium feel"}</div>
                         </m.button>
                       ))}
                     </div>
                   </div>
 
                   <div className="pt-6 border-t border-white/10 space-y-4">
-                    <h3 className="text-white font-semibold text-lg">Order Details</h3>
+                    <h3 className="text-[clamp(1.1rem,2vw,1.5rem)] font-semibold text-white">Order Details</h3>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <label className="text-white text-sm">Quantity</label>
+                        <label htmlFor="bc-order-quantity" className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-white">
+                          Quantity
+                        </label>
                         <input
+                          id="bc-order-quantity"
                           type="number"
                           value={formData.quantity}
                           onChange={(e) => setFormData({ ...formData, quantity: parseInt(e.target.value || "0", 10) })}
                           min="25"
-                          className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-cyan-400 transition-all"
+                          placeholder="Minimum 25"
+                          aria-label="Order quantity"
+                          className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400 transition-all"
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-white text-sm">Delivery Location</label>
+                        <label className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-white">Delivery Location</label>
                         <input
                           type="text"
                           value={formData.deliveryLocation}
@@ -671,13 +685,13 @@ export function BottleCustomizer() {
                     </div>
                   </div>
 
-                  <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center">
+                  <div className="flex flex-col flex-wrap justify-center gap-3 pt-4 sm:flex-row">
                     <m.button
                       type="button"
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => setPreviewRotationEnabled((prev) => !prev)}
-                      className={`w-full max-w-[300px] py-4 px-6 text-center rounded-xl font-semibold transition-all border ${
+                      className={`w-full max-w-[min(100%,300px)] rounded-xl border px-6 py-4 text-center text-[clamp(0.85rem,1.3vw,1rem)] font-semibold transition-all ${
                         previewRotationEnabled
                           ? "bg-cyan-400/20 border-cyan-300 text-cyan-100"
                           : "bg-white/10 border-white/20 text-white hover:bg-white/15"
@@ -690,18 +704,18 @@ export function BottleCustomizer() {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       disabled={loading}
-                      className="w-full max-w-[300px] py-4 px-6 text-center rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold shadow-lg shadow-cyan-500/50 hover:shadow-cyan-500/70 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full max-w-[min(100%,300px)] rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 px-6 py-4 text-center text-[clamp(0.85rem,1.3vw,1rem)] font-semibold text-white shadow-lg shadow-cyan-500/50 transition-all hover:shadow-cyan-500/70 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       {loading ? "⏳ Sending..." : "Request Custom Order"}
                     </m.button>
                   </div>
                   {status === "success" && (
-                    <div className="p-4 rounded-xl bg-green-500/20 border border-green-500/30 text-green-300 text-center text-sm">
+                    <div className="rounded-xl border border-green-500/30 bg-green-500/20 p-4 text-center text-[clamp(0.75rem,1.2vw,0.95rem)] text-green-300">
                       ✅ Order request sent successfully! We will contact you within 24 hours.
                     </div>
                   )}
                   {status === "error" && (
-                    <div className="p-4 rounded-xl bg-red-500/20 border border-red-500/30 text-red-300 text-center text-sm">❌ {errorMessage}</div>
+                    <div className="rounded-xl border border-red-500/30 bg-red-500/20 p-4 text-center text-[clamp(0.75rem,1.2vw,0.95rem)] text-red-300">❌ {errorMessage}</div>
                   )}
                 </form>
               </div>

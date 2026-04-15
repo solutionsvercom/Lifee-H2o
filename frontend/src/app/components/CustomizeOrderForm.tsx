@@ -1,9 +1,10 @@
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { Upload } from "lucide-react";
+import { API_ENDPOINTS } from "../../config/api";
 
 const STATUS_HIDE_MS = 10000;
-const REQUEST_TIMEOUT_MS = 12000;
+const REQUEST_TIMEOUT_MS = 30000;
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const MAX_IMAGE_DIMENSION = 1600;
 const JPEG_QUALITY = 0.82;
@@ -67,10 +68,9 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
 
   const [customData, setCustomData] = useState(getInitialFormData);
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
   const [uploadedImageBase64, setUploadedImageBase64] = useState("");
-  const fetchAbortRef = useRef<AbortController | null>(null);
   const statusTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -83,7 +83,6 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
 
   useEffect(() => {
     return () => {
-      fetchAbortRef.current?.abort();
       if (statusTimeoutRef.current) {
         window.clearTimeout(statusTimeoutRef.current);
       }
@@ -91,15 +90,15 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
   }, []);
 
   useEffect(() => {
-    if (!status) return;
+    if (!error && !success) return;
     if (statusTimeoutRef.current) {
       window.clearTimeout(statusTimeoutRef.current);
     }
     statusTimeoutRef.current = window.setTimeout(() => {
-      setStatus("");
-      setErrorMessage("");
+      setSuccess(false);
+      setError("");
     }, STATUS_HIDE_MS);
-  }, [status]);
+  }, [error, success]);
 
   const handleImageUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -115,19 +114,19 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
       const base64String = await compressImage(file);
       setCustomData((prev) => ({ ...prev, image: base64String }));
       setUploadedImageBase64(base64String);
-      setStatus("");
-      setErrorMessage("");
+      setSuccess(false);
+      setError("");
     } catch {
-      setStatus("error");
-      setErrorMessage("Failed to process image");
+      setSuccess(false);
+      setError("Failed to process image");
     }
   }, [compressImage]);
 
   const resetForm = useCallback(() => {
     setCustomData(getInitialFormData());
     setUploadedImageBase64("");
-    setErrorMessage("");
-    setStatus("");
+    setSuccess(false);
+    setError("");
   }, [getInitialFormData]);
 
   const handleSubmit = useCallback(
@@ -152,17 +151,9 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
         alert("Please enter Email Address");
         return;
       }
-      fetchAbortRef.current?.abort();
-      const ac = new AbortController();
-      fetchAbortRef.current = ac;
       setLoading(true);
-      setStatus("");
-      setErrorMessage("");
-      let didTimeout = false;
-      const requestTimeout = window.setTimeout(() => {
-        didTimeout = true;
-        ac.abort();
-      }, REQUEST_TIMEOUT_MS);
+      setError("");
+      setSuccess(false);
 
       const payload = {
         contactName: customData.contactName,
@@ -184,35 +175,30 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
       console.log("Final payload:", payload);
 
       try {
-        const response = await fetch("http://localhost:5000/api/email/custom-order", {
+        const response = await fetch(API_ENDPOINTS.customOrder, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          signal: ac.signal,
+          signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
           body: JSON.stringify(payload),
         });
 
         const data = await response.json();
         console.log("Server response:", data);
 
-        if (data.success) {
+        if (!response.ok || !data.success) {
+          throw new Error(data.error || "Failed to send");
+        }
           resetForm();
-          setStatus("success");
-        } else {
-          setStatus("error");
-          setErrorMessage(data.error || "Failed to send");
-        }
+          setSuccess(true);
       } catch (error) {
-        if (error instanceof Error && error.name === "AbortError" && !didTimeout) return;
-        if (didTimeout) {
-          setStatus("error");
-          setErrorMessage("Request timed out. Please try again.");
-          return;
+        if (error instanceof Error && error.name === "TimeoutError") {
+          setError("Request timed out. Please try again.");
+        } else if (error instanceof Error) {
+          setError(error.message || "Something went wrong");
+        } else {
+          setError("Something went wrong");
         }
-        console.error("Submit error:", error);
-        setStatus("error");
-        setErrorMessage("Cannot connect to server. Make sure backend is running on port 5000");
       } finally {
-        window.clearTimeout(requestTimeout);
         setLoading(false);
       }
     },
@@ -220,26 +206,20 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
   );
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 to-[#0A2540] px-4 sm:px-6 py-10">
-      <div className="max-w-4xl mx-auto section-container">
-        <Link to="/" prefetch="intent" className="inline-flex items-center text-cyan-300 hover:text-cyan-200 mb-8">
+    <main className="min-h-[100svh] bg-gradient-to-br from-slate-900 to-[#0A2540] px-[clamp(1rem,5vw,5rem)] py-[clamp(2rem,6vh,4rem)]">
+      <div className="section-container mx-auto w-full max-w-[min(100%,1400px)]">
+        <Link to="/" prefetch="intent" className="mb-[clamp(1.5rem,4vh,2rem)] inline-flex items-center text-[clamp(0.85rem,1.3vw,1rem)] text-cyan-300 hover:text-cyan-200">
           ← Back
         </Link>
-        <div className="text-center mb-10">
-          <h1 className="text-2xl md:text-3xl font-bold text-white">{title}</h1>
-          <p className="text-cyan-100/80 mt-3">{subtitle}</p>
+        <div className="mb-[clamp(2rem,5vh,3rem)] text-center">
+          <h1 className="text-[clamp(2rem,5vw,4rem)] font-bold text-white">{title}</h1>
+          <p className="mt-3 text-[clamp(0.9rem,1.5vw,1.1rem)] text-cyan-100/80">{subtitle}</p>
         </div>
 
-        <div
-          style={{
-            maxWidth: "560px",
-            width: "100%",
-            margin: "0 auto",
-          }}
-        >
-          <form onSubmit={handleSubmit} className="p-5 sm:p-8 rounded-3xl bg-white/10 backdrop-blur-lg border border-white/20 space-y-6">
+        <div className="custom-order-form-shell mx-auto w-full max-w-[min(100%,560px)]">
+          <form onSubmit={handleSubmit} className="custom-order-form space-y-6 rounded-3xl border border-white/20 bg-white/10 p-[clamp(1rem,2vw,2rem)] backdrop-blur-lg">
           <div className="space-y-3">
-            <label className="text-white text-sm font-semibold">Upload Image</label>
+            <label className="text-[clamp(0.75rem,1.2vw,0.95rem)] font-semibold text-white">Upload Image</label>
             <div className="relative">
               <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" id="image-upload-page" />
               <label
@@ -258,13 +238,14 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
                 height={96}
                 loading="lazy"
                 decoding="async"
+                fetchPriority="low"
                 className="w-24 h-24 object-cover rounded-lg"
               />
             )}
           </div>
 
           <div className="space-y-3">
-            <label className="text-white text-sm font-semibold">Contact Person Name *</label>
+            <label className="text-[clamp(0.75rem,1.2vw,0.95rem)] font-semibold text-white">Contact Person Name *</label>
             <input
               type="text"
               value={customData.contactName}
@@ -276,7 +257,7 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
           </div>
 
           <div className="space-y-3">
-            <label className="text-white text-sm font-semibold">Phone Number *</label>
+            <label className="text-[clamp(0.75rem,1.2vw,0.95rem)] font-semibold text-white">Phone Number *</label>
             <input
               type="tel"
               value={customData.phone}
@@ -288,7 +269,7 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
           </div>
 
           <div className="space-y-3">
-            <label className="text-white text-sm font-semibold">Email Address *</label>
+            <label className="text-[clamp(0.75rem,1.2vw,0.95rem)] font-semibold text-white">Email Address *</label>
             <input
               type="email"
               value={customData.email}
@@ -302,7 +283,7 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
           <div className="border-t border-white/10 my-2" />
 
           <div className="space-y-3">
-            <label className="text-white text-sm font-semibold">Name(s)</label>
+            <label className="text-[clamp(0.75rem,1.2vw,0.95rem)] font-semibold text-white">Name(s)</label>
             <input
               type="text"
               value={customData.names}
@@ -313,17 +294,17 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
           </div>
 
           <div className="space-y-3">
-            <label className="text-white text-sm font-semibold">Event Date</label>
+            <label className="text-[clamp(0.75rem,1.2vw,0.95rem)] font-semibold text-white">Event Date</label>
             <input
               type="date"
               value={customData.eventDate}
               onChange={(e) => setCustomData((prev) => ({ ...prev, eventDate: e.target.value }))}
-              className="w-full px-3 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-cyan-400 transition-all"
+              className="event-date-input w-full px-3 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-cyan-400 transition-all"
             />
           </div>
 
           <div className="space-y-3">
-            <label className="text-white text-sm font-semibold">Custom Message</label>
+            <label className="text-[clamp(0.75rem,1.2vw,0.95rem)] font-semibold text-white">Custom Message</label>
             <textarea
               value={customData.message}
               onChange={(e) => setCustomData((prev) => ({ ...prev, message: e.target.value }))}
@@ -334,7 +315,7 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
           </div>
 
           <div className="space-y-3">
-            <label className="text-white text-sm font-semibold">Label Finish</label>
+            <label className="text-[clamp(0.75rem,1.2vw,0.95rem)] font-semibold text-white">Label Finish</label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {(["matte", "glossy"] as const).map((finish) => (
                 <button
@@ -345,18 +326,18 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
                     customData.finish === finish ? "border-cyan-400 bg-cyan-400/20" : "border-white/20 bg-white/5 hover:bg-white/10"
                   }`}
                 >
-                  <div className="text-white font-semibold capitalize">{finish}</div>
-                  <div className="text-xs text-cyan-100/60 mt-1">{finish === "matte" ? "Soft, elegant look" : "Shiny, premium feel"}</div>
+                  <div className="text-[clamp(0.85rem,1.3vw,1rem)] font-semibold capitalize text-white">{finish}</div>
+                  <div className="mt-1 text-[clamp(0.75rem,1.2vw,0.95rem)] text-cyan-100/60">{finish === "matte" ? "Soft, elegant look" : "Shiny, premium feel"}</div>
                 </button>
               ))}
             </div>
           </div>
 
           <div className="pt-6 border-t border-white/10 space-y-4">
-            <h2 className="text-white font-semibold text-lg">Order Details</h2>
+            <h2 className="text-[clamp(1.1rem,2vw,1.5rem)] font-semibold text-white">Order Details</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-white text-sm">Quantity</label>
+                <label className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-white">Quantity</label>
                 <input
                   type="number"
                   value={customData.quantity}
@@ -366,7 +347,7 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-white text-sm">Delivery Location</label>
+                <label className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-white">Delivery Location</label>
                 <input
                   type="text"
                   value={customData.location}
@@ -387,18 +368,18 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
                   e.preventDefault();
                 }
               }}
-              className="block mx-auto w-full max-w-[300px] py-4 px-6 text-center rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold shadow-lg shadow-cyan-500/50 hover:shadow-cyan-500/70 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="mx-auto block w-full max-w-[min(100%,300px)] rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 px-6 py-4 text-center text-[clamp(0.85rem,1.3vw,1rem)] font-semibold text-white shadow-lg shadow-cyan-500/50 transition-all hover:shadow-cyan-500/70 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? "⏳ Sending..." : "Request Custom Order"}
             </button>
           </div>
-          {status === "success" && (
-            <div className="p-4 rounded-xl bg-green-500/20 border border-green-500/30 text-green-300 text-center text-sm">
+          {success && (
+            <div className="rounded-xl border border-green-500/30 bg-green-500/20 p-4 text-center text-[clamp(0.75rem,1.2vw,0.95rem)] text-green-300">
               ✅ Order request sent successfully! We will contact you within 24 hours.
             </div>
           )}
-          {status === "error" && (
-            <div className="p-4 rounded-xl bg-red-500/20 border border-red-500/30 text-red-300 text-center text-sm">❌ {errorMessage}</div>
+          {!!error && (
+            <div className="rounded-xl border border-red-500/30 bg-red-500/20 p-4 text-center text-[clamp(0.75rem,1.2vw,0.95rem)] text-red-300">❌ {error}</div>
           )}
           </form>
         </div>

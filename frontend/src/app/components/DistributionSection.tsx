@@ -1,7 +1,7 @@
 import { m, useInView } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MapPin, Users, TrendingUp } from "lucide-react";
-import { apiUrl } from "../utils/apiUrl";
+import { API_ENDPOINTS } from "../../config/api";
 import { MADHYA_PRADESH_MAP_PATH } from "../data/madhyaPradeshOutlinePath";
 
 const STATUS_HIDE_MS = 10000;
@@ -87,7 +87,7 @@ export function DistributionSection() {
         ac.abort();
       }, REQUEST_TIMEOUT_MS);
       try {
-        const response = await fetch(apiUrl("/api/email/distributor"), {
+        const response = await fetch(API_ENDPOINTS.distributor, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           signal: ac.signal,

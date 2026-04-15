@@ -2,7 +2,7 @@ import { m, useInView } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Send, Phone, Mail, MapPin, Eye } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
-import { apiUrl } from "../utils/apiUrl";
+import { API_ENDPOINTS } from "../../config/api";
 
 const STATUS_HIDE_MS = 10000;
 const REQUEST_TIMEOUT_MS = 30000;
@@ -22,7 +22,8 @@ export function ContactSection() {
     requirement: "",
   });
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
   const handleMobileContactAction = useCallback((href?: string) => {
     if (!href) return;
     if (!window.matchMedia("(max-width: 767px)").matches) return;
@@ -31,7 +32,6 @@ export function ContactSection() {
   const handleDownloadPdf = useCallback((url: string) => {
     window.location.assign(url);
   }, []);
-  const fetchAbortRef = useRef<AbortController | null>(null);
   const statusTimeoutRef = useRef<number | null>(null);
   const resetContactForm = useCallback(() => {
     setFormData({ name: "", email: "", phone: "", location: "", requirement: "" });
@@ -39,7 +39,6 @@ export function ContactSection() {
 
   useEffect(() => {
     return () => {
-      fetchAbortRef.current?.abort();
       if (statusTimeoutRef.current) {
         window.clearTimeout(statusTimeoutRef.current);
       }
@@ -47,34 +46,28 @@ export function ContactSection() {
   }, []);
 
   useEffect(() => {
-    if (!status) return;
+    if (!error && !success) return;
     if (statusTimeoutRef.current) {
       window.clearTimeout(statusTimeoutRef.current);
     }
     statusTimeoutRef.current = window.setTimeout(() => {
-      setStatus("");
+      setError("");
+      setSuccess(false);
     }, STATUS_HIDE_MS);
-  }, [status]);
+  }, [error, success]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
-      fetchAbortRef.current?.abort();
-      const ac = new AbortController();
-      fetchAbortRef.current = ac;
       setLoading(true);
-      setStatus("");
-      let didTimeout = false;
-      const requestTimeout = window.setTimeout(() => {
-        didTimeout = true;
-        ac.abort();
-      }, REQUEST_TIMEOUT_MS);
+      setError("");
+      setSuccess(false);
 
       try {
-        const response = await fetch(apiUrl("/api/email/contact"), {
+        const response = await fetch(API_ENDPOINTS.contact, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          signal: ac.signal,
+          signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
           body: JSON.stringify({
             name: formData.name,
             email: formData.email,
@@ -86,21 +79,20 @@ export function ContactSection() {
 
         const data = await response.json();
 
-        if (data.success) {
-          setStatus("success: Message sent successfully!");
+        if (!response.ok || !data.success) {
+          throw new Error(data.error || "Failed to send");
+        }
+        setSuccess(true);
           resetContactForm();
-        } else {
-          setStatus("error: " + (data.error || "Failed to send message"));
-        }
       } catch (error) {
-        if (error instanceof Error && error.name === "AbortError" && !didTimeout) return;
-        if (didTimeout) {
-          setStatus("error: Request timed out. Please try again.");
-          return;
+        if (error instanceof Error && error.name === "TimeoutError") {
+          setError("Request timed out. Please try again.");
+        } else if (error instanceof Error) {
+          setError(error.message || "Something went wrong");
+        } else {
+          setError("Something went wrong");
         }
-        setStatus("error: Cannot connect to server");
       } finally {
-        window.clearTimeout(requestTimeout);
         setLoading(false);
       }
     },
@@ -252,11 +244,11 @@ export function ContactSection() {
                   <Send className="w-5 h-5" />
                   {loading ? "Sending..." : "Send Message"}
                 </m.button>
-                {status.startsWith("success") && (
+                {success && (
                   <p className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-green-400">✅ Message sent successfully!</p>
                 )}
-                {status.startsWith("error") && (
-                  <p className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-red-400">❌ {status.replace(/^error:\s*/i, "")}</p>
+                {!!error && (
+                  <p className="text-[clamp(0.75rem,1.2vw,0.95rem)] text-red-400">❌ {error}</p>
                 )}
               </form>
               </div>

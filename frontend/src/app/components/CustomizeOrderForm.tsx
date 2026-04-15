@@ -1,7 +1,7 @@
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { Upload } from "lucide-react";
-import { apiUrl } from "../utils/apiUrl";
+import { API_ENDPOINTS } from "../../config/api";
 
 const STATUS_HIDE_MS = 10000;
 const REQUEST_TIMEOUT_MS = 30000;
@@ -68,10 +68,9 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
 
   const [customData, setCustomData] = useState(getInitialFormData);
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
   const [uploadedImageBase64, setUploadedImageBase64] = useState("");
-  const fetchAbortRef = useRef<AbortController | null>(null);
   const statusTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -84,7 +83,6 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
 
   useEffect(() => {
     return () => {
-      fetchAbortRef.current?.abort();
       if (statusTimeoutRef.current) {
         window.clearTimeout(statusTimeoutRef.current);
       }
@@ -92,15 +90,15 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
   }, []);
 
   useEffect(() => {
-    if (!status) return;
+    if (!error && !success) return;
     if (statusTimeoutRef.current) {
       window.clearTimeout(statusTimeoutRef.current);
     }
     statusTimeoutRef.current = window.setTimeout(() => {
-      setStatus("");
-      setErrorMessage("");
+      setSuccess(false);
+      setError("");
     }, STATUS_HIDE_MS);
-  }, [status]);
+  }, [error, success]);
 
   const handleImageUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -116,19 +114,19 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
       const base64String = await compressImage(file);
       setCustomData((prev) => ({ ...prev, image: base64String }));
       setUploadedImageBase64(base64String);
-      setStatus("");
-      setErrorMessage("");
+      setSuccess(false);
+      setError("");
     } catch {
-      setStatus("error");
-      setErrorMessage("Failed to process image");
+      setSuccess(false);
+      setError("Failed to process image");
     }
   }, [compressImage]);
 
   const resetForm = useCallback(() => {
     setCustomData(getInitialFormData());
     setUploadedImageBase64("");
-    setErrorMessage("");
-    setStatus("");
+    setSuccess(false);
+    setError("");
   }, [getInitialFormData]);
 
   const handleSubmit = useCallback(
@@ -153,17 +151,9 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
         alert("Please enter Email Address");
         return;
       }
-      fetchAbortRef.current?.abort();
-      const ac = new AbortController();
-      fetchAbortRef.current = ac;
       setLoading(true);
-      setStatus("");
-      setErrorMessage("");
-      let didTimeout = false;
-      const requestTimeout = window.setTimeout(() => {
-        didTimeout = true;
-        ac.abort();
-      }, REQUEST_TIMEOUT_MS);
+      setError("");
+      setSuccess(false);
 
       const payload = {
         contactName: customData.contactName,
@@ -185,35 +175,30 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
       console.log("Final payload:", payload);
 
       try {
-        const response = await fetch(apiUrl("/api/email/custom-order"), {
+        const response = await fetch(API_ENDPOINTS.customOrder, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          signal: ac.signal,
+          signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
           body: JSON.stringify(payload),
         });
 
         const data = await response.json();
         console.log("Server response:", data);
 
-        if (data.success) {
+        if (!response.ok || !data.success) {
+          throw new Error(data.error || "Failed to send");
+        }
           resetForm();
-          setStatus("success");
-        } else {
-          setStatus("error");
-          setErrorMessage(data.error || "Failed to send");
-        }
+          setSuccess(true);
       } catch (error) {
-        if (error instanceof Error && error.name === "AbortError" && !didTimeout) return;
-        if (didTimeout) {
-          setStatus("error");
-          setErrorMessage("Request timed out. Please try again.");
-          return;
+        if (error instanceof Error && error.name === "TimeoutError") {
+          setError("Request timed out. Please try again.");
+        } else if (error instanceof Error) {
+          setError(error.message || "Something went wrong");
+        } else {
+          setError("Something went wrong");
         }
-        console.error("Submit error:", error);
-        setStatus("error");
-        setErrorMessage("Cannot connect to server. Make sure backend is running on port 5000");
       } finally {
-        window.clearTimeout(requestTimeout);
         setLoading(false);
       }
     },
@@ -388,13 +373,13 @@ function CustomizeOrderFormInner({ title, subtitle }: CustomizeOrderFormProps) {
               {loading ? "⏳ Sending..." : "Request Custom Order"}
             </button>
           </div>
-          {status === "success" && (
+          {success && (
             <div className="rounded-xl border border-green-500/30 bg-green-500/20 p-4 text-center text-[clamp(0.75rem,1.2vw,0.95rem)] text-green-300">
               ✅ Order request sent successfully! We will contact you within 24 hours.
             </div>
           )}
-          {status === "error" && (
-            <div className="rounded-xl border border-red-500/30 bg-red-500/20 p-4 text-center text-[clamp(0.75rem,1.2vw,0.95rem)] text-red-300">❌ {errorMessage}</div>
+          {!!error && (
+            <div className="rounded-xl border border-red-500/30 bg-red-500/20 p-4 text-center text-[clamp(0.75rem,1.2vw,0.95rem)] text-red-300">❌ {error}</div>
           )}
           </form>
         </div>

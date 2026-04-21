@@ -243,6 +243,40 @@ export function Footer() {
               Refund Policy
             </span>
           </div>
+          <div
+            style={{
+              textAlign: "center",
+              marginTop: "0.8rem",
+              paddingTop: "0.8rem",
+              borderTop: "1px solid rgba(255,255,255,0.06)",
+            }}
+          >
+            <p
+              style={{
+                margin: 0,
+                fontSize: "0.72rem",
+                color: "rgba(255,255,255,0.35)",
+                letterSpacing: "0.02em",
+              }}
+            >
+              Designed by :{" "}
+              <a
+                href="https://www.vercomsolutions.in/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: "#22d3ee",
+                  textDecoration: "none",
+                  fontWeight: "600",
+                  transition: "opacity 0.2s",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
+                onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+              >
+                Vercom Solutions Pvt. Ltd.
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </footer>

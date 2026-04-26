@@ -148,10 +148,11 @@ function HeroSectionInner() {
 
   const goToSlide = useCallback(
     (i: number) => {
+      if (i === slideIndex) return;
       setSlideIndex(i);
       startTimer();
     },
-    [startTimer],
+    [slideIndex, startTimer],
   );
 
   const currentSlide = useMemo(() => slides[slideIndex], [slideIndex]);
@@ -253,7 +254,7 @@ function HeroSectionInner() {
                       return (
                         <div
                           key={slide.src}
-                          aria-hidden={isActive ? undefined : true}
+                          aria-hidden={!isActive ? "true" : "false"}
                           className={`absolute inset-0 transition-opacity duration-[400ms] ease-in-out will-change-[opacity] ${isActive ? "z-[1] opacity-100" : "z-0 opacity-0"} ${isActive ? "pointer-events-auto" : "pointer-events-none"}`}
                         >
                           <img
@@ -317,23 +318,45 @@ function HeroSectionInner() {
           </div>
 
           <div
-            className="hero-slide-dots relative z-10 mt-2 flex flex-wrap items-center justify-center gap-1.5 opacity-100"
             role="tablist"
             aria-label="Slide indicators"
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "center",
+              gap: "6px",
+              marginTop: "8px",
+              zIndex: 10,
+              position: "relative",
+            }}
           >
             {slides.map((_, i) => (
               <button
-                key={i}
+                key={`dot-${i}`}
                 type="button"
                 role="tab"
                 aria-selected={i === slideIndex ? "true" : "false"}
                 aria-label={`Go to slide ${i + 1}`}
                 onClick={() => goToSlide(i)}
-                className={
-                  i === slideIndex
-                    ? "block h-2.5 w-2.5 scale-125 rounded-full bg-cyan-400 opacity-100 shadow-[0_0_8px_rgba(34,211,238,0.6)] transition-all"
-                    : "block h-2 w-2 rounded-full border-2 border-cyan-400/50 bg-transparent opacity-100 transition-all hover:border-cyan-400/80"
-                }
+                style={{
+                  width: i === slideIndex ? "10px" : "8px",
+                  height: i === slideIndex ? "10px" : "8px",
+                  borderRadius: "50%",
+                  background: i === slideIndex ? "#22d3ee" : "transparent",
+                  border:
+                    i === slideIndex
+                      ? "none"
+                      : "2px solid rgba(34,211,238,0.5)",
+                  padding: 0,
+                  cursor: "pointer",
+                  flexShrink: 0,
+                  outline: "none",
+                  boxShadow:
+                    i === slideIndex
+                      ? "0 0 8px rgba(34,211,238,0.6)"
+                      : "none",
+                  transition: "none",
+                }}
               />
             ))}
           </div>

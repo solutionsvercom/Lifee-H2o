@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
-import { Home, Info, Cog, Package, Phone, Menu, X, Award } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Home, Info, Cog, Package, Phone, Award } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router";
-import { m, AnimatePresence } from "motion/react";
 import { throttle } from "../utils/throttle";
 import { suppressSectionScrollSpy } from "../hooks/useSectionNavigation";
 
@@ -18,13 +17,34 @@ export function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+  const [menuHeight, setMenuHeight] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const onScroll = throttle(() => setIsScrolled(window.scrollY > 10), 100);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    if (menuRef.current) {
+      setMenuHeight(menuRef.current.scrollHeight);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const closeMenu = useCallback(() => setIsOpen(false), []);
@@ -55,6 +75,7 @@ export function Navbar() {
 
   return (
     <header
+      ref={navRef}
       className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 bg-white/5 backdrop-blur-[12px] border-b border-white/10 shadow-[0_2px_20px_rgba(0,0,0,0.3)] ${
         isScrolled ? "bg-[#0a2540]/75" : ""
       }`}
@@ -110,55 +131,145 @@ export function Navbar() {
           </nav>
 
           <button
-            type="button"
-            onClick={() => setIsOpen((prev) => !prev)}
-            className="md:hidden inline-flex items-center justify-center w-11 h-11 rounded-lg border border-white/20 bg-white/10 text-white hover:bg-white/20 transition-colors"
+            onClick={() => setIsOpen(!isOpen)}
+            style={{
+              width: "40px",
+              height: "40px",
+              borderRadius: "10px",
+              border: "1px solid rgba(0,200,255,0.2)",
+              background: "rgba(0,200,255,0.05)",
+              color: "#22d3ee",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              transition: "all 0.3s",
+              flexShrink: 0,
+            }}
+            className="md:hidden"
             aria-label={isOpen ? "Close menu" : "Open menu"}
             aria-expanded={isOpen}
             aria-controls="mobile-nav"
           >
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            <div
+              style={{
+                width: "18px",
+                height: "14px",
+                position: "relative",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+              }}
+            >
+              <span
+                style={{
+                  display: "block",
+                  height: "2px",
+                  background: "#22d3ee",
+                  borderRadius: "2px",
+                  transition: "all 0.3s",
+                  transformOrigin: "center",
+                  transform: isOpen ? "translateY(6px) rotate(45deg)" : "none",
+                }}
+              />
+              <span
+                style={{
+                  display: "block",
+                  height: "2px",
+                  background: "#22d3ee",
+                  borderRadius: "2px",
+                  transition: "all 0.3s",
+                  opacity: isOpen ? 0 : 1,
+                  transform: isOpen ? "scaleX(0)" : "scaleX(1)",
+                }}
+              />
+              <span
+                style={{
+                  display: "block",
+                  height: "2px",
+                  background: "#22d3ee",
+                  borderRadius: "2px",
+                  transition: "all 0.3s",
+                  transformOrigin: "center",
+                  transform: isOpen ? "translateY(-6px) rotate(-45deg)" : "none",
+                }}
+              />
+            </div>
           </button>
         </div>
       </div>
 
-      <AnimatePresence>
-        {isOpen && (
-          <m.nav
-            id="mobile-nav"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="md:hidden border-t border-white/10 bg-[#071b2f]/95 backdrop-blur-xl"
-          >
-            <div className="mobile-nav-container container mx-auto flex w-full max-w-[min(100%,1400px)] flex-col px-[clamp(1rem,4vw,3rem)] py-3">
-              <div className="mobile-nav">
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = activeId === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => onNavItemClick(item.id)}
-                    aria-current={isActive ? "page" : undefined}
-                    className={`min-h-11 w-full flex items-center gap-2 px-2 py-3 rounded-md border-0 bg-transparent text-left font-inherit text-[clamp(0.8rem,1.2vw,1rem)] transition-all ${
-                      isActive
-                        ? "text-cyan-300 bg-white/10"
-                        : "text-cyan-100/90 hover:text-cyan-300 hover:bg-white/5"
-                    }`}
-                  >
-                    <Icon className="w-4 h-4" />
-                    {item.label}
-                  </button>
-                );
-              })}
-              </div>
-            </div>
-          </m.nav>
-        )}
-      </AnimatePresence>
+      <div
+        id="mobile-nav"
+        className="md:hidden"
+        style={{
+          overflow: "hidden",
+          maxHeight: isOpen ? `${menuHeight}px` : "0px",
+          transition: "max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+          background: "rgba(10, 25, 47, 0.98)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          borderTop: isOpen ? "1px solid rgba(0,200,255,0.15)" : "none",
+          width: "100%",
+          position: "absolute",
+          top: "100%",
+          left: 0,
+          right: 0,
+          zIndex: 50,
+        }}
+      >
+        <div
+          ref={menuRef}
+          style={{
+            padding: "1rem 1.5rem 1.5rem",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "0.2rem",
+          }}
+        >
+          {navItems.map((item, i) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => onNavItemClick(item.id)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "12px",
+                  padding: "12px 16px",
+                  borderRadius: "10px",
+                  color: "white",
+                  textDecoration: "none",
+                  fontSize: "0.95rem",
+                  fontWeight: "500",
+                  transition: "background 0.2s",
+                  opacity: isOpen ? 1 : 0,
+                  transform: isOpen ? "translateY(0)" : "translateY(-8px)",
+                  transitionDelay: isOpen ? `${i * 0.05}s` : "0s",
+                  border: 0,
+                  background: "transparent",
+                  width: "100%",
+                  textAlign: "center",
+                  cursor: "pointer",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "rgba(0,200,255,0.08)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "transparent";
+                }}
+              >
+                <Icon className="w-4 h-4" />
+                {item.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
     </header>
   );
 }
